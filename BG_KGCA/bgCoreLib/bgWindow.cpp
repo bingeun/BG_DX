@@ -76,9 +76,9 @@ bool bgWindow::InitWindow(HINSTANCE hInstance, TCHAR* titleName, int iWidth, int
 		return false;
 
 	// 클라이언트 영역을 계산하여 윈도우 생성
-	m_iWindowW = m_iClientW + 2 * GetSystemMetrics(SM_CXFRAME);
-	m_iWindowH = m_iClientH + (2 * GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION));
-	m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, L"BG", titleName, m_dwStyle, 0, 0, m_iWindowW, m_iWindowH, NULL, NULL, hInstance, NULL);
+	SetWindowSize(m_iClientW, m_iClientH, m_dwStyle);
+	SetPosCenter();
+	m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, L"BG", titleName, m_dwStyle, m_iWindowX, m_iWindowY, m_iWindowW, m_iWindowH, NULL, NULL, hInstance, NULL);
 
 	// 윈도우와 클라이언트 각 영역의 크기를 얻음
 	GetWindowRect(m_hWnd, &m_rtWindow);
@@ -87,8 +87,8 @@ bool bgWindow::InitWindow(HINSTANCE hInstance, TCHAR* titleName, int iWidth, int
 	// 화면에 윈도우 보이기
 	if (m_hWnd != NULL)
 	{
-		if(bCenter)
-			MoveCenter();
+		//if(bCenter)
+		//	MoveCenter();
 		ShowWindow(m_hWnd, SW_SHOW);
 	}
 
@@ -98,13 +98,69 @@ bool bgWindow::InitWindow(HINSTANCE hInstance, TCHAR* titleName, int iWidth, int
 	return true;
 }
 
+void bgWindow::SetWindowSize(int iWidth, int iHeight, DWORD dwStyle)
+{
+	// 클라이언트 크기로 초기값 설정
+	m_iWindowW = m_iClientW;
+	m_iWindowH = m_iClientH;
+
+	// 테두리 크기만큼 더하기
+	if (m_dwStyle & WS_BORDER)
+	{
+		m_iWindowW += GetSystemMetrics(SM_CXBORDER) * 2;
+		m_iWindowH += GetSystemMetrics(SM_CYBORDER) * 2;
+
+		m_iWindowW += GetSystemMetrics(SM_CXFRAME) * 2;
+		m_iWindowH += GetSystemMetrics(SM_CYFRAME) * 2;
+
+		m_iWindowW += GetSystemMetrics(SM_CXDLGFRAME) * 2;
+		m_iWindowH += GetSystemMetrics(SM_CYDLGFRAME) * 2;
+	}
+
+	// 타이틀바 크기만큼 더하기
+	if (m_dwStyle & (WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU))
+		m_iWindowH += GetSystemMetrics(SM_CYCAPTION);
+}
+
+void bgWindow::SetPosCenter()
+{
+	// 전체화면 크기 구하기
+	m_iWindowX = m_iScreenW = GetSystemMetrics(SM_CXSCREEN);
+	m_iWindowY = m_iScreenH = GetSystemMetrics(SM_CYSCREEN);
+
+	// 클라이언트 영역만큼 빼기
+	m_iWindowX -= m_iClientW;
+	m_iWindowY -= m_iClientH;
+
+	// 테두리 크기만큼 빼기
+	if (m_dwStyle & WS_BORDER)
+	{
+		m_iWindowX -= GetSystemMetrics(SM_CXBORDER);
+		m_iWindowY -= GetSystemMetrics(SM_CYBORDER);
+
+		m_iWindowX -= GetSystemMetrics(SM_CXFRAME);
+		m_iWindowY -= GetSystemMetrics(SM_CYFRAME);
+
+		m_iWindowX -= GetSystemMetrics(SM_CXDLGFRAME);
+		m_iWindowY -= GetSystemMetrics(SM_CYDLGFRAME);
+	}
+	
+	// 타이틀바 크기만큼 빼기
+	if (m_dwStyle & (WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU))
+		m_iWindowY -= GetSystemMetrics(SM_CYCAPTION);
+	
+	// 최종값을 2로 나누기
+	m_iWindowX /= 2;
+	m_iWindowY /= 2;
+
+	// 이미 생성한 윈도우의 좌표와 크기를 변경
+	//MoveWindow(m_hWnd, m_iWindowX, m_iWindowY, m_iWindowW, m_iWindowH, true);
+}
+
 void bgWindow::MoveCenter()
 {
-	m_iWindowX = (GetSystemMetrics(SM_CXSCREEN) / 2) - (m_iClientW / 2) - GetSystemMetrics(SM_CXFRAME);
-	m_iWindowY = (GetSystemMetrics(SM_CYSCREEN) / 2) - (m_iClientH / 2) - ((2 * GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION)) / 2);
-	m_iWindowW = m_iClientW + 2 * GetSystemMetrics(SM_CXFRAME);
-	m_iWindowH = m_iClientH + (2 * GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION));
-
+	SetWindowSize(m_iClientW, m_iClientH, m_dwStyle);
+	SetPosCenter();
 	MoveWindow(m_hWnd, m_iWindowX, m_iWindowY, m_iWindowW, m_iWindowH, true);
 }
 
@@ -138,8 +194,11 @@ bool bgWindow::Release()
 
 bgWindow::bgWindow()
 {
-	m_dwStyle = WS_BORDER | WS_MINIMIZEBOX | WS_SYSMENU; //WS_OVERLAPPED;
+	m_dwStyle = WS_BORDER | WS_MINIMIZEBOX | WS_SYSMENU;
 	m_bActivate = TRUE;
+
+	m_iScreenW = GetSystemMetrics(SM_CXSCREEN);
+	m_iScreenH = GetSystemMetrics(SM_CYSCREEN);
 
 	// 전역변수 설정
 	g_pWindow = this;
