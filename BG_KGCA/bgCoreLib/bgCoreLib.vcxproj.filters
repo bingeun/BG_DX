@@ -9,10 +9,99 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="헤더 파일\FMOD">
+      <UniqueIdentifier>{93385a57-6d1c-4bd9-94c5-7a325b2be382}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\bgCore">
+      <UniqueIdentifier>{eac3aa38-5bd9-44f1-a93d-45e30197aeee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\bgCore">
+      <UniqueIdentifier>{9611020b-c723-43e0-97f1-6818c23ae3ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bgStd.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\..\FMOD\include\fmod.h">
+      <Filter>헤더 파일\FMOD</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\FMOD\include\fmod.hpp">
+      <Filter>헤더 파일\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FMOD\include\fmod_codec.h">
+      <Filter>헤더 파일\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FMOD\include\fmod_dsp.h">
+      <Filter>헤더 파일\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FMOD\include\fmod_errors.h">
+      <Filter>헤더 파일\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FMOD\include\fmod_memoryinfo.h">
+      <Filter>헤더 파일\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FMOD\include\fmod_output.h">
+      <Filter>헤더 파일\FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="bgWindow.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgBase.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgCore.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgStd.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgSys.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgTimer.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgInput.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgSound.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgCollision.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgDWrite.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgDevice.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="bgWindow.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgBase.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgCore.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgTimer.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgInput.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgSound.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgCollision.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgDWrite.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgDevice.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

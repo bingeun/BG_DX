@@ -9,6 +9,11 @@
 #include <string>
 #include <algorithm>
 #include <functional>
+#include <assert.h>
+#include <d3d10_1.h>
+#include <D3DX10math.h>
+#include <d3dx11.h> 
+#include <D3Dcompiler.h>
 
 using namespace std;
 
