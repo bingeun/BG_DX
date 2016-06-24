@@ -38,7 +38,7 @@ bool bgDWrite::Release()
 
 bool bgDWrite::Init()
 {
-	const wchar_t defaultText[] = L"Times New Roman";
+	const wchar_t defaultText[] = L"Consolas";
 	m_wszFontFamily = defaultText;
 	return true;
 }
@@ -60,7 +60,7 @@ HRESULT bgDWrite::CreateDeviceIndependentResources()
 	if (SUCCEEDED(hr))
 	{
 		hr = m_pDWriteFactory->CreateTextFormat(m_wszFontFamily.c_str(), NULL, m_fontWeight, m_fontStyle,
-			DWRITE_FONT_STRETCH_NORMAL, 20, L"en-us", &m_pTextFormat);
+			DWRITE_FONT_STRETCH_NORMAL, m_fontSize, L"en-us", &m_pTextFormat);
 	}
 	return hr;
 }
@@ -188,7 +188,6 @@ void bgDWrite::DiscardDeviceIndependentResources()
 	SafeRelease(&m_pD2DFactory);
 	SafeRelease(&m_pDWriteFactory);
 	SafeRelease(&m_pTextFormat);
-	SafeRelease(&m_pTextFormat);
 	SafeRelease(&m_pTextLayout);
 }
 
@@ -277,7 +276,7 @@ bgDWrite::bgDWrite()
 	m_fontWeight = DWRITE_FONT_WEIGHT_NORMAL;
 	m_fontStyle = DWRITE_FONT_STYLE_NORMAL;
 	m_fontUnderline = FALSE;
-	m_fontSize = 72.0f;
+	m_fontSize = 24.0f;
 }
 
 bgDWrite::~bgDWrite()

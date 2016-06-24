@@ -20,8 +20,9 @@ using namespace std;
 #pragma comment( lib, "ws2_32.lib")
 #pragma comment( lib, "winmm.lib")
 
-#define RadianToDegree(fAngle) (fAngle * (3.141592f / 180.0f))
-#define DegreeToRadian(fAngle) (fAngle * (180.0f / 3.141592f))
+#define RadianToDegree(fAngle)	(fAngle * (3.141592f / 180.0f))
+#define DegreeToRadian(fAngle)	(fAngle * (180.0f / 3.141592f))
+#define DEBUG_BUFFER_SIZE		(256)
 
 template <class T> class bgSingleton
 {

@@ -25,10 +25,14 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL IsFullSc
 		MessageBox(0, _T("SetViewPort FAILED"), _T("Fatal error"), MB_OK);
 		return hr;
 	}
-	//if (FAILED(hr = m_pFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER)))
-	//{
-	//	return hr;
-	//}
+	if (FAILED(hr = CreateDxResource()))
+	{
+		return hr;
+	}
+	if (FAILED(hr = m_pFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER)))
+	{
+		return hr;
+	}
 	return hr;
 }
 

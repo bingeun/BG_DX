@@ -27,7 +27,11 @@ public:
 	HRESULT		SetViewPort();
 
 	void		SetFullScreenFlag(BOOL bFlag) { m_IsFullScreen = bFlag; }
+	BOOL		GetFullScreenFlag() { return m_IsFullScreen; }
 	void		ClearD3D11DeviceContext(ID3D11DeviceContext* pd3dDeviceContext);
+
+	virtual	HRESULT	CreateDxResource() { return S_OK; }
+	virtual	HRESULT	DeleteDxResource() { return S_OK; }
 
 public:
 	bgDevice();

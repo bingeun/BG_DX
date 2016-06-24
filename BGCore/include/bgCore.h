@@ -1,12 +1,14 @@
 #pragma once
 #include "bgTimer.h"
 #include "bgInput.h"
+#include "bgDWrite.h"
 #include "bgWindow.h"
 
 class bgCore : public bgWindow
 {
 public:
 	bgTimer		m_Timer;
+	bgDWrite	m_Font;
 	bgInput		m_Input;
 
 public:
@@ -32,6 +34,11 @@ public:
 
 	virtual bool	DrawDebug();
 	virtual bool	DrawDebug(TCHAR* pString, int iX, int iY);
+
+			HRESULT	CreateDxResource();
+			HRESULT	DeleteDxResource();
+	virtual	HRESULT	CreateResource();
+	virtual	HRESULT	DeleteResource();
 
 public:
 	bgCore();

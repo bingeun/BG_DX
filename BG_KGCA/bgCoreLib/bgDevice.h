@@ -14,7 +14,6 @@ public:
 	D3D_DRIVER_TYPE         m_DriverType;
 	DXGI_SWAP_CHAIN_DESC	m_SwapChainDesc;
 	D3D11_VIEWPORT			m_ViewPort;
-
 	BOOL					m_IsFullScreen;
 
 public:
@@ -27,7 +26,11 @@ public:
 	HRESULT		SetViewPort();
 
 	void		SetFullScreenFlag(BOOL bFlag) { m_IsFullScreen = bFlag; }
+	BOOL		GetFullScreenFlag() { return m_IsFullScreen; }
 	void		ClearD3D11DeviceContext(ID3D11DeviceContext* pd3dDeviceContext);
+
+	virtual	HRESULT	CreateDxResource() { return S_OK; }
+	virtual	HRESULT	DeleteDxResource() { return S_OK; }
 
 public:
 	bgDevice();

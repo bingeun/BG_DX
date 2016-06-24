@@ -23,9 +23,28 @@ LRESULT	dx01::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 		case '0': // 풀스크린 or 윈도우
 		{
-			int x;
-			x = 10;
-			break;
+			if (m_pSwapChain)
+			{
+				BOOL IsScreenMode = FALSE;
+				m_pSwapChain->GetFullscreenState(&IsScreenMode, NULL);
+				m_pSwapChain->SetFullscreenState(!IsScreenMode, NULL);
+				SetFullScreenFlag(IsScreenMode);
+				assert(GetFullScreenFlag() == IsScreenMode);
+				if (IsScreenMode)
+				{
+					ShowWindow(hWnd, SW_SHOW);
+				}
+			}
+		}
+		break;
+		case VK_UP:
+		{
+
+		}
+		break;
+		case VK_DOWN:
+		{
+
 		}
 		break;
 		}
@@ -52,7 +71,7 @@ dx01::~dx01()
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	dx01 win;
-	if (win.InitWindow(hInstance, L"BG Project", 1024, 768, TRUE) == true)
+	if (win.InitWindow(hInstance, L"BG Project", 800, 600, TRUE) == true)
 	{
 		win.Run();
 	}

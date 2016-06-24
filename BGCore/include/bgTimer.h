@@ -5,6 +5,7 @@ class bgTimer : public bgBase, public bgSingleton<bgTimer>
 {
 public:
 	LARGE_INTEGER	m_Frequency;	// 현재 시스템의 초당 주파수
+	LARGE_INTEGER	m_AppStartTime;	// 프로그램 시작 시간
 	LARGE_INTEGER	m_Current;		// 현재 시간
 	LARGE_INTEGER	m_PrevFrame;	// 1프레임 이전 시간
 	LARGE_INTEGER	m_PrevSecond;	// 1초 이전 시간

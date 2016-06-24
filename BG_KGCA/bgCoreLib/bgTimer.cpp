@@ -47,11 +47,12 @@ bool bgTimer::Init()
 	if (m_Current.QuadPart == 0)
 		return false;
 
-	m_iFPS = 0;
-	m_fSPF = 0.0f;
+	g_iFPS = m_iFPS = 0;
+	g_fSPF = m_fSPF = 0.0f;
 	m_iCountFrame = 0;
 	m_PrevSecond = m_Current;
 	m_PrevFrame = m_Current;
+	m_AppStartTime = m_Current;
 
 	Start();
 	return true;
@@ -61,7 +62,7 @@ bool bgTimer::Frame()
 {
 	// 현재 시간 얻기
 	QueryPerformanceCounter(&m_Current);
-	g_fCurrent = static_cast<float>(m_Current.QuadPart) / static_cast<float>(m_Frequency.QuadPart);
+	g_fCurrent = static_cast<float>(m_Current.QuadPart - m_AppStartTime.QuadPart) / static_cast<float>(m_Frequency.QuadPart);
 
 	// 1프레임이 경과된 시간 계산
 	g_fSPF = m_fSPF = static_cast<float>(m_Current.QuadPart - m_PrevFrame.QuadPart) / static_cast<float>(m_Frequency.QuadPart);
@@ -73,7 +74,7 @@ bool bgTimer::Frame()
 		m_PrevSecond = m_Current;			// 새로운 1초의 시작값을 현재시간으로 설정
 		m_iCountFrame = 0;					// 프레임 카운트 초기화
 	}
-	m_iFPS++;
+	m_iCountFrame++;
 	m_PrevFrame = m_Current;
 	return true;
 }
