@@ -107,11 +107,11 @@ void bgWindow::SetWindowSize(int iWidth, int iHeight, DWORD dwStyle)
 	// 테두리 크기만큼 더하기
 	if (m_dwStyle & WS_BORDER)
 	{
-		m_iWindowW += GetSystemMetrics(SM_CXBORDER) * 2;
-		m_iWindowH += GetSystemMetrics(SM_CYBORDER) * 2;
+		//m_iWindowW += GetSystemMetrics(SM_CXBORDER) * 2;
+		//m_iWindowH += GetSystemMetrics(SM_CYBORDER) * 2;
 
-		m_iWindowW += GetSystemMetrics(SM_CXFRAME) * 2;
-		m_iWindowH += GetSystemMetrics(SM_CYFRAME) * 2;
+		//m_iWindowW += GetSystemMetrics(SM_CXFRAME) * 2;
+		//m_iWindowH += GetSystemMetrics(SM_CYFRAME) * 2;
 
 		m_iWindowW += GetSystemMetrics(SM_CXDLGFRAME) * 2;
 		m_iWindowH += GetSystemMetrics(SM_CYDLGFRAME) * 2;
@@ -135,11 +135,11 @@ void bgWindow::SetPosCenter()
 	// 테두리 크기만큼 빼기
 	if (m_dwStyle & WS_BORDER)
 	{
-		m_iWindowX -= GetSystemMetrics(SM_CXBORDER);
-		m_iWindowY -= GetSystemMetrics(SM_CYBORDER);
+		//m_iWindowX -= GetSystemMetrics(SM_CXBORDER);
+		//m_iWindowY -= GetSystemMetrics(SM_CYBORDER);
 
-		m_iWindowX -= GetSystemMetrics(SM_CXFRAME);
-		m_iWindowY -= GetSystemMetrics(SM_CYFRAME);
+		//m_iWindowX -= GetSystemMetrics(SM_CXFRAME);
+		//m_iWindowY -= GetSystemMetrics(SM_CYFRAME);
 
 		m_iWindowX -= GetSystemMetrics(SM_CXDLGFRAME);
 		m_iWindowY -= GetSystemMetrics(SM_CYDLGFRAME);
