@@ -14,7 +14,6 @@ public:
 	D3D_DRIVER_TYPE         m_DriverType;
 	DXGI_SWAP_CHAIN_DESC	m_SwapChainDesc;
 	D3D11_VIEWPORT			m_ViewPort;
-
 	BOOL					m_IsFullScreen;
 
 public:

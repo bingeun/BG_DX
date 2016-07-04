@@ -128,8 +128,8 @@ HRESULT bgDevice::CreateGIFactory()
 	//IDXGIFactory* pIDXGIFactory;
 	pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&m_pFactory);
 
-	pDXGIDevice->Release();
 	pDXGIAdapter->Release();
+	pDXGIDevice->Release();
 
 	return S_OK;
 }
