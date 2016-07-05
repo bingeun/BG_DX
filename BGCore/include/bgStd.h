@@ -17,8 +17,10 @@
 
 using namespace std;
 
-#pragma comment( lib, "ws2_32.lib")
-#pragma comment( lib, "winmm.lib")
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "d3dx10d.lib")
+#pragma comment(lib, "d3dx11d.lib")
 
 #define RadianToDegree(fAngle)	(fAngle * (3.141592f / 180.0f))
 #define DegreeToRadian(fAngle)	(fAngle * (180.0f / 3.141592f))
