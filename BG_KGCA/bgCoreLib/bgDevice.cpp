@@ -144,15 +144,24 @@ HRESULT bgDevice::SetRenderTargetView()
 HRESULT bgDevice::SetViewPort()
 {
 	HRESULT hr = S_OK;
+
 	ID3D11Texture2D* pBackBuffer;
 	if (FAILED(hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer)))
 		return hr;
-
 	if (FAILED(hr = m_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pRenderTargetView)))
 		return hr;
-
 	pBackBuffer->Release();
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+
+	DXGI_SWAP_CHAIN_DESC Desc;
+	m_pSwapChain->GetDesc(&Desc);
+	m_ViewPort.Width = Desc.BufferDesc.Width;
+	m_ViewPort.Height = Desc.BufferDesc.Height;
+	m_ViewPort.MinDepth = 0.0f;
+	m_ViewPort.MaxDepth = 1.0f;
+	m_ViewPort.TopLeftX = 0;
+	m_ViewPort.TopLeftY = 0;
+	m_pImmediateContext->RSSetViewports(1, &m_ViewPort);
 
 	return hr;
 }
