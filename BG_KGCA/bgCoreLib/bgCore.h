@@ -2,13 +2,11 @@
 #include "bgTimer.h"
 #include "bgInput.h"
 #include "bgDWrite.h"
-#include "bgWindow.h"
 
 class bgCore : public bgWindow
 {
 public:
 	bgTimer		m_Timer;
-	bgDWrite	m_Font;
 	bgInput		m_Input;
 
 public:
@@ -17,7 +15,6 @@ public:
 	bool	GameFrame();
 	bool	GameRender();
 	bool	GameRelease();
-	void	MsgEvent(MSG msg);
 
 public:
 	virtual bool	Init() { return true; }
@@ -32,14 +29,9 @@ public:
 	virtual bool	PreRender();
 	virtual bool	PostRender();
 
-	virtual bool	DrawDebug();
-	virtual bool	DrawDebug(TCHAR* pString, int iX, int iY);
-
-			HRESULT	CreateDxResource();
-			HRESULT	DeleteDxResource();
-	virtual	HRESULT	CreateResource();
-	virtual	HRESULT	DeleteResource();
-
+	virtual bool	PrintDebug();
+	virtual bool	PrintDebug(TCHAR* pszString, int iX, int iY);
+	
 public:
 	bgCore();
 	virtual ~bgCore();

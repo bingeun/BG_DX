@@ -1,6 +1,12 @@
 #include "bgCore.h"
 
+bgCore::bgCore()
+{
+}
 
+bgCore::~bgCore()
+{
+}
 
 bool bgCore::GameRun()
 {
@@ -46,7 +52,6 @@ bool bgCore::GameRelease()
 
 bool bgCore::PreInit()
 {
-	InitDevice(m_hWnd);
 	m_Timer.Init();
 	m_Input.Init();
 	return true;
@@ -72,85 +77,49 @@ bool bgCore::PostFrame()
 bool bgCore::PreRender()
 {
 	float ClearColor[4] = { 0.0f, 0.25f, 0.5f, 1.0f };
-	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
+	m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
+	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	return true;
 }
 
 bool bgCore::PostRender()
 {
-	m_Timer.Render();
-	m_Input.Render();
-	DrawDebug();
-	m_pSwapChain->Present(0, 0);
+	if (m_bVsync)
+	{
+		m_Timer.Render();
+		m_Input.Render();
+		DrawDebug();
+		m_pSwapChain->Present(1, 0);
+	}
+	else
+	{
+		m_Timer.Render();
+		m_Input.Render();
+		DrawDebug();
+		m_pSwapChain->Present(0, 0);
+	}
 	return true;
 }
 
-void bgCore::MsgEvent(MSG msg)
-{
-	//m_Input.MsgEvent(msg);
-}
-
-bool bgCore::DrawDebug()
+bool bgCore::PrintDebug()
 {
 #ifdef _DEBUG
 	// FPS Ãâ·Â
 	TCHAR pBuffer[DEBUG_BUFFER_SIZE];
 	memset(pBuffer, 0, sizeof(TCHAR) * DEBUG_BUFFER_SIZE);
-	_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Now[%.2f]\nFontSize[%d]"),
-		g_iFPS, g_fSPF*1000.0f, g_fCurrent, (int)m_Font.m_fontSize);
+	_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f]\nLog[???]"),
+				g_iFPS, g_fSPF*1000.0f, g_fCurrent);
 
-	m_Font.Begin(); // --------------------
-	RECT rect = { 2, 2, m_iClientW, m_iClientH };
-	m_Font.m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	m_Font.m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	m_Font.DrawText(rect, pBuffer, D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.75f));
-	m_Font.End(); // ----------------------
+	// printf()?
+
 #endif //_DEBUG
 	return true;
 }
 
-bool bgCore::DrawDebug(TCHAR * pString, int iX, int iY)
+bool bgCore::PrintDebug(TCHAR * pszString, int iX, int iY)
 {
 #ifdef _DEBUG
 
 #endif //_DEBUG
 	return true;
-}
-
-HRESULT bgCore::CreateDxResource()
-{
-	IDXGISurface1* pBackBuffer = NULL;
-	HRESULT hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&pBackBuffer);
-	m_Font.Set(m_hWnd, m_iWindowW, m_iWindowH, pBackBuffer);
-	if (pBackBuffer)
-		pBackBuffer->Release();
-
-	CreateResource();
-	return S_OK;
-}
-
-HRESULT bgCore::DeleteDxResource()
-{
-	if (!m_Font.Release())
-		return false;
-	DeleteResource();
-	return S_OK;
-}
-
-HRESULT bgCore::CreateResource()
-{
-	return S_OK;
-}
-
-HRESULT bgCore::DeleteResource()
-{
-	return S_OK;
-}
-
-bgCore::bgCore()
-{
-}
-
-bgCore::~bgCore()
-{
 }

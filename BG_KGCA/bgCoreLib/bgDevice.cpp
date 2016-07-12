@@ -13,7 +13,7 @@ bool bgDevice::Release()
 {
 	if (m_pSwapChain)
 	{
-		m_pSwapChain->SetFullscreenState(false, NULL);
+		m_pSwapChain->SetFullscreenState(FALSE, NULL);
 	}
 
 	SAFE_RELEASE(m_pRasterizerState);
@@ -32,6 +32,8 @@ bool bgDevice::Release()
 HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScreen, BOOL bVsync)
 {
 	HRESULT hr = S_OK;
+
+	m_bVsync = bVsync;
 
 	IDXGIFactory* pFactory;
 	HR_RETURN(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory));
@@ -53,7 +55,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	HR_RETURN(pAdapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &iNumModes, pDisplayModeList));
 
 	UINT iNumerator, iDenominator;
-	for (int iMode = 0; iMode < iNumModes; iMode++)
+	for (UINT iMode = 0; iMode < iNumModes; iMode++)
 	{
 		if (pDisplayModeList[iMode].Width == iWidth && pDisplayModeList[iMode].Height == iHeight)
 		{

@@ -15,6 +15,7 @@ public:
 	ID3D11RasterizerState*	m_pRasterizerState;
 
 	D3D_DRIVER_TYPE			m_DriverType;
+	BOOL					m_bVsync;
 	
 public:
 	HRESULT		InitDevice(HWND hWnd, UINT iWidth = 1024, UINT iHeight = 768, BOOL bFullScreen = FALSE, BOOL bVsync = FALSE);
