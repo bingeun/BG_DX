@@ -10,6 +10,3 @@ extern HINSTANCE	g_hInstance;
 extern int			g_iFPS;
 extern float		g_fSPF;
 extern float		g_fCurrent;
-
-// bgInput - 입력 관련 전역변수
-//extern BGINPUT_MAP	g_InputData;

@@ -19,6 +19,16 @@ public:
 	TCHAR m_szBuffer[MAX_PATH];
 
 public:
+	bgSound();
+	virtual ~bgSound();
+
+public:
+	bool Init();
+	bool Frame();
+	bool Render();
+	bool Release();
+
+public:
 	int  Load(char* pLoadName, bool bPlay);
 	void Play(int iIndex, bool bPlay);
 	void Stop(int iIndex);
@@ -26,12 +36,4 @@ public:
 	void Pause(int iIndex);
 	void Volume(int iIndex, float fVolume, bool bUp);
 	void SetLoop(int iIndex);
-
-	bool Init();
-	bool Frame();
-	bool Release();
-
-public:
-	bgSound();
-	virtual ~bgSound();
 };

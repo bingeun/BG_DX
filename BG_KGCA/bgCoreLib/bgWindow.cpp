@@ -6,6 +6,7 @@ HWND		g_hWnd;
 
 bgWindow::bgWindow()
 {
+	g_pWindow = this;
 	return;
 }
 
@@ -21,7 +22,7 @@ bool bgWindow::AppRun()
 
 	GameInit();
 
-	// =============== 프로그램 실행 루프 ===============
+	// 프로그램 실행중 루프
 	while (msg.message != WM_QUIT)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -34,7 +35,6 @@ bool bgWindow::AppRun()
 			GameRun();
 		}
 	}
-	// ================================================
 
 	GameRelease();
 
@@ -45,48 +45,61 @@ bool bgWindow::InitWindow(HINSTANCE hInstance, TCHAR* pszTitle, int iWidth, int 
 {
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WndProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = m_hInstance;
 	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = pszTitle;
 	wc.hIconSm = wc.hIcon;
 	RegisterClassEx(&wc);
 
-	m_iWindowX = 0;
-	m_iWindowY = 0;
-	m_iWindowW = 0;
-	m_iWindowH = 0;
-	m_iClientW = 0;
-	m_iClientH = 0;
-	m_iScreenW = GetSystemMetrics(SM_CXSCREEN);
-	m_iScreenH = GetSystemMetrics(SM_CYSCREEN);
+	m_dwStyle = WS_OVERLAPPED;
+	m_dwStyleEx = WS_EX_APPWINDOW;
+	m_hWnd = CreateWindowEx(m_dwStyleEx, pszTitle, pszTitle, m_dwStyle, 0, 0, iWidth, iHeight, NULL, NULL, hInstance, NULL);
+	if (m_hWnd == NULL)
+		return false;
 
-	m_hWnd = CreateWindowEx(WS_EX_APPWINDOW, pszTitle, pszTitle, WS_OVERLAPPED,
-							m_iWindowX, m_iWindowY, m_iWindowW, m_iWindowH, NULL, NULL, hInstance, NULL);
-
+	SetWindowSize(m_hWnd, iWidth, iHeight);
 	ShowWindow(m_hWnd, SW_SHOW);
+
 	SetForegroundWindow(m_hWnd);
 	SetFocus(m_hWnd);
 
-	// 마우스 숨기기
 	//ShowCursor(false);
 
 	g_hInstance = m_hInstance = hInstance;
 	g_hWnd = m_hWnd;
-	g_pWindow = this;
 
 	return true;
 }
 
-void bgWindow::SetWindowSize(int iWidth, int iHeight, DWORD dwStyle)
+bool bgWindow::SetWindowSize(HWND hWnd, int iWidth, int iHeight)
 {
-	return;
+	if (hWnd == NULL)
+		return false;
+
+	m_iScreenW = GetSystemMetrics(SM_CXSCREEN);
+	m_iScreenH = GetSystemMetrics(SM_CYSCREEN);
+	m_iClientW = iWidth;
+	m_iClientH = iHeight;
+
+	bool bMenu = (GetMenu(hWnd) != NULL);
+	m_rtWindow = { 0, 0, iWidth, iHeight };
+
+	AdjustWindowRectEx(&m_rtWindow, m_dwStyle, bMenu, m_dwStyleEx);
+	
+	m_rtWindow.right += (m_dwStyle & WS_VSCROLL) ? GetSystemMetrics(SM_CXVSCROLL) : 0;
+	m_rtWindow.bottom += (m_dwStyle & WS_HSCROLL) ? GetSystemMetrics(SM_CYVSCROLL) : 0;
+	m_iWindowW = m_rtWindow.right - m_rtWindow.left;
+	m_iWindowH = m_rtWindow.bottom - m_rtWindow.top;
+
+	SetWindowPos(hWnd, NULL, m_rtWindow.left, m_rtWindow.top, m_iWindowW, m_iWindowH, NULL);
+	return true;
 }
 
 LRESULT CALLBACK bgWindow::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

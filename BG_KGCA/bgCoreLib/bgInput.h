@@ -14,38 +14,6 @@
 
 #define I_Input bgInput::GetInstance()
 
-/*
-struct BGINPUT_MAP
-{
-	bool bUpKey;
-	bool bDownKey;
-	bool bLeftKey;
-	bool bRightKey;
-
-	bool bWKey;
-	bool bSKey;
-	bool bAKey;
-	bool bDKey;
-	bool bQKey;
-	bool bEKey;
-
-	bool bLeftClick;
-	bool bRightClick;
-	bool bMiddleClick;
-
-	bool bExit;
-	bool bSpace; // 카메라의 이동가속도
-
-	int  iMouseValue[3];
-
-	bool bFullScreen;
-	bool bChangeFillMode;
-	bool bChangePrimitive;
-	bool bChangeCullMode;
-	bool bChangeCameraType;
-};
-*/
-
 class bgInput : public bgSingleton<bgInput>
 {
 private:
@@ -66,6 +34,16 @@ public:
 	DWORD			m_dwImmediate;
 
 public:
+	bgInput();
+	virtual ~bgInput();
+
+public:
+	bool		Init();
+	bool		Frame();
+	bool		Render();
+	bool		Release();
+
+public:
 	bool		InitDirectInput(HINSTANCE, HWND, bool, bool);
 	bool		KeyProcess();
 	bool		MouseProcess();
@@ -78,14 +56,4 @@ public:
 
 	bool		ResetDevice();
 	bool		ResetResource() { return true; }
-
-public:
-	bool		Init();
-	bool		Frame();
-	bool		Render();
-	bool		Release();
-
-public:
-	bgInput();
-	virtual ~bgInput();
 };

@@ -52,6 +52,7 @@ bool bgCore::GameRelease()
 
 bool bgCore::PreInit()
 {
+	InitDevice(m_hWnd);
 	m_Timer.Init();
 	m_Input.Init();
 	return true;
@@ -88,14 +89,14 @@ bool bgCore::PostRender()
 	{
 		m_Timer.Render();
 		m_Input.Render();
-		DrawDebug();
+		PrintDebug();
 		m_pSwapChain->Present(1, 0);
 	}
 	else
 	{
 		m_Timer.Render();
 		m_Input.Render();
-		DrawDebug();
+		PrintDebug();
 		m_pSwapChain->Present(0, 0);
 	}
 	return true;

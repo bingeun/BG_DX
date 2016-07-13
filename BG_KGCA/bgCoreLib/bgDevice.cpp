@@ -9,6 +9,11 @@ bgDevice::~bgDevice()
 	Release();
 }
 
+bool bgDevice::Init()
+{
+	return true;
+}
+
 bool bgDevice::Release()
 {
 	if (m_pSwapChain)

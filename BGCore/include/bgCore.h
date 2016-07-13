@@ -1,14 +1,18 @@
 #pragma once
 #include "bgTimer.h"
 #include "bgInput.h"
-#include "bgDWrite.h"
 #include "bgWindow.h"
+#include "bgDevice.h"
 
-class bgCore : public bgWindow
+class bgCore : public bgWindow, public bgDevice
 {
 public:
 	bgTimer		m_Timer;
 	bgInput		m_Input;
+
+public:
+	bgCore();
+	virtual ~bgCore();
 
 public:
 	bool	GameRun();
@@ -16,7 +20,6 @@ public:
 	bool	GameFrame();
 	bool	GameRender();
 	bool	GameRelease();
-	void	MsgEvent(MSG msg);
 
 public:
 	virtual bool	Init() { return true; }
@@ -31,10 +34,6 @@ public:
 	virtual bool	PreRender();
 	virtual bool	PostRender();
 
-	virtual bool	DrawDebug();
-	virtual bool	DrawDebug(TCHAR* pString, int iX, int iY);
-	
-public:
-	bgCore();
-	virtual ~bgCore();
+	virtual bool	PrintDebug();
+	virtual bool	PrintDebug(TCHAR* pszString, int iX, int iY);
 };

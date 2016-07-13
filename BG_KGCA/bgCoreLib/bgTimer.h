@@ -1,7 +1,7 @@
 #pragma once
-#include "bgBase.h"
+#include "bgStd.h"
 
-class bgTimer : public bgBase, public bgSingleton<bgTimer>
+class bgTimer : public bgSingleton<bgTimer>
 {
 public:
 	LARGE_INTEGER	m_Frequency;	// 현재 시스템의 초당 주파수
@@ -19,14 +19,8 @@ public:
 	bool			m_bStarted;		// 활성 상태
 
 public:
-	void	Reset();
-	void	Start();
-	void	Stop();
-	float	GetElapsedTime();
-
-	bool	IsStarted() { return m_bStarted; }
-	int		GetFPS() { return m_iFPS; }
-	float	GetSPF() { return m_fSPF; }
+	bgTimer();
+	virtual ~bgTimer();
 
 public:
 	bool	Init();
@@ -35,6 +29,12 @@ public:
 	bool	Release();
 
 public:
-	bgTimer();
-	virtual ~bgTimer();
+	void	Reset();
+	void	Start();
+	void	Stop();
+	float	GetElapsedTime();
+
+	bool	IsStarted() { return m_bStarted; }
+	int		GetFPS() { return m_iFPS; }
+	float	GetSPF() { return m_fSPF; }
 };

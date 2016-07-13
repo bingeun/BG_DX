@@ -7,8 +7,12 @@ struct SPHERE
 	float rad;
 };
 
-class bgCollision
+class bgCollider
 {
+public:
+	bgCollider();
+	virtual ~bgCollider();
+
 public:
 	bool	RectInPoint(RECT& rectDest, POINT& posSrc);
 	bool	RectInPointWH(RECT& rectDest, POINT& posSrc);
@@ -21,8 +25,4 @@ public:
 	bool	SphereInSphere(SPHERE& sphDest, SPHERE& sphSrc);
 	bool	SphereInSphere(RECT& rectDest, RECT& rectSrc);
 	bool	SphereInSphereWH(RECT& rectDest, RECT& rectSrc);
-
-public:
-	bgCollision();
-	virtual ~bgCollision();
 };

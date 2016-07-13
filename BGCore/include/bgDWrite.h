@@ -43,6 +43,10 @@ public:
 	UINT32					m_cTextLength;
 
 public:
+	bgDWrite();
+	virtual ~bgDWrite();
+
+public:
 	bool			Set(HWND hWnd, int iWidth, int iHeight, IDXGISurface1*	m_pSurface);
 	bool			Init();
 	bool			Begin();
@@ -63,8 +67,4 @@ public:
 	HRESULT			SetItalic(bool italic);
 	HRESULT			SetUnderline(bool underline);
 	void			OnResize(UINT width, UINT height, IDXGISurface1*pSurface);
-
-public:
-	bgDWrite();
-	virtual ~bgDWrite();
 };

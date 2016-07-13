@@ -44,9 +44,6 @@
     <ClInclude Include="bgWindow.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
-    <ClInclude Include="bgBase.h">
-      <Filter>헤더 파일\bgCore</Filter>
-    </ClInclude>
     <ClInclude Include="bgCore.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
@@ -65,21 +62,18 @@
     <ClInclude Include="bgSound.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
-    <ClInclude Include="bgCollision.h">
-      <Filter>헤더 파일\bgCore</Filter>
-    </ClInclude>
     <ClInclude Include="bgDWrite.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
     <ClInclude Include="bgDevice.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
+    <ClInclude Include="bgCollider.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
-      <Filter>소스 파일\bgCore</Filter>
-    </ClCompile>
-    <ClCompile Include="bgBase.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
     <ClCompile Include="bgCore.cpp">
@@ -94,13 +88,13 @@
     <ClCompile Include="bgSound.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
-    <ClCompile Include="bgCollision.cpp">
-      <Filter>소스 파일\bgCore</Filter>
-    </ClCompile>
     <ClCompile Include="bgDWrite.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
     <ClCompile Include="bgDevice.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgCollider.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
   </ItemGroup>

@@ -26,8 +26,7 @@
     <ClInclude Include="..\..\FMOD\include\fmod_errors.h" />
     <ClInclude Include="..\..\FMOD\include\fmod_memoryinfo.h" />
     <ClInclude Include="..\..\FMOD\include\fmod_output.h" />
-    <ClInclude Include="bgBase.h" />
-    <ClInclude Include="bgCollision.h" />
+    <ClInclude Include="bgCollider.h" />
     <ClInclude Include="bgCore.h" />
     <ClInclude Include="bgDevice.h" />
     <ClInclude Include="bgDWrite.h" />
@@ -39,8 +38,7 @@
     <ClInclude Include="bgWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bgBase.cpp" />
-    <ClCompile Include="bgCollision.cpp" />
+    <ClCompile Include="bgCollider.cpp" />
     <ClCompile Include="bgCore.cpp" />
     <ClCompile Include="bgDevice.cpp" />
     <ClCompile Include="bgDWrite.cpp" />

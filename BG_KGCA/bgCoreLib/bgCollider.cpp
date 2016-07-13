@@ -1,8 +1,14 @@
-#include "bgCollision.h"
+#include "bgCollider.h"
 
+bgCollider::bgCollider()
+{
+}
 
+bgCollider::~bgCollider()
+{
+}
 
-bool bgCollision::RectInPoint(RECT & rectDest, POINT & posSrc)
+bool bgCollider::RectInPoint(RECT & rectDest, POINT & posSrc)
 {
 	if (posSrc.x >= rectDest.left && posSrc.x <= rectDest.right)
 	{
@@ -14,7 +20,7 @@ bool bgCollision::RectInPoint(RECT & rectDest, POINT & posSrc)
 	return false;
 }
 
-bool bgCollision::RectInPointWH(RECT& rectDest, POINT& posSrc)
+bool bgCollider::RectInPointWH(RECT& rectDest, POINT& posSrc)
 {
 	if (posSrc.x >= rectDest.left && posSrc.x <= rectDest.left + rectDest.right)
 	{
@@ -26,7 +32,7 @@ bool bgCollision::RectInPointWH(RECT& rectDest, POINT& posSrc)
 	return false;
 }
 
-bool bgCollision::RectInRect(RECT& rectDest, RECT& rectSrc)
+bool bgCollider::RectInRect(RECT& rectDest, RECT& rectSrc)
 {
 	if (rectDest.right < rectSrc.left) return false;
 	if (rectSrc.right < rectDest.left) return false;
@@ -36,7 +42,7 @@ bool bgCollision::RectInRect(RECT& rectDest, RECT& rectSrc)
 	return true;
 }
 
-bool bgCollision::RectInRectWH(RECT& rectDest, RECT& rectSrc)
+bool bgCollider::RectInRectWH(RECT& rectDest, RECT& rectSrc)
 {
 	RECT rtDest, rtSrc;
 
@@ -58,7 +64,7 @@ bool bgCollision::RectInRectWH(RECT& rectDest, RECT& rectSrc)
 	return true;
 }
 
-bool bgCollision::SphereInPoint(SPHERE& sphDest, POINT& posSrc)
+bool bgCollider::SphereInPoint(SPHERE& sphDest, POINT& posSrc)
 {
 	int iDisX = abs(sphDest.pos.x - posSrc.x);
 	int iDisY = abs(sphDest.pos.y - posSrc.y);
@@ -70,7 +76,7 @@ bool bgCollision::SphereInPoint(SPHERE& sphDest, POINT& posSrc)
 	return false;
 }
 
-bool bgCollision::SphereInVLine(SPHERE& sphDest, POINT& posSrc, int iEndY)
+bool bgCollider::SphereInVLine(SPHERE& sphDest, POINT& posSrc, int iEndY)
 {
 	int iDisX, iDisY;
 	double iDistance;
@@ -103,12 +109,12 @@ bool bgCollision::SphereInVLine(SPHERE& sphDest, POINT& posSrc, int iEndY)
 	return false;
 }
 
-bool bgCollision::SphereInHLine(SPHERE& sphDest, POINT& posSrc, int iEndX)
+bool bgCollider::SphereInHLine(SPHERE& sphDest, POINT& posSrc, int iEndX)
 {
 	return false;
 }
 
-bool bgCollision::SphereInSphere(SPHERE& sphDest, SPHERE& sphSrc)
+bool bgCollider::SphereInSphere(SPHERE& sphDest, SPHERE& sphSrc)
 {
 	int iDisX = abs(sphDest.pos.x - sphSrc.pos.x);
 	int iDisY = abs(sphDest.pos.y - sphSrc.pos.y);
@@ -120,20 +126,12 @@ bool bgCollision::SphereInSphere(SPHERE& sphDest, SPHERE& sphSrc)
 	return false;
 }
 
-bool bgCollision::SphereInSphere(RECT& rectDest, RECT& rectSrc)
+bool bgCollider::SphereInSphere(RECT& rectDest, RECT& rectSrc)
 {
 	return false;
 }
 
-bool bgCollision::SphereInSphereWH(RECT& rectDest, RECT& rectSrc)
+bool bgCollider::SphereInSphereWH(RECT& rectDest, RECT& rectSrc)
 {
 	return false;
-}
-
-bgCollision::bgCollision()
-{
-}
-
-bgCollision::~bgCollision()
-{
 }
