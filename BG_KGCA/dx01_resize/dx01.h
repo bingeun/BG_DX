@@ -13,4 +13,7 @@ public:
 	bool	Frame();
 	bool	Render();
 	bool	Release();
+
+public:
+	LRESULT CALLBACK AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

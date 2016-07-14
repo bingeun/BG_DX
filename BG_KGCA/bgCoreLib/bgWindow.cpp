@@ -122,9 +122,17 @@ bool bgWindow::SetWindowSize(HWND hWnd, int iWidth, int iHeight)
 	return true;
 }
 
+// virtual 함수
 LRESULT CALLBACK bgWindow::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	switch (uMsg)
+	{
+	default:
+	{
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	}
+	break;
+	}
 }
 
 // 전역 프로시져 함수

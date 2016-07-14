@@ -14,6 +14,9 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	HRESULT hr = S_OK;
 
 	m_bVsync = bVsync;
+	m_bFullScreen = bFullScreen;
+	if (iWidth < 1024)
+		m_bSizeLarge = false;
 
 	IDXGIFactory* pFactory;
 	HR_RETURN(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory));

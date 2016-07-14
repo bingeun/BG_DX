@@ -21,6 +21,12 @@
     <Filter Include="헤더 파일\bgCore\Common">
       <UniqueIdentifier>{ed06c45b-baac-4114-97a3-68421f2150e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\bgCore\Shape">
+      <UniqueIdentifier>{f8ba504c-7e92-4a6d-be5d-875561f53c8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\bgCore\Shape">
+      <UniqueIdentifier>{628d2304-1882-4216-906c-98cca8b7e6c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\FMOD\include\fmod.h">
@@ -74,6 +80,18 @@
     <ClInclude Include="bgStd.h">
       <Filter>헤더 파일\bgCore\Common</Filter>
     </ClInclude>
+    <ClInclude Include="bgShape.h">
+      <Filter>헤더 파일\bgCore\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="bgShapeGuideAxis.h">
+      <Filter>헤더 파일\bgCore\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="bgShapeBox.h">
+      <Filter>헤더 파일\bgCore\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="bgShapePlane.h">
+      <Filter>헤더 파일\bgCore\Shape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
@@ -99,6 +117,18 @@
     </ClCompile>
     <ClCompile Include="bgCollider.cpp">
       <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgShape.cpp">
+      <Filter>소스 파일\bgCore\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="bgShapeGuideAxis.cpp">
+      <Filter>소스 파일\bgCore\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="bgShapeBox.cpp">
+      <Filter>소스 파일\bgCore\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="bgShapePlane.cpp">
+      <Filter>소스 파일\bgCore\Shape</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

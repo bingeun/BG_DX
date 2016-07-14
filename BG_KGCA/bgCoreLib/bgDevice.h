@@ -18,6 +18,10 @@ public:
 	BOOL					m_bVsync;
 
 public:
+	bool	m_bSizeLarge;
+	bool	m_bFullScreen;
+
+public:
 	bgDevice();
 	virtual ~bgDevice();
 
