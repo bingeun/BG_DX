@@ -18,6 +18,9 @@
     <Filter Include="소스 파일\bgCore">
       <UniqueIdentifier>{9611020b-c723-43e0-97f1-6818c23ae3ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\bgCore\Common">
+      <UniqueIdentifier>{ed06c45b-baac-4114-97a3-68421f2150e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\FMOD\include\fmod.h">
@@ -47,12 +50,6 @@
     <ClInclude Include="bgCore.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
-    <ClInclude Include="bgStd.h">
-      <Filter>헤더 파일\bgCore</Filter>
-    </ClInclude>
-    <ClInclude Include="bgSys.h">
-      <Filter>헤더 파일\bgCore</Filter>
-    </ClInclude>
     <ClInclude Include="bgTimer.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
@@ -70,6 +67,12 @@
     </ClInclude>
     <ClInclude Include="bgCollider.h">
       <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgSys.h">
+      <Filter>헤더 파일\bgCore\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="bgStd.h">
+      <Filter>헤더 파일\bgCore\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

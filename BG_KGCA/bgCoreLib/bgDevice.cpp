@@ -6,32 +6,7 @@ bgDevice::bgDevice()
 
 bgDevice::~bgDevice()
 {
-	Release();
-}
-
-bool bgDevice::Init()
-{
-	return true;
-}
-
-bool bgDevice::Release()
-{
-	if (m_pSwapChain)
-	{
-		m_pSwapChain->SetFullscreenState(FALSE, NULL);
-	}
-
-	SAFE_RELEASE(m_pRasterizerState);
-	SAFE_RELEASE(m_pDepthStencilView);
-	SAFE_RELEASE(m_pDepthStencilState);
-	SAFE_RELEASE(m_pDepthStencilBuffer);
-
-	SAFE_RELEASE(m_pRenderTargetView);
-	SAFE_RELEASE(m_pDeviceContext);
-	SAFE_RELEASE(m_pDevice);
-	SAFE_RELEASE(m_pSwapChain);
-
-	return true;
+	ReleaseDevice();
 }
 
 HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScreen, BOOL bVsync)
@@ -96,7 +71,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	SwapChainDesc.BufferCount = 1;
 	SwapChainDesc.OutputWindow = hWnd;
-	SwapChainDesc.Windowed = bFullScreen;
+	SwapChainDesc.Windowed = !bFullScreen;
 	SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	SwapChainDesc.Flags = 0;
 	D3D_FEATURE_LEVEL FeatureLevel = D3D_FEATURE_LEVEL_11_0;
@@ -178,4 +153,22 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	m_pDeviceContext->RSSetViewports(1, &Viewport);
 
 	return hr;
+}
+
+void bgDevice::ReleaseDevice()
+{
+	if (m_pSwapChain)
+	{
+		m_pSwapChain->SetFullscreenState(FALSE, NULL);
+	}
+
+	SAFE_RELEASE(m_pRasterizerState);
+	SAFE_RELEASE(m_pDepthStencilView);
+	SAFE_RELEASE(m_pDepthStencilState);
+	SAFE_RELEASE(m_pDepthStencilBuffer);
+
+	SAFE_RELEASE(m_pRenderTargetView);
+	SAFE_RELEASE(m_pDeviceContext);
+	SAFE_RELEASE(m_pDevice);
+	SAFE_RELEASE(m_pSwapChain);
 }

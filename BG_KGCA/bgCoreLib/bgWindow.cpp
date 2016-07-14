@@ -58,7 +58,7 @@ bool bgWindow::InitWindow(HINSTANCE hInstance, TCHAR* pszTitle, int iWidth, int 
 	wc.hIconSm = wc.hIcon;
 	RegisterClassEx(&wc);
 
-	m_dwStyle = WS_OVERLAPPED;
+	m_dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX; // | WS_MAXIMIZEBOX; // | WS_THICKFRAME;
 	m_dwStyleEx = WS_EX_APPWINDOW;
 	m_hWnd = CreateWindowEx(m_dwStyleEx, pszTitle, pszTitle, m_dwStyle, 0, 0, iWidth, iHeight, NULL, NULL, hInstance, NULL);
 	if (m_hWnd == NULL)
@@ -83,22 +83,42 @@ bool bgWindow::SetWindowSize(HWND hWnd, int iWidth, int iHeight)
 	if (hWnd == NULL)
 		return false;
 
+	// 윈도우 스타일 얻기
+	bool bMenu = (GetMenu(hWnd) != NULL);
+	m_dwStyle = GetWindowLong(hWnd, GWL_STYLE);
+	m_dwStyleEx = GetWindowLong(hWnd, GWL_EXSTYLE);
+
+	// 스크린 크기 계산
 	m_iScreenW = GetSystemMetrics(SM_CXSCREEN);
 	m_iScreenH = GetSystemMetrics(SM_CYSCREEN);
+
+	// 클라이언트 영역 크기(인자값) 설정
 	m_iClientW = iWidth;
 	m_iClientH = iHeight;
 
-	bool bMenu = (GetMenu(hWnd) != NULL);
 	m_rtWindow = { 0, 0, iWidth, iHeight };
-
 	AdjustWindowRectEx(&m_rtWindow, m_dwStyle, bMenu, m_dwStyleEx);
-	
-	m_rtWindow.right += (m_dwStyle & WS_VSCROLL) ? GetSystemMetrics(SM_CXVSCROLL) : 0;
-	m_rtWindow.bottom += (m_dwStyle & WS_HSCROLL) ? GetSystemMetrics(SM_CYVSCROLL) : 0;
-	m_iWindowW = m_rtWindow.right - m_rtWindow.left;
-	m_iWindowH = m_rtWindow.bottom - m_rtWindow.top;
 
-	SetWindowPos(hWnd, NULL, m_rtWindow.left, m_rtWindow.top, m_iWindowW, m_iWindowH, NULL);
+	// 윈도우의 크기(W, H) 먼저 계산
+	m_rtWindow.bottom += (m_dwStyle & WS_CAPTION) ? GetSystemMetrics(SM_CYCAPTION) : 0;
+	m_rtWindow.right += (m_dwStyle & WS_BORDER) ? GetSystemMetrics(SM_CXBORDER) : 0;
+	m_rtWindow.bottom += (m_dwStyle & WS_BORDER) ? GetSystemMetrics(SM_CYBORDER) : 0;
+	m_rtWindow.right += (m_dwStyle & WS_DLGFRAME) ? GetSystemMetrics(SM_CXDLGFRAME) : 0;
+	m_rtWindow.bottom += (m_dwStyle & WS_DLGFRAME) ? GetSystemMetrics(SM_CYDLGFRAME) : 0;
+
+	///////////////////////////////////////
+	// -1 필요여부...? ★★★★★★★★ 윈도우 스타일에서 잘못 계산되었는지 확인필요
+	////////////////////////
+	m_iWindowW = m_rtWindow.right - 1;
+	m_iWindowH = m_rtWindow.bottom - 1;
+
+	// 계산된 크기로 스크린에 출력될 위치(X, Y) 계산
+	m_rtWindow.left = (m_iScreenW - m_iWindowW) / 2;
+	m_rtWindow.top = (m_iScreenH - m_iWindowH) / 2;
+	m_iWindowX = m_rtWindow.left;
+	m_iWindowY = m_rtWindow.top;
+
+	SetWindowPos(hWnd, NULL, m_iWindowX, m_iWindowY, m_iWindowW, m_iWindowH, NULL);
 	return true;
 }
 

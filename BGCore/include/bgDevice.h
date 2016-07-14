@@ -22,9 +22,6 @@ public:
 	virtual ~bgDevice();
 
 public:
-	bool	Init();
-	bool	Release();
-
-public:
 	HRESULT	InitDevice(HWND hWnd, UINT iWidth = 800, UINT iHeight = 600, BOOL bFullScreen = FALSE, BOOL bVsync = FALSE);
+	void	ReleaseDevice();
 };

@@ -12,8 +12,9 @@ public:
 	DWORD		m_dwStyleEx;	// 윈도우 스타일(확장)
 	RECT		m_rtWindow;		// 윈도우 상하좌우 위치값
 	int			m_iScreenW, m_iScreenH; // 화면 크기
-	int			m_iWindowW, m_iWindowH; // 윈도우 크기
 	int			m_iClientW, m_iClientH; // 클라이언트 크기
+	int			m_iWindowW, m_iWindowH; // 윈도우 크기
+	int			m_iWindowX, m_iWindowY; // 윈도우 위치
 
 public:
 	bgWindow();

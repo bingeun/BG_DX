@@ -1,6 +1,52 @@
 #include "bgSound.h"
 
+bgSound::bgSound()
+{
+}
 
+bgSound::~bgSound()
+{
+	Release();
+}
+
+bool bgSound::Init()
+{
+	FMOD::System_Create(&m_pSystem);
+	m_pSystem->init(32, FMOD_INIT_NORMAL, 0);
+	return true;
+}
+
+bool bgSound::Frame()
+{
+	unsigned int total;
+	unsigned int current;
+
+	m_pSystem->update();
+
+	m_pSound[0]->getLength(&total, FMOD_TIMEUNIT_MS);
+	m_pChannel[0]->getPosition(&current, FMOD_TIMEUNIT_MS);
+	_stprintf_s(m_szBuffer, _T("[%02d:%02d:%02d] [%02d:%02d:%02d]"),	// [현재 진행] [전체 길이]
+		current / 1000 / 60, current / 1000 % 60, current / 10 % 60,	// 현재 진행
+		total / 1000 / 60, total / 1000 % 60, total / 10 % 60);			// 전체 길이
+	return true;
+}
+
+bool bgSound::Render()
+{
+	return true;
+}
+
+bool bgSound::Release()
+{
+	for (int iSound = 0; iSound < m_iSoundList; iSound++)
+	{
+		m_pSound[iSound]->release();
+	}
+	m_iSoundList = 0;
+	m_pSystem->close();
+	m_pSystem->release();
+	return true;
+}
 
 int bgSound::Load(char * pLoadName, bool bPlay)
 {
@@ -58,47 +104,4 @@ void bgSound::Volume(int iIndex, float fVolume, bool bUp)
 void bgSound::SetLoop(int iIndex)
 {
 	m_pSound[iIndex]->setMode(FMOD_LOOP_NORMAL);
-}
-
-bool bgSound::Init()
-{
-	FMOD::System_Create(&m_pSystem);
-	m_pSystem->init(32, FMOD_INIT_NORMAL, 0);
-	return true;
-}
-
-bool bgSound::Frame()
-{
-	unsigned int total;
-	unsigned int current;
-
-	m_pSystem->update();
-
-	m_pSound[0]->getLength(&total, FMOD_TIMEUNIT_MS);
-	m_pChannel[0]->getPosition(&current, FMOD_TIMEUNIT_MS);
-	_stprintf_s(m_szBuffer, _T("[%02d:%02d:%02d] [%02d:%02d:%02d]"),	// [현재 진행] [전체 길이]
-		current / 1000 / 60, current / 1000 % 60, current / 10 % 60,	// 현재 진행
-		total / 1000 / 60, total / 1000 % 60, total / 10 % 60);			// 전체 길이
-	return true;
-}
-
-bool bgSound::Release()
-{
-	for (int iSound = 0; iSound < m_iSoundList; iSound++)
-	{
-		m_pSound[iSound]->release();
-	}
-	m_iSoundList = 0;
-	m_pSystem->close();
-	m_pSystem->release();
-	return true;
-}
-
-bgSound::bgSound()
-{
-}
-
-bgSound::~bgSound()
-{
-	Release();
 }
