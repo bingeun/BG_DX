@@ -43,6 +43,10 @@ bool bgWindow::AppRun()
 
 bool bgWindow::InitWindow(HINSTANCE hInstance, TCHAR* pszTitle, int iWidth, int iHeight, BOOL bFullScreen, bool bCenter)
 {
+	m_bFullScreen = bFullScreen;
+	if (iWidth < 1024)
+		m_bSizeLarge = false;
+
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;

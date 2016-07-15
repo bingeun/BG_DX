@@ -20,6 +20,9 @@ dx01::~dx01()
 
 bool dx01::Init()
 {
+	m_objGuideAxis.Init();
+	m_objGuideAxis.Set(m_pDevice, m_pDeviceContext);
+	m_objGuideAxis.Create();
 	return true;
 }
 
@@ -30,6 +33,7 @@ bool dx01::Frame()
 
 bool dx01::Render()
 {
+	m_objGuideAxis.Render();
 	return true;
 }
 
@@ -51,7 +55,7 @@ LRESULT CALLBACK dx01::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			if (m_pSwapChain && !m_bFullScreen)
 			{
 				m_bSizeLarge = !m_bSizeLarge;
-				if(m_bSizeLarge)
+				if (m_bSizeLarge)
 					g_pWindow->SetWindowSize(m_hWnd, 1024, 768);
 				else
 					g_pWindow->SetWindowSize(m_hWnd, 800, 600);
@@ -75,7 +79,7 @@ LRESULT CALLBACK dx01::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			if (m_pSwapChain)
 			{
 				m_bFullScreen = !m_bFullScreen;
-				if(m_bFullScreen)
+				if (m_bFullScreen)
 					m_pSwapChain->SetFullscreenState(TRUE, NULL);
 				else
 					m_pSwapChain->SetFullscreenState(FALSE, NULL);

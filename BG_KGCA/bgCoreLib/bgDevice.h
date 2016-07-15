@@ -14,12 +14,21 @@ public:
 	ID3D11DepthStencilView*	m_pDepthStencilView;
 	ID3D11RasterizerState*	m_pRasterizerState;
 
+	ID3D11VertexShader*     m_pVertexShader;
+	ID3D11PixelShader*      m_pPixelShader;
+
 	D3D_DRIVER_TYPE			m_DriverType;
 	BOOL					m_bVsync;
 
 public:
-	bool	m_bSizeLarge;
-	bool	m_bFullScreen;
+	D3DXMATRIX		m_matWorld;
+	D3DXMATRIX		m_matProj;
+	D3DXMATRIX		m_matOrtho;
+
+	float	m_fFieldOfView;
+	float	m_fAspect;
+	float	m_fScreenNear;
+	float	m_fScreenFar;
 
 public:
 	bgDevice();

@@ -14,9 +14,6 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	HRESULT hr = S_OK;
 
 	m_bVsync = bVsync;
-	m_bFullScreen = bFullScreen;
-	if (iWidth < 1024)
-		m_bSizeLarge = false;
 
 	IDXGIFactory* pFactory;
 	HR_RETURN(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory));
@@ -154,6 +151,14 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	Viewport.TopLeftX = 0.0f;
 	Viewport.TopLeftY = 0.0f;
 	m_pDeviceContext->RSSetViewports(1, &Viewport);
+
+	m_fFieldOfView = (float)D3DX_PI / 4.0f;
+	m_fAspect = (float)iWidth / (float)iHeight;
+	m_fScreenNear = 0.1f;
+	m_fScreenFar = 1000.0f;
+	D3DXMatrixPerspectiveFovLH(&m_matProj, m_fFieldOfView, m_fAspect, m_fScreenNear, m_fScreenFar);
+	D3DXMatrixIdentity(&m_matWorld);
+	D3DXMatrixOrthoLH(&m_matOrtho, (float)iWidth, (float)iHeight, m_fScreenNear, m_fScreenFar);
 
 	return hr;
 }

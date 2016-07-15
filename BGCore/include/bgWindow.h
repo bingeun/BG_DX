@@ -15,6 +15,8 @@ public:
 	int			m_iClientW, m_iClientH; // 클라이언트 크기
 	int			m_iWindowW, m_iWindowH; // 윈도우 크기
 	int			m_iWindowX, m_iWindowY; // 윈도우 위치
+	bool		m_bSizeLarge;	// 윈도우 크기 (1024x768 <=> 800x600)
+	bool		m_bFullScreen;	// 윈도우 <=> 전체화면 모드변환
 
 public:
 	bgWindow();

@@ -1,20 +1,33 @@
-cbuffer cb0
+cbuffer MatrixBuffer
 {
-	float4	Color : packoffset(c0);
-	float	fTime : packoffset(c1.y);
+	matrix matWorld;
+	matrix matView;
+	matrix matProj;
 };
 
+struct VS_INPUT
+{
+	float4 pos : POSITION;
+	float4 col : COLOR;
+};
+
+// VS_OUTPUT == PS_INPUT
 struct VS_OUTPUT
 {
-	float4 Position   : SV_Position;
-	float4 Diffuse    : COLOR0;
+	float4 pos : SV_POSITION;
+	float4 col : COLOR;
 };
 
-VS_OUTPUT VS(float3 p : POSITION)
+VS_OUTPUT VS(VS_INPUT input)
 {
-	VS_OUTPUT Output;
-	float3 vPos = p * fTime;
-	Output.Position = float4(vPos, 1.0f);
-	Output.Diffuse = Color;
-	return Output;
+	VS_OUTPUT output;
+
+	input.pos.w = 1.0f;
+
+	output.pos = mul(input.pos, matWorld);
+	output.pos = mul(output.pos, matView);
+	output.pos = mul(output.pos, matProj);
+	output.col = input.col;
+
+	return output;
 }
