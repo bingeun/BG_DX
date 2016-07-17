@@ -23,6 +23,7 @@ bool dx01::Init()
 	m_objGuideAxis.Init();
 	m_objGuideAxis.Set(m_pDevice, m_pDeviceContext);
 	m_objGuideAxis.Create();
+	m_objGuideAxis.Load();
 	return true;
 }
 

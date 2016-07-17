@@ -4,7 +4,7 @@ struct GS_OUTPUT
 };
 
 [maxvertexcount(3)]
-void main(triangle float4 input[3] : SV_POSITION, inout TriangleStream< GS_OUTPUT > output)
+void GS(triangle float4 input[3] : SV_POSITION, inout TriangleStream< GS_OUTPUT > output)
 {
 	for (uint i = 0; i < 3; i++)
 	{

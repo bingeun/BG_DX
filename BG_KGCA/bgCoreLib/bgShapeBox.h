@@ -12,4 +12,7 @@ public:
 	bool	Frame();
 	bool	Render();
 	bool	Release();
+
+	HRESULT	Create();
+	HRESULT	Load();
 };

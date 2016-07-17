@@ -1,5 +1,6 @@
 #pragma once
 #include "bgStd.h"
+#include "bgCamera.h"
 
 class bgDevice
 {
@@ -24,6 +25,7 @@ public:
 	D3DXMATRIX		m_matWorld;
 	D3DXMATRIX		m_matProj;
 	D3DXMATRIX		m_matOrtho;
+	bgCamera		m_Camera;
 
 	float	m_fFieldOfView;
 	float	m_fAspect;

@@ -14,6 +14,5 @@ public:
 	bool	Release();
 
 	HRESULT	Create();
-
-public:
+	HRESULT	Load();
 };
