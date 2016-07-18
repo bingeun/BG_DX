@@ -27,7 +27,7 @@ bool bgShapeGuideAxis::Render()
 	D3DXVECTOR3 vAt(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 vUp(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&m_matView, &vEye, &vAt, &vUp);
-	D3DXMatrixPerspectiveFovLH(&m_matProj, (float)D3DX_PI * 0.25f, g_pWindow->m_iClientW / (FLOAT)g_pWindow->m_iClientH, 0.1f, 1000.0f);
+	D3DXMatrixPerspectiveFovLH(&m_matProj, (FLOAT)D3DX_PI * 0.25f, g_pWindow->m_iClientW / (FLOAT)g_pWindow->m_iClientH, 0.1f, 1000.0f);
 
 	D3DXMatrixTranspose(&m_ConstantData.matWorld, &m_matWorld);
 	D3DXMatrixTranspose(&m_ConstantData.matView, &m_matView);
@@ -63,7 +63,6 @@ HRESULT bgShapeGuideAxis::Create()
 {
 	HRESULT hr = S_OK;
 
-	//D3DXVECTOR3 vVertices[] =
 	VertexPC vVertices[] =
 	{
 		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // ¿øÁ¡
@@ -127,21 +126,21 @@ HRESULT bgShapeGuideAxis::Load()
 #endif
 
 	ID3DBlob* pVSBuf = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"dx01_vs.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSBuf, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PC_VS.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSBuf, NULL, NULL));
 	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), NULL, &m_pVertexShader));
 
 	ID3DBlob* pPSBuf = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"dx01_ps.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSBuf, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PC_PS.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSBuf, NULL, NULL));
 	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pPSBuf->GetBufferPointer(), pPSBuf->GetBufferSize(), NULL, &m_pPixelShader));
 	/*
 	ID3DBlob* pGSBuf = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"dx01_gs.hlsl", NULL, NULL, "GS", "gs_5_0", dwShaderFlags, NULL, NULL, &pGSBuf, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PC_GS.hlsl", NULL, NULL, "GS", "gs_5_0", dwShaderFlags, NULL, NULL, &pGSBuf, NULL, NULL));
 	HR_RETURN(m_pDevice->CreateGeometryShader((DWORD*)pGSBuf->GetBufferPointer(), pGSBuf->GetBufferSize(), NULL, &m_pGeometryShader));
 	*/
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HR_RETURN(m_pDevice->CreateInputLayout(layout, 2, pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), &m_pInputLayout));
 

@@ -20,6 +20,16 @@ dx01::~dx01()
 
 bool dx01::Init()
 {
+	m_objBox.Init();
+	m_objBox.Set(m_pDevice, m_pDeviceContext);
+	m_objBox.Create();
+	m_objBox.Load();
+
+	m_objPlane.Init();
+	m_objPlane.Set(m_pDevice, m_pDeviceContext);
+	m_objPlane.Create();
+	m_objPlane.Load();
+
 	m_objGuideAxis.Init();
 	m_objGuideAxis.Set(m_pDevice, m_pDeviceContext);
 	m_objGuideAxis.Create();
@@ -34,6 +44,8 @@ bool dx01::Frame()
 
 bool dx01::Render()
 {
+	m_objBox.Render();
+	//m_objPlane.Render();
 	m_objGuideAxis.Render();
 	return true;
 }
