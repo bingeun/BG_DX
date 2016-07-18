@@ -16,6 +16,10 @@ bgShape::bgShape()
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 	D3DXMatrixIdentity(&m_matProj);
+
+	D3DXMatrixIdentity(&m_ConstantData.matWorld);
+	D3DXMatrixIdentity(&m_ConstantData.matView);
+	D3DXMatrixIdentity(&m_ConstantData.matProj);
 }
 
 bgShape::~bgShape()

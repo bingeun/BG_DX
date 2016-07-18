@@ -11,7 +11,7 @@ bgShapeGuideAxis::~bgShapeGuideAxis()
 
 bool bgShapeGuideAxis::Init()
 {
-	m_uPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST; //D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+	m_uPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST; //D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	return true;
 }
 
@@ -23,10 +23,10 @@ bool bgShapeGuideAxis::Frame()
 bool bgShapeGuideAxis::Render()
 {
 	D3DXMatrixIdentity(&m_matWorld);
-	D3DXVECTOR3 Eye(0.0f, 0.0f, -10.0f);
-	D3DXVECTOR3 At(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 Up(0.0f, 1.0f, 0.0f);
-	D3DXMatrixLookAtLH(&m_matView, &Eye, &At, &Up);
+	D3DXVECTOR3 vEye(10.0f, 10.0f, -20.0f);
+	D3DXVECTOR3 vAt(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 vUp(0.0f, 1.0f, 0.0f);
+	D3DXMatrixLookAtLH(&m_matView, &vEye, &vAt, &vUp);
 	D3DXMatrixPerspectiveFovLH(&m_matProj, (float)D3DX_PI * 0.25f, g_pWindow->m_iClientW / (FLOAT)g_pWindow->m_iClientH, 0.1f, 1000.0f);
 
 	D3DXMatrixTranspose(&m_ConstantData.matWorld, &m_matWorld);
@@ -45,7 +45,7 @@ bool bgShapeGuideAxis::Render()
 	UINT uOffset = 0;
 		
 	m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uStride, &uOffset);
-	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	m_pDeviceContext->IASetPrimitiveTopology(m_uPrimitiveTopology);
 	m_pDeviceContext->DrawIndexed(6, 0, 0);
 
@@ -63,24 +63,21 @@ HRESULT bgShapeGuideAxis::Create()
 {
 	HRESULT hr = S_OK;
 
-	D3DXVECTOR3 vVertices[] =
+	//D3DXVECTOR3 vVertices[] =
+	VertexPC vVertices[] =
 	{
-		//{ 0.0f, 0.0f, 0.0f }, // 원점
-		//{ 1.0f, 0.0f, 0.0f }, // x축
-		//{ 0.0f, 1.0f, 0.0f }, // y축
-		//{ 0.0f, 0.0f, 1.0f }, // z축
-		{ 0.0f, 0.0f, 10.0f }, // 원점
-		{ 10.0f, 0.0f, 10.0f }, // x축
-		{ 10.0f, -10.0f, 10.0f }, // y축
-		{ 0.0f, -10.0f, 10.0f }, // z축
+		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // 원점
+		{ { 0.5f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // x축
+		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // 원점
+		{ { 0.0f, 0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // y축
+		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // 원점
+		{ { 0.0f, 0.0f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // z축
 	};
 	UINT uIndices[] =
 	{
-		//0, 1, // x축
-		//0, 2, // y축
-		//0, 3, // z축
-		0, 1, 2,
-		0, 2, 3,
+		0, 1, // x축
+		2, 3, // y축
+		4, 5, // z축
 	};
 
 	m_iNumVertex = COUNTOF(vVertices);
@@ -101,7 +98,7 @@ HRESULT bgShapeGuideAxis::Create()
 	HR_RETURN(m_pDevice->CreateBuffer(&BufferDescVertex, &DataVertex, &m_pVertexBuffer));
 
 	D3D11_BUFFER_DESC BufferDescIndex;
-	BufferDescIndex.ByteWidth = sizeof(ULONG) * m_iNumIndex;
+	BufferDescIndex.ByteWidth = sizeof(UINT) * m_iNumIndex;
 	BufferDescIndex.Usage = D3D11_USAGE_DEFAULT;
 	BufferDescIndex.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	BufferDescIndex.CPUAccessFlags = 0;
@@ -143,7 +140,7 @@ HRESULT bgShapeGuideAxis::Load()
 	*/
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
-		{ "POSITION",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HR_RETURN(m_pDevice->CreateInputLayout(layout, 2, pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), &m_pInputLayout));

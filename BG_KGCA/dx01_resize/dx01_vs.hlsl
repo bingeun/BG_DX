@@ -1,10 +1,3 @@
-cbuffer MatrixBuffer
-{
-	matrix matWorld;
-	matrix matView;
-	matrix matProj;
-};
-
 struct VS_INPUT
 {
 	float4 pos : POSITION;
@@ -22,11 +15,7 @@ VS_OUTPUT VS(VS_INPUT input)
 {
 	VS_OUTPUT output;
 
-	input.pos.w = 1.0f;
-
-	output.pos = mul(input.pos, matWorld);
-	output.pos = mul(output.pos, matView);
-	output.pos = mul(output.pos, matProj);
+	output.pos = input.pos;
 	output.col = input.col;
 
 	return output;
