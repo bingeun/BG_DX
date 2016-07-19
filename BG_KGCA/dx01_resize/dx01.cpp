@@ -45,7 +45,7 @@ bool dx01::Frame()
 bool dx01::Render()
 {
 	m_objBox.Render();
-	//m_objPlane.Render();
+	m_objPlane.Render();
 	m_objGuideAxis.Render();
 	return true;
 }

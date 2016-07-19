@@ -23,11 +23,11 @@ bool bgShapeBox::Frame()
 bool bgShapeBox::Render()
 {
 	D3DXMatrixIdentity(&m_matWorld);
-	D3DXVECTOR3 vEye(10.0f, 10.0f, -20.0f);
+	D3DXVECTOR3 vEye(0.0f, 0.0f, -20.0f);
 	D3DXVECTOR3 vAt(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 vUp(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&m_matView, &vEye, &vAt, &vUp);
-	D3DXMatrixPerspectiveFovLH(&m_matProj, (FLOAT)D3DX_PI * 0.25f, g_pWindow->m_iClientW / (FLOAT)g_pWindow->m_iClientH, 0.1f, 1000.0f);
+	D3DXMatrixPerspectiveFovLH(&m_matProj, (FLOAT)D3DX_PI * 0.25f, g_pWindow->m_iClientH / (FLOAT)g_pWindow->m_iClientW, 0.1f, 1000.0f);
 
 	D3DXMatrixTranspose(&m_ConstantData.matWorld, &m_matWorld);
 	D3DXMatrixTranspose(&m_ConstantData.matView, &m_matView);
@@ -65,31 +65,23 @@ HRESULT bgShapeBox::Create()
 
 	VertexPCTN vVertices[] =
 	{
-		//{ { -1.0f, +1.0f, -1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 0
-		//{ { +1.0f, +1.0f, -1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 1
-		//{ { +1.0f, -1.0f, -1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 2
-		//{ { -1.0f, -1.0f, -1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 3
-		//{ { -1.0f, +1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 4
-		//{ { +1.0f, +1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 5
-		//{ { +1.0f, -1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 6
-		//{ { -1.0f, -1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 7
-		{ { -1.0f, +1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 0
-		{ { +1.0f, +1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 1
-		{ { +1.0f, -1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 2
-		{ { -1.0f, -1.0f, +1.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 3
-		{ { -1.0f, +1.0f, +3.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 4
-		{ { +1.0f, +1.0f, +3.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 5
-		{ { +1.0f, -1.0f, +3.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 6
-		{ { -1.0f, -1.0f, +3.0f }, { +0.0f, +0.0f, +0.0f, +1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 7
+		{ { -0.5f, +0.5f, +0.5f }, { 0.0f, 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 0
+		{ { +0.5f, +0.5f, +0.5f }, { 1.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 1
+		{ { +0.5f, -0.5f, +0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 2
+		{ { -0.5f, -0.5f, +0.5f }, { 0.0f, 1.0f, 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 3
+		{ { -0.5f, +0.5f, +1.5f }, { 0.0f, 0.0f, 1.0f, 1.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 4
+		{ { +0.5f, +0.5f, +1.5f }, { 1.0f, 0.0f, 1.0f, 1.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } }, // 5
+		{ { +0.5f, -0.5f, +1.5f }, { 1.0f, 1.0f, 1.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 6
+		{ { -0.5f, -0.5f, +1.5f }, { 0.0f, 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }, // 7
 	};
 	UINT uIndices[] =
 	{
-		0, 1, 2, 0, 2, 3, // ¾Õ¸é       4========5
-		5, 4, 7, 5, 7, 6, // µÞ¸é     //|     // ||
-		4, 0, 3, 4, 3, 7, // ÁÂÃø   0========1   ||
-		1, 5, 6, 1, 6, 2, // ¿ìÃø  ||   7---||---6
-		4, 5, 1, 4, 1, 0, // »ó´Ü  || /     || //
-		3, 2, 6, 3, 6, 7, // ÇÏ´Ü   3========2
+		0, 1, 2, 0, 2, 3, // ¾Õ¸é      4 ======= 5
+		5, 4, 7, 5, 7, 6, // µÞ¸é    //|      //||
+		4, 0, 3, 4, 3, 7, // ÁÂÃø   0 ======= 1 ||
+		1, 5, 6, 1, 6, 2, // ¿ìÃø   || 7 ----||- 6
+		4, 5, 1, 4, 1, 0, // »ó´Ü   ||/      ||//
+		3, 2, 6, 3, 6, 7, // ÇÏ´Ü   3 ======= 2
 	};
 
 	m_iNumVertex = COUNTOF(vVertices);
@@ -154,7 +146,7 @@ HRESULT bgShapeBox::Load()
 	{
 		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXTURE",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HR_RETURN(m_pDevice->CreateInputLayout(layout, 4, pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), &m_pInputLayout));

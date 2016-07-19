@@ -2,7 +2,7 @@ struct VS_INPUT
 {
 	float4 pos : POSITION;
 	float4 col : COLOR;
-	float2 tex : TEXCOORD0;
+	float2 tex : TEXCOORD;
 };
 
 // VS_OUTPUT == PS_INPUT
@@ -10,7 +10,7 @@ struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
 	float4 col : COLOR;
-	float2 tex : TEXCOORD0;
+	float2 tex : TEXCOORD;
 };
 
 VS_OUTPUT VS(VS_INPUT input)

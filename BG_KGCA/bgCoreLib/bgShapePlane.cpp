@@ -23,7 +23,7 @@ bool bgShapePlane::Frame()
 bool bgShapePlane::Render()
 {
 	D3DXMatrixIdentity(&m_matWorld);
-	D3DXVECTOR3 vEye(10.0f, 10.0f, -20.0f);
+	D3DXVECTOR3 vEye(0.0f, 0.0f, -20.0f);
 	D3DXVECTOR3 vAt(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 vUp(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&m_matView, &vEye, &vAt, &vUp);
@@ -65,20 +65,16 @@ HRESULT bgShapePlane::Create()
 
 	VertexPCT vVertices[] =
 	{
-		//{ { -0.5f, 0.0f, +0.5f },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } }, // ÁÂ»ó ¢Ø
-		//{ { +0.5f, 0.0f, +0.5f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // ¿ì»ó ¢Ö
-		//{ { +0.5f, 0.0f, -0.5f },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 1.0f } }, // ¿ìÇÏ ¢Ù
-		//{ { -0.5f, 0.0f, -0.5f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } }, // ÁÂÇÏ ¢×
-		{ { -0.5f, 0.5f, +0.5f },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } }, // ÁÂ»ó ¢Ø
-		{ { +0.5f, 0.5f, +0.5f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // ¿ì»ó ¢Ö
-		{ { +0.5f, -1.0f, -0.5f },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 1.0f } }, // ¿ìÇÏ ¢Ù
-		{ { -0.5f, -1.0f, -0.5f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } }, // ÁÂÇÏ ¢×
+		{ { -0.75f, +0.75f, +0.75f },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } }, // 0
+		{ { +0.75f, +0.75f, +0.75f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // 1
+		{ { +0.75f, -0.75f, -0.75f },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 1.0f } }, // 2
+		{ { -0.75f, -0.75f, -0.75f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } }, // 3
 	};
 	UINT uIndices[] =
-	{
-		0, 1, 2, // ¢Ö
-		0, 2, 3, // ¢×
-	};
+	{            //                0 == 1
+		0, 1, 2, // ¿ìÃø»ó´Ü Æú¸®°ï ||¡¬ ||
+		0, 2, 3, // ÁÂÃøÇÏ´Ü Æú¸®°ï || ¡¬||
+	};           //                3 == 2
 
 	m_iNumVertex = COUNTOF(vVertices);
 	m_iNumIndex = COUNTOF(uIndices);
@@ -142,7 +138,7 @@ HRESULT bgShapePlane::Load()
 	{
 		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXTURE",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HR_RETURN(m_pDevice->CreateInputLayout(layout, 3, pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), &m_pInputLayout));
 

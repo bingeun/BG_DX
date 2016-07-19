@@ -23,7 +23,7 @@ bool bgShapeGuideAxis::Frame()
 bool bgShapeGuideAxis::Render()
 {
 	D3DXMatrixIdentity(&m_matWorld);
-	D3DXVECTOR3 vEye(10.0f, 10.0f, -20.0f);
+	D3DXVECTOR3 vEye(0.0f, 0.0f, -20.0f);
 	D3DXVECTOR3 vAt(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 vUp(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&m_matView, &vEye, &vAt, &vUp);
@@ -65,18 +65,18 @@ HRESULT bgShapeGuideAxis::Create()
 
 	VertexPC vVertices[] =
 	{
-		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // 원점
-		{ { 0.5f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // x축
-		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // 원점
-		{ { 0.0f, 0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // y축
-		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // 원점
-		{ { 0.0f, 0.0f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // z축
+		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // 원점 빨강
+		{ { 0.5f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // x축 빨강
+		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // 원점 초록
+		{ { 0.0f, 0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // y축 초록
+		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // 원점 파랑
+		{ { 0.0f, 0.0f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // z축 파랑
 	};
 	UINT uIndices[] =
 	{
-		0, 1, // x축
-		2, 3, // y축
-		4, 5, // z축
+		0, 1, // x축 빨강
+		2, 3, // y축 초록
+		4, 5, // z축 파랑
 	};
 
 	m_iNumVertex = COUNTOF(vVertices);
