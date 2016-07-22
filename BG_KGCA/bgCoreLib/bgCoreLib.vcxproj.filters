@@ -59,9 +59,6 @@
     <ClInclude Include="bgTimer.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
-    <ClInclude Include="bgInput.h">
-      <Filter>헤더 파일\bgCore</Filter>
-    </ClInclude>
     <ClInclude Include="bgSound.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
@@ -95,6 +92,12 @@
     <ClInclude Include="bgCamera.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
+    <ClInclude Include="bgShapeGuideProj.h">
+      <Filter>헤더 파일\bgShape</Filter>
+    </ClInclude>
+    <ClInclude Include="bgDInput.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
@@ -104,9 +107,6 @@
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
     <ClCompile Include="bgTimer.cpp">
-      <Filter>소스 파일\bgCore</Filter>
-    </ClCompile>
-    <ClCompile Include="bgInput.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
     <ClCompile Include="bgSound.cpp">
@@ -134,6 +134,12 @@
       <Filter>소스 파일\bgShape</Filter>
     </ClCompile>
     <ClCompile Include="bgCamera.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgShapeGuideProj.cpp">
+      <Filter>소스 파일\bgShape</Filter>
+    </ClCompile>
+    <ClCompile Include="bgDInput.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
   </ItemGroup>

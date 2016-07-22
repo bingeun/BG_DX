@@ -23,17 +23,17 @@ public:
 	virtual ~bgSound();
 
 public:
-	bool Init();
-	bool Frame();
-	bool Render();
-	bool Release();
+	bool	Init();
+	bool	Frame();
+	bool	Render();
+	bool	Release();
 
 public:
-	int  Load(char* pLoadName, bool bPlay);
-	void Play(int iIndex, bool bPlay);
-	void Stop(int iIndex);
-	void Stop();
-	void Pause(int iIndex);
-	void Volume(int iIndex, float fVolume, bool bUp);
-	void SetLoop(int iIndex);
+	int		Load(char* pLoadName, bool bPlay);
+	void	Play(int iIndex, bool bPlay);
+	void	Stop(int iIndex);
+	void	Stop();
+	void	Pause(int iIndex);
+	void	Volume(int iIndex, float fVolume, bool bUp);
+	void	SetLoop(int iIndex);
 };

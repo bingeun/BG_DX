@@ -1,5 +1,6 @@
 #pragma once
 #include "bgStd.h"
+#include "bgDInput.h"
 
 LRESULT	CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -17,6 +18,7 @@ public:
 	int			m_iWindowX, m_iWindowY; // 윈도우 위치
 	bool		m_bSizeLarge;	// 윈도우 크기 (1024x768 <=> 800x600)
 	bool		m_bFullScreen;	// 윈도우 <=> 전체화면 모드변환
+	bool		m_bActive;		// 윈도우 활성상태
 
 public:
 	bgWindow();

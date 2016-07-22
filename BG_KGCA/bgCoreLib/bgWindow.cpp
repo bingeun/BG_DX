@@ -131,6 +131,11 @@ LRESULT CALLBACK bgWindow::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 {
 	switch (uMsg)
 	{
+	case WM_ACTIVATE:
+	{
+		m_bActive = (WA_INACTIVE == wParam) ? FALSE : TRUE;
+		I_DInput.SetAcquire(m_bActive);
+	}
 	default:
 	{
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);

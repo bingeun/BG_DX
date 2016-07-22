@@ -1,3 +1,10 @@
+cbuffer MatrixBuffer
+{
+	matrix matWorld;
+	matrix matView;
+	matrix matProj;
+};
+
 struct VS_INPUT
 {
 	float4 pos : POSITION;

@@ -1,6 +1,6 @@
 #pragma once
 #include "bgTimer.h"
-#include "bgInput.h"
+#include "bgDInput.h"
 #include "bgWindow.h"
 #include "bgDevice.h"
 
@@ -8,7 +8,7 @@ class bgCore : public bgWindow, public bgDevice
 {
 public:
 	bgTimer		m_Timer;
-	bgInput		m_Input;
+	bgDInput	m_DInput;
 
 public:
 	bgCore();

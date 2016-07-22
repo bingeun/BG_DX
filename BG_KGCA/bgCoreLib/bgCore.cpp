@@ -46,7 +46,7 @@ bool bgCore::GameRelease()
 {
 	Release();
 	m_Timer.Release();
-	m_Input.Release();
+	m_DInput.Release();
 	return true;
 }
 
@@ -54,7 +54,7 @@ bool bgCore::PreInit()
 {
 	InitDevice(m_hWnd);
 	m_Timer.Init();
-	m_Input.Init();
+	m_DInput.Init();
 	return true;
 }
 
@@ -66,7 +66,7 @@ bool bgCore::PostInit()
 bool bgCore::PreFrame()
 {
 	m_Timer.Frame();
-	m_Input.Frame();
+	m_DInput.Frame();
 	return true;
 }
 
@@ -88,14 +88,14 @@ bool bgCore::PostRender()
 	if (m_bVsync)
 	{
 		m_Timer.Render();
-		m_Input.Render();
+		m_DInput.Render();
 		PrintDebug();
 		m_pSwapChain->Present(1, 0);
 	}
 	else
 	{
 		m_Timer.Render();
-		m_Input.Render();
+		m_DInput.Render();
 		PrintDebug();
 		m_pSwapChain->Present(0, 0);
 	}

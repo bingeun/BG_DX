@@ -2,6 +2,13 @@
 #include "bgStd.h"
 #include "bgSys.h"
 
+struct MatrixBuffer
+{
+	D3DXMATRIX matWorld;
+	D3DXMATRIX matView;
+	D3DXMATRIX matProj;
+};
+
 struct VertexPC
 {
 	D3DXVECTOR3 pos;
@@ -23,13 +30,6 @@ struct VertexPCTN
 	D3DXVECTOR3 norm;
 };
 
-struct MatrixBuffer
-{
-	D3DXMATRIX matWorld;
-	D3DXMATRIX matView;
-	D3DXMATRIX matProj;
-};
-
 class bgShape
 {
 public:
@@ -37,7 +37,12 @@ public:
 	ID3D11DeviceContext*	m_pDeviceContext;
 	ID3D11InputLayout*		m_pInputLayout;
 	ID3D11RasterizerState*	m_pRasterizerState;
+
 	D3D_PRIMITIVE_TOPOLOGY	m_uPrimitiveTopology;
+
+	ID3D11VertexShader*		m_pVertexShader;
+	ID3D11PixelShader*		m_pPixelShader;
+	ID3D11GeometryShader*	m_pGeometryShader;
 
 	ID3D11Buffer*	m_pVertexBuffer;
 	ID3D11Buffer*	m_pIndexBuffer;
@@ -47,10 +52,6 @@ public:
 	D3DXMATRIX		m_matWorld;
 	D3DXMATRIX		m_matView;
 	D3DXMATRIX		m_matProj;
-
-	ID3D11VertexShader*		m_pVertexShader;
-	ID3D11PixelShader*		m_pPixelShader;
-	ID3D11GeometryShader*	m_pGeometryShader;
 
 	UINT		m_iNumVertex;
 	UINT		m_iNumIndex;

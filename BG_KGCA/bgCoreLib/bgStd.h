@@ -18,12 +18,14 @@
 
 using namespace std;
 
-#pragma comment(lib, "ws2_32.lib")
+//#pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx10d.lib")
 #pragma comment(lib, "d3dx11d.lib")
+#pragma comment(lib, "dinput8.lib")
 
 #define RadianToDegree(fAngle)	(fAngle * (3.141592f / 180.0f))
 #define DegreeToRadian(fAngle)	(fAngle * (180.0f / 3.141592f))
@@ -47,6 +49,9 @@ public:
 #endif
 #ifndef HR_RETURN
 #define HR_RETURN(A)	{ hr = (A); if (FAILED(hr)) { return hr; } }
+#endif
+#ifndef BOOL_RETURN
+#define BOOL_RETURN(A)	{ hr = (A); if (FAILED(hr)) { return false; } }
 #endif
 
 #ifndef SAFE_ZERO
