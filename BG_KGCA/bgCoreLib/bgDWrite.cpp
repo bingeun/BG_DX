@@ -1,29 +1,46 @@
 #include "bgDWrite.h"
-#include <math.h>
 
-
-
-template <class T> inline void SafeRelease(T **ppT)
+bgDWrite::bgDWrite()
 {
-	if (*ppT)
-	{
-		(*ppT)->Release();
-		*ppT = NULL;
-	}
+	m_hWnd = NULL;
+	m_pRenderTarget = NULL;
+	m_pD2DFactory = NULL;
+	m_pDWriteFactory = NULL;
+	m_pSurface = NULL;
+	m_pTextFormat = NULL;
+	m_pTextLayout = NULL;
+	m_pBrushFontColor = NULL;
+
+	m_eFontWeight = DWRITE_FONT_WEIGHT_NORMAL;
+	m_eFontStyle = DWRITE_FONT_STYLE_NORMAL;
+	m_bFontUnderline = FALSE;
+	m_fFontSize = 15.0f;
+	m_iTextLength = 0;
+
+	m_bFontBorder = true;
 }
 
-bool bgDWrite::Set(HWND hWnd, int iWidth, int iHeight, IDXGISurface1*	pSurface)
+bgDWrite::~bgDWrite()
 {
-	HRESULT hr;
-	if (!Init())
-	{
-		return false;
-	}
-	m_hWnd = hWnd;
+	Release();
+}
 
-	hr = CreateDeviceIndependentResources();
-	hr = CreateDeviceResources(pSurface);
-	SetText(D2D1::Point2F((FLOAT)iWidth, (FLOAT)iHeight), L"BG!", D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+bool bgDWrite::Init()
+{
+	const wchar_t fontFamily[] = L"Consolas"; //L"맑은 고딕"; Consolas
+	m_wszFontFamily = fontFamily;
+	return true;
+}
+
+bool bgDWrite::Frame()
+{
+	return true;
+}
+
+bool bgDWrite::Render()
+{
+	PreRender();
+	PostRender();
 	return true;
 }
 
@@ -31,27 +48,41 @@ bool bgDWrite::Release()
 {
 	m_wszText.clear();
 	m_wszFontFamily.clear();
-	DiscardDeviceIndependentResources();
+	DiscardResources();
 	DiscardDeviceResources();
+
 	return true;
 }
 
-bool bgDWrite::Init()
+bool bgDWrite::PreRender()
 {
-	const wchar_t defaultText[] = L"Consolas";
-	m_wszFontFamily = defaultText;
+	if (m_pRenderTarget)
+	{
+		m_pRenderTarget->BeginDraw();
+		m_pRenderTarget->SetTransform(D2D1::IdentityMatrix());
+		// m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	}
 	return true;
 }
 
-HRESULT bgDWrite::CreateDeviceIndependentResources()
+bool bgDWrite::PostRender()
 {
-	HRESULT hr;
-	// Create Direct2D factory.
+	if (m_pRenderTarget && FAILED(m_pRenderTarget->EndDraw()))
+	{
+		return false;
+	}
+	return true;
+}
+
+HRESULT bgDWrite::CreateResources()
+{
+	HRESULT hr = S_OK;
+
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pD2DFactory);
 
-	m_pD2DFactory->GetDesktopDpi(&m_fdpiX, &m_fdpiY);
-	m_fDPIScaleX = m_fdpiX / 96.0f;
-	m_fDPIScaleY = m_fdpiY / 96.0f;
+	m_pD2DFactory->GetDesktopDpi(&m_fDPIX, &m_fDPIY);
+	m_fDPIScaleX = m_fDPIX / 96.0f;
+	m_fDPIScaleY = m_fDPIY / 96.0f;
 
 	if (SUCCEEDED(hr))
 	{
@@ -59,226 +90,194 @@ HRESULT bgDWrite::CreateDeviceIndependentResources()
 	}
 	if (SUCCEEDED(hr))
 	{
-		hr = m_pDWriteFactory->CreateTextFormat(m_wszFontFamily.c_str(), NULL, m_fontWeight, m_fontStyle,
-			DWRITE_FONT_STRETCH_NORMAL, m_fontSize, L"en-us", &m_pTextFormat);
+		hr = m_pDWriteFactory->CreateTextFormat(m_wszFontFamily.c_str(), NULL,
+			m_eFontWeight, m_eFontStyle, DWRITE_FONT_STRETCH_NORMAL, m_fFontSize, L"ko-KR", &m_pTextFormat);
 	}
+
 	return hr;
 }
 
-HRESULT bgDWrite::SetFont(wchar_t *fontFamily)
+void bgDWrite::DiscardResources()
 {
-	HRESULT hr;
+	SAFE_RELEASE(m_pD2DFactory);
+	SAFE_RELEASE(m_pDWriteFactory);
+	SAFE_RELEASE(m_pTextFormat);
+	SAFE_RELEASE(m_pTextLayout);
+}
 
-	DWRITE_TEXT_RANGE textRange = { 0, m_cTextLength };
+HRESULT bgDWrite::CreateDeviceResources(IDXGISurface1* pSurface)
+{
+	HRESULT hr = S_OK;
+
+	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), m_fDPIX, m_fDPIY);
+
+	HR_RETURN(m_pD2DFactory->CreateDxgiSurfaceRenderTarget(pSurface, (const D2D1_RENDER_TARGET_PROPERTIES *)&props, &m_pRenderTarget));
+	HR_RETURN(m_pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 1), &m_pBrushFontColor));
+
+	return hr;
+}
+
+void bgDWrite::DiscardDeviceResources()
+{
+	SAFE_RELEASE(m_pRenderTarget);
+	SAFE_RELEASE(m_pBrushFontColor);
+}
+
+bool bgDWrite::Set(HWND hWnd, int iWidth, int iHeight, IDXGISurface1* pSurface)
+{
+	HRESULT hr = S_OK;
+
+	if (!Init())
+		return false;
+
+	m_hWnd = hWnd;
+
+	hr = CreateResources();
+	hr = CreateDeviceResources(pSurface);
+
+	SetText(D2D1::Point2F(iWidth, iHeight), L"TEXT 텍스트 셋 Set()...!", D2D1::ColorF(1, 1, 1, 1));
+
+	return true;
+}
+
+void bgDWrite::Resize(UINT iWidth, UINT iHeight, IDXGISurface1* pSurface)
+{
+	DiscardDeviceResources();
+	CreateDeviceResources(pSurface);
+
+	SetText(D2D1::Point2F(iWidth, iHeight), L"TEXT 텍스트 리사이즈 Resize()...!!!", D2D1::ColorF(1, 1, 1, 1));
+}
+
+HRESULT bgDWrite::SetText(D2D1_POINT_2F size, wchar_t* text, D2D1::ColorF Color)
+{
+	HRESULT hr = S_OK;
+
+	m_iTextLength = (UINT32)wcslen(text);
+	m_wszText.clear();
+	m_wszText = text;
+
+	SAFE_RELEASE(m_pTextLayout);
+	if (SUCCEEDED(hr))
+		hr = m_pDWriteFactory->CreateTextLayout(m_wszText.c_str(), m_iTextLength, m_pTextFormat, size.x, size.y, &m_pTextLayout);
+
+	IDWriteTypography* pTypography = NULL;
+	if (SUCCEEDED(hr))
+		hr = m_pDWriteFactory->CreateTypography(&pTypography);
+
+	DWRITE_FONT_FEATURE fontFeature = { DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_7, 1 };
+	if (SUCCEEDED(hr))
+		hr = pTypography->AddFontFeature(fontFeature);
+
+	DWRITE_TEXT_RANGE textRange = { 0, m_iTextLength };
+	if (SUCCEEDED(hr))
+		hr = m_pTextLayout->SetTypography(pTypography, textRange);
+
+	if (SUCCEEDED(hr))
+		hr = m_pTextLayout->SetUnderline(m_bFontUnderline, textRange);
+
+	SAFE_RELEASE(pTypography);
+
+	return hr;
+}
+
+HRESULT bgDWrite::SetFont(wchar_t* fontFamily)
+{
+	HRESULT hr = S_OK;
+
+	DWRITE_TEXT_RANGE textRange = { 0, m_iTextLength };
 
 	hr = m_pTextLayout->SetFontFamilyName(fontFamily, textRange);
-
 	if (SUCCEEDED(hr))
 	{
 		m_wszFontFamily.clear();
 		m_wszFontFamily = fontFamily;
 	}
+
 	return hr;
 }
 
-HRESULT bgDWrite::SetFontSize(float size)
-{
-	HRESULT hr;
-	DWRITE_TEXT_RANGE textRange = { 0, m_cTextLength };
-
-	hr = m_pTextLayout->SetFontSize(size, textRange);
-
-	if (SUCCEEDED(hr))
-	{
-		m_fontSize = size;
-	}
-	return hr;
-}
-
-HRESULT bgDWrite::SetText(D2D1_POINT_2F size, wchar_t *text, D2D1::ColorF Color)
+HRESULT bgDWrite::SetFontSize(float fSize)
 {
 	HRESULT hr = S_OK;
-	m_cTextLength = (UINT32)wcslen(text);
-	m_wszText.clear();
-	m_wszText = text;
 
-	SafeRelease(&m_pTextLayout);
+	DWRITE_TEXT_RANGE textRange = { 0, m_iTextLength };
+
+	hr = m_pTextLayout->SetFontSize(fSize, textRange);
 	if (SUCCEEDED(hr))
 	{
-		hr = m_pDWriteFactory->CreateTextLayout(m_wszText.c_str(), m_cTextLength, m_pTextFormat, size.x, size.y, &m_pTextLayout);
+		m_fFontSize = fSize;
 	}
-
-	IDWriteTypography* pTypography = NULL;
-	if (SUCCEEDED(hr))
-	{
-		hr = m_pDWriteFactory->CreateTypography(&pTypography);
-	}
-
-	DWRITE_FONT_FEATURE fontFeature = { DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_7,1 };
-	if (SUCCEEDED(hr))
-	{
-		hr = pTypography->AddFontFeature(fontFeature);
-	}
-
-	DWRITE_TEXT_RANGE textRange = { 0, m_cTextLength };
-
-	if (SUCCEEDED(hr))
-	{
-		hr = m_pTextLayout->SetTypography(pTypography, textRange);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		hr = m_pTextLayout->SetUnderline(m_fontUnderline, textRange);
-	}
-	SafeRelease(&pTypography);
 
 	return hr;
 }
 
-HRESULT bgDWrite::SetBold(bool bold)
+HRESULT bgDWrite::SetBold(bool bBold)
 {
-	HRESULT hr;
-	DWRITE_TEXT_RANGE textRange = { 0, m_cTextLength };
-
-	if (bold)
-	{
-		m_fontWeight = DWRITE_FONT_WEIGHT_BOLD;
-	}
-	else
-	{
-		m_fontWeight = DWRITE_FONT_WEIGHT_NORMAL;
-	}
-
-	hr = m_pTextLayout->SetFontWeight(m_fontWeight, textRange);
-	return hr;
-}
-
-HRESULT bgDWrite::SetItalic(bool italic)
-{
-	HRESULT hr;
-	DWRITE_TEXT_RANGE textRange = { 0, m_cTextLength };
-
-	if (italic)
-	{
-		m_fontStyle = DWRITE_FONT_STYLE_ITALIC;
-	}
-	else
-	{
-		m_fontStyle = DWRITE_FONT_STYLE_NORMAL;
-	}
-
-	hr = m_pTextLayout->SetFontStyle(m_fontStyle, textRange);
-	return hr;
-}
-
-HRESULT bgDWrite::SetUnderline(bool underline)
-{
-	HRESULT hr;
-	DWRITE_TEXT_RANGE textRange = { 0, m_cTextLength };
-
-	m_fontUnderline = underline;
-
-	hr = m_pTextLayout->SetUnderline(m_fontUnderline, textRange);
-	return hr;
-}
-
-void bgDWrite::DiscardDeviceIndependentResources()
-{
-	SafeRelease(&m_pD2DFactory);
-	SafeRelease(&m_pDWriteFactory);
-	SafeRelease(&m_pTextFormat);
-	SafeRelease(&m_pTextLayout);
-}
-
-HRESULT bgDWrite::DrawText(RECT rc, TCHAR* pText, D2D1::ColorF Color)
-{
-	if (m_pRT&&m_pBlackBrush)
-	{
-		D2D1_RECT_F layoutRect = D2D1::RectF(
-			static_cast<FLOAT>(rc.left) / m_fDPIScaleX,
-			static_cast<FLOAT>(rc.top) / m_fDPIScaleY,
-			static_cast<FLOAT>(rc.right) / m_fDPIScaleX,
-			static_cast<FLOAT>(rc.bottom) / m_fDPIScaleY);
-		m_pBlackBrush->SetColor(Color);
-		m_pRT->DrawText(pText, wcslen(pText), m_pTextFormat, layoutRect, m_pBlackBrush);
-	}
-	return S_OK;
-}
-
-HRESULT bgDWrite::DrawText(D2D1_POINT_2F pos, D2D1::ColorF Color)
-{
-	D2D1_POINT_2F origin = D2D1::Point2F(
-		static_cast<FLOAT>(pos.x / m_fDPIScaleX),
-		static_cast<FLOAT>(pos.y / m_fDPIScaleY));
-	m_pBlackBrush->SetColor(Color);
-	m_pRT->DrawTextLayout(origin, m_pTextLayout, m_pBlackBrush);
-	return S_OK;
-}
-
-bool bgDWrite::Begin()
-{
-	if (m_pRT)
-	{
-		m_pRT->BeginDraw();
-		m_pRT->SetTransform(D2D1::IdentityMatrix());
-	}
-	return true;
-}
-
-bool bgDWrite::End()
-{
-	if (m_pRT && FAILED(m_pRT->EndDraw()))
-	{
-		return false;
-	}
-	return true;
-}
-
-HRESULT bgDWrite::CreateDeviceResources(IDXGISurface1* pSurface)
-{
-	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), static_cast<float>(m_fdpiX), static_cast<float>(m_fdpiY));
-
 	HRESULT hr = S_OK;
-	if (FAILED(hr = m_pD2DFactory->CreateDxgiSurfaceRenderTarget(pSurface, (const D2D1_RENDER_TARGET_PROPERTIES *)&props, &m_pRT)))
-		return hr;
 
-	if (FAILED(hr = m_pRT->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Yellow), &m_pBlackBrush)))
-		return hr;
+	DWRITE_TEXT_RANGE textRange = { 0, m_iTextLength };
 
-	return S_OK;
+	if (bBold)
+		m_eFontWeight = DWRITE_FONT_WEIGHT_BOLD;
+	else
+		m_eFontWeight = DWRITE_FONT_WEIGHT_NORMAL;
+
+	hr = m_pTextLayout->SetFontWeight(m_eFontWeight, textRange);
+
+	return hr;
 }
 
-void bgDWrite::DiscardDeviceResources()
+HRESULT bgDWrite::SetItalic(bool bItalic)
 {
-	SafeRelease(&m_pRT);
-	SafeRelease(&m_pBlackBrush);
+	HRESULT hr = S_OK;
+
+	DWRITE_TEXT_RANGE textRange = { 0, m_iTextLength };
+
+	if (bItalic)
+		m_eFontStyle = DWRITE_FONT_STYLE_ITALIC;
+	else
+		m_eFontStyle = DWRITE_FONT_STYLE_NORMAL;
+
+	hr = m_pTextLayout->SetFontStyle(m_eFontStyle, textRange);
+
+	return hr;
 }
 
-void bgDWrite::OnResize(UINT width, UINT height, IDXGISurface1*	pSurface)
+HRESULT bgDWrite::SetUnderline(bool bUnderline)
 {
-	DiscardDeviceResources();
-	CreateDeviceResources(pSurface);
-	SetText(D2D1::Point2F((FLOAT)width, (FLOAT)height), L"BG!", D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+	HRESULT hr = S_OK;
+
+	DWRITE_TEXT_RANGE textRange = { 0, m_iTextLength };
+	m_bFontUnderline = bUnderline;
+	hr = m_pTextLayout->SetUnderline(m_bFontUnderline, textRange);
+
+	return hr;
 }
 
-bgDWrite::bgDWrite()
+HRESULT bgDWrite::Print(RECT rect, TCHAR* pText, D2D1::ColorF Color)
 {
-	m_pBlackBrush = NULL;
-	m_pDWriteFactory = NULL;
-	m_pTextFormat = NULL;
-	m_pD2DFactory = NULL;
-	m_pTextLayout = NULL;
-	m_pRT = NULL;
-	m_hWnd = NULL;
-	m_cTextLength = 0;
-	m_fontWeight = DWRITE_FONT_WEIGHT_NORMAL;
-	m_fontStyle = DWRITE_FONT_STYLE_NORMAL;
-	m_fontUnderline = FALSE;
-	m_fontSize = 24.0f;
+	HRESULT hr = S_OK;
+
+	if (m_pRenderTarget && m_pBrushFontColor)
+	{
+		D2D1_RECT_F rectLayout = D2D1::RectF(
+			static_cast<FLOAT>(rect.left) / m_fDPIScaleX, static_cast<FLOAT>(rect.top) / m_fDPIScaleY,
+			static_cast<FLOAT>(rect.right) / m_fDPIScaleX, static_cast<FLOAT>(rect.bottom) / m_fDPIScaleY);
+		m_pBrushFontColor->SetColor(Color);
+		m_pRenderTarget->DrawText(pText, wcslen(pText), m_pTextFormat, rectLayout, m_pBrushFontColor);
+	}
+
+	return hr;
 }
 
-bgDWrite::~bgDWrite()
+HRESULT bgDWrite::Print(D2D1_POINT_2F pos, D2D1::ColorF Color)
 {
+	HRESULT hr = S_OK;
+
+	D2D1_POINT_2F origin = D2D1::Point2F(static_cast<FLOAT>(pos.x / m_fDPIScaleX), static_cast<FLOAT>(pos.y / m_fDPIScaleY));
+	m_pBrushFontColor->SetColor(Color);
+	m_pRenderTarget->DrawTextLayout(origin, m_pTextLayout, m_pBrushFontColor);
+
+	return hr;
 }

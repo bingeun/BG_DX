@@ -46,15 +46,20 @@ bool bgCore::GameRelease()
 {
 	Release();
 	m_Timer.Release();
-	m_DInput.Release();
+	m_DWrite.Release();
+	I_DInput.Release();
 	return true;
 }
 
 bool bgCore::PreInit()
 {
 	InitDevice(m_hWnd);
+	I_DInput.Create();
+	I_DInput.Init();
+
+	m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&m_pBackScreen);
+	m_DWrite.Set(m_hWnd, m_iClientW, m_iClientH, m_pBackScreen);
 	m_Timer.Init();
-	m_DInput.Init();
 	return true;
 }
 
@@ -66,7 +71,8 @@ bool bgCore::PostInit()
 bool bgCore::PreFrame()
 {
 	m_Timer.Frame();
-	m_DInput.Frame();
+	I_DInput.Frame();
+	m_DWrite.Frame();
 	return true;
 }
 
@@ -88,39 +94,62 @@ bool bgCore::PostRender()
 	if (m_bVsync)
 	{
 		m_Timer.Render();
-		m_DInput.Render();
-		PrintDebug();
+		I_DInput.Render();
+		m_DWrite.Render();
 		m_pSwapChain->Present(1, 0);
 	}
 	else
 	{
 		m_Timer.Render();
-		m_DInput.Render();
-		PrintDebug();
+		I_DInput.Render();
+#ifdef _DEBUG
+		TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
+		_stprintf_s(pBuffer, _T("int=%d, float=%f"), 1024, 3.141592f);
+		PrintInfo(pBuffer); // FPS 및 로그 출력
+#endif //_DEBUG
 		m_pSwapChain->Present(0, 0);
 	}
 	return true;
 }
 
-bool bgCore::PrintDebug()
+bool bgCore::PrintInfo(TCHAR* pszString)
 {
-#ifdef _DEBUG
 	// FPS 출력
-	TCHAR pBuffer[DEBUG_BUFFER_SIZE];
-	memset(pBuffer, 0, sizeof(TCHAR) * DEBUG_BUFFER_SIZE);
-	_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f]\nLog[???]"),
-				g_iFPS, g_fSPF*1000.0f, g_fCurrent);
+	TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
+	_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Pos[%d,%d,%d]\n%s"),
+		g_iFPS, g_fSPF*1000.0f, g_fCurrent, I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ, pszString);
+	PrintLog(pBuffer, 5, 5);
 
-	// printf()?
-
-#endif //_DEBUG
 	return true;
 }
 
-bool bgCore::PrintDebug(TCHAR * pszString, int iX, int iY)
+bool bgCore::PrintLog(TCHAR* pszString, int iX, int iY)
 {
-#ifdef _DEBUG
+	if (m_DWrite.m_pTextFormat)
+	{
+		RECT rect = { iX, iY, m_iClientW - iX, m_iClientH - iY };
+		m_DWrite.PreRender();
+		{
+			FLOAT fFontSize = m_DWrite.m_fFontSize;
+			m_DWrite.m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); // LEFT
+			m_DWrite.m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); // TOP
+			m_DWrite.m_pTextFormat->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM, fFontSize * 1.25f, fFontSize * 0.8f);
 
-#endif //_DEBUG
+			// 검정색 외곽선
+			if(m_DWrite.m_bFontBorder)
+			{
+				m_DWrite.Print(rect, pszString, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+				rect.left += 2;
+				rect.top += 2;
+				m_DWrite.Print(rect, pszString, D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+				rect.left -= 1;
+				rect.top -= 1;
+			}
+
+			m_DWrite.Print(rect, pszString, D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
+		}
+		m_DWrite.PostRender();
+	}
+
 	return true;
 }

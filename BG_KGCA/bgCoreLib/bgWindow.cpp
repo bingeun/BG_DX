@@ -1,4 +1,5 @@
 #include "bgWindow.h"
+#include "bgDInput.h"
 
 bgWindow*	g_pWindow;
 HINSTANCE	g_hInstance;

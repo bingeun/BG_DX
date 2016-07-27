@@ -1,6 +1,5 @@
 #pragma once
 #include "bgStd.h"
-#include "bgDInput.h"
 
 LRESULT	CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

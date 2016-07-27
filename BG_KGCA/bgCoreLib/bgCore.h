@@ -1,14 +1,20 @@
 #pragma once
-#include "bgTimer.h"
-#include "bgDInput.h"
 #include "bgWindow.h"
 #include "bgDevice.h"
+#include "bgDInput.h"
+#include "bgTimer.h"
+
+#ifdef _DEBUG
+#include "bgDWrite.h"
+#endif //_DEBUG
 
 class bgCore : public bgWindow, public bgDevice
 {
 public:
-	bgTimer		m_Timer;
-	bgDInput	m_DInput;
+	bgDInput		m_DInput;
+	bgTimer			m_Timer;
+	bgDWrite		m_DWrite;
+	IDXGISurface1*	m_pBackScreen;
 
 public:
 	bgCore();
@@ -34,6 +40,6 @@ public:
 	virtual bool	PreRender();
 	virtual bool	PostRender();
 
-	virtual bool	PrintDebug();
-	virtual bool	PrintDebug(TCHAR* pszString, int iX, int iY);
+	virtual bool	PrintInfo(TCHAR* pszString);
+	virtual bool	PrintLog(TCHAR* pszString, int iX, int iY);
 };

@@ -57,6 +57,10 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	SAFE_RELEASE(pFactory);
 	// Release!
 
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifdef _DEBUG
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif //_DEBUG
 	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
 	ZeroMemory(&SwapChainDesc, sizeof(SwapChainDesc));
 	SwapChainDesc.BufferDesc.Width = iWidth;
@@ -76,7 +80,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	SwapChainDesc.Flags = 0;
 	D3D_FEATURE_LEVEL FeatureLevel = D3D_FEATURE_LEVEL_11_0;
 	m_DriverType = D3D_DRIVER_TYPE_HARDWARE;
-	HR_RETURN(D3D11CreateDeviceAndSwapChain(NULL, m_DriverType, NULL, 0, &FeatureLevel, 1, D3D11_SDK_VERSION,
+	HR_RETURN(D3D11CreateDeviceAndSwapChain(NULL, m_DriverType, NULL, createDeviceFlags, &FeatureLevel, 1, D3D11_SDK_VERSION,
 											&SwapChainDesc, &m_pSwapChain, &m_pDevice, NULL, &m_pDeviceContext));
 
 	ID3D11Texture2D* pBackBuffer;
