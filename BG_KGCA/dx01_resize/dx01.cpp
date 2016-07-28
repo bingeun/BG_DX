@@ -87,6 +87,14 @@ LRESULT CALLBACK dx01::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		}
 		break;
 
+		case '2': // 키눌림 상태 출력여부 변경
+		{
+			if (m_DWrite.m_bFontBorder)
+				m_bPrintKeyState = !m_bPrintKeyState;
+			m_DWrite.m_bFontBorder = !m_DWrite.m_bFontBorder;
+		}
+		break;
+
 		case '0': // 윈도우 <=> 전체화면 모드변경
 		{
 			if (m_pSwapChain)

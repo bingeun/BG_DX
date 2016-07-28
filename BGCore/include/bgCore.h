@@ -16,6 +16,8 @@ public:
 	bgDWrite		m_DWrite;
 	IDXGISurface1*	m_pBackScreen;
 
+	bool	m_bPrintKeyState; // 키눌림 상태 출력여부
+
 public:
 	bgCore();
 	virtual ~bgCore();

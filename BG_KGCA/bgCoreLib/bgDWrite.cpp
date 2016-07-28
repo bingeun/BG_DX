@@ -17,7 +17,7 @@ bgDWrite::bgDWrite()
 	m_fFontSize = 15.0f;
 	m_iTextLength = 0;
 
-	m_bFontBorder = true;
+	m_bFontBorder = false;
 }
 
 bgDWrite::~bgDWrite()
