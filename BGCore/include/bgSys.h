@@ -1,12 +1,16 @@
 #pragma once
 #include "bgWindow.h"
+#include "bgShape.h"
 
-// bgWindow - 윈도우 관련 전역변수
+// bgWindow
 extern bgWindow*	g_pWindow;
 extern HWND			g_hWnd;
 extern HINSTANCE	g_hInstance;
 
-// bgTimer - 타이머 관련 전역변수
+// bgTimer
 extern int			g_iFPS;
 extern float		g_fSPF;
 extern float		g_fCurrent;
+
+// bgShape
+extern MATRIX_BUFFER	g_MatrixBuffer;

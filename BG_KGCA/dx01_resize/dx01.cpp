@@ -20,20 +20,20 @@ dx01::~dx01()
 
 bool dx01::Init()
 {
-	m_objBox.Init();
-	m_objBox.Set(m_pDevice, m_pDeviceContext);
-	m_objBox.Create();
-	m_objBox.Load();
+	//m_objBox.Init();
+	//m_objBox.SetDevice(m_pDevice, m_pDeviceContext, m_pRSSolidFront);
+	//m_objBox.CreateBuffer();
+	//m_objBox.LoadShader();
 
-	m_objPlane.Init();
-	m_objPlane.Set(m_pDevice, m_pDeviceContext);
-	m_objPlane.Create();
-	m_objPlane.Load();
+	//m_objPlane.Init();
+	//m_objPlane.SetDevice(m_pDevice, m_pDeviceContext, m_pRSSolidFront);
+	//m_objPlane.CreateBuffer();
+	//m_objPlane.LoadShader();
 
 	m_objGuideAxis.Init();
-	m_objGuideAxis.Set(m_pDevice, m_pDeviceContext);
-	m_objGuideAxis.Create();
-	m_objGuideAxis.Load();
+	m_objGuideAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
+	m_objGuideAxis.CreateBuffer();
+	m_objGuideAxis.LoadShader();
 	return true;
 }
 
@@ -44,8 +44,8 @@ bool dx01::Frame()
 
 bool dx01::Render()
 {
-	m_objBox.Render();
-	m_objPlane.Render();
+	//m_objBox.Render();
+	//m_objPlane.Render();
 	m_objGuideAxis.Render();
 	return true;
 }
@@ -92,6 +92,35 @@ LRESULT CALLBACK dx01::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			if (m_DWrite.m_bFontBorder)
 				m_bPrintKeyState = !m_bPrintKeyState;
 			m_DWrite.m_bFontBorder = !m_DWrite.m_bFontBorder;
+		}
+		break;
+
+		case '3': // 뷰포트 모드 변경 (0=단일모드, 1=2x2모드, 2=4+1모드)
+		{
+			m_iModeViewport = (m_iModeViewport + 1) % 3;
+			switch (m_iModeViewport)
+			{
+			case 0: // 단일화면 모드
+			{
+			}
+			break;
+
+			case 1: // 2x2화면 모드
+			{
+			}
+			break;
+
+			case 2: // 4+1화면 모드
+			{
+			}
+			break;
+			}
+		}
+		break;
+
+		case '4': // 와이어프레임 <=> 솔리드 모드변경
+		{
+
 		}
 		break;
 

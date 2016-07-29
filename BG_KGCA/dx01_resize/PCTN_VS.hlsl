@@ -26,7 +26,9 @@ VS_OUTPUT VS(VS_INPUT input)
 {
 	VS_OUTPUT output;
 
-	output.pos = input.pos;
+	output.pos = mul(input.pos, matWorld);
+	output.pos = mul(output.pos, matView);
+	output.pos = mul(output.pos, matProj);
 	output.col = input.col;
 	output.tex = input.tex;
 	output.norm = input.norm;

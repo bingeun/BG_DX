@@ -1,8 +1,7 @@
 #pragma once
 #include "bgStd.h"
-#include "bgSys.h"
 
-struct MatrixBuffer
+struct MATRIX_BUFFER
 {
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matView;
@@ -34,24 +33,23 @@ class bgShape
 {
 public:
 	ID3D11Device*			m_pDevice;
-	ID3D11DeviceContext*	m_pDeviceContext;
-	ID3D11InputLayout*		m_pInputLayout;
+	ID3D11DeviceContext*	m_pDContext;
 	ID3D11RasterizerState*	m_pRasterizerState;
 
-	D3D_PRIMITIVE_TOPOLOGY	m_uPrimitiveTopology;
+public:
+	ID3D11InputLayout*		m_pInputLayout;
+	D3D_PRIMITIVE_TOPOLOGY	m_ePrimitiveTopology;
 
-	ID3D11VertexShader*		m_pVertexShader;
-	ID3D11PixelShader*		m_pPixelShader;
-	ID3D11GeometryShader*	m_pGeometryShader;
+	ID3D11VertexShader*		m_pVS; // Vertex Shader
+	ID3D11PixelShader*		m_pPS; // Pixel Shader
+	ID3D11GeometryShader*	m_pGS; // Geometry Shader
+	ID3D11HullShader*		m_pHS; // Hull Shader
+	ID3D11DomainShader*		m_pDS; // Domain Shader
+	ID3D11ComputeShader*	m_pCS; // Compute Shader
 
-	ID3D11Buffer*	m_pVertexBuffer;
-	ID3D11Buffer*	m_pIndexBuffer;
-	ID3D11Buffer*	m_pConstantBuffer;
-
-	MatrixBuffer	m_ConstantData;
-	D3DXMATRIX		m_matWorld;
-	D3DXMATRIX		m_matView;
-	D3DXMATRIX		m_matProj;
+	ID3D11Buffer*	m_pVB; // Vertex Buffer;
+	ID3D11Buffer*	m_pIB; // Index Buffer;
+	ID3D11Buffer*	m_pCB; // Constant Buffer;
 
 	UINT		m_iNumVertex;
 	UINT		m_iNumIndex;
@@ -66,10 +64,9 @@ public:
 	virtual bool	Render();
 	virtual bool	Release();
 
-	virtual HRESULT	Create() = 0;
-	virtual HRESULT	Load() = 0;
+	virtual HRESULT	CreateBuffer() = 0;
+	virtual HRESULT	LoadShader() = 0;
 
 public:
-	bool	Set(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext);
-	HRESULT	CreateCB();
+	bool	SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, ID3D11RasterizerState* pRasterizerState, ID3D11Buffer* pCB = NULL);
 };

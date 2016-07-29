@@ -136,7 +136,7 @@ bool bgDWrite::Set(HWND hWnd, int iWidth, int iHeight, IDXGISurface1* pSurface)
 	hr = CreateResources();
 	hr = CreateDeviceResources(pSurface);
 
-	SetText(D2D1::Point2F(iWidth, iHeight), L"TEXT 텍스트 셋 Set()...!", D2D1::ColorF(1, 1, 1, 1));
+	SetText(D2D1::Point2F((FLOAT)iWidth, (FLOAT)iHeight), L"TEXT 텍스트 셋 Set()...!", D2D1::ColorF(1, 1, 1, 1));
 
 	return true;
 }
@@ -146,7 +146,7 @@ void bgDWrite::Resize(UINT iWidth, UINT iHeight, IDXGISurface1* pSurface)
 	DiscardDeviceResources();
 	CreateDeviceResources(pSurface);
 
-	SetText(D2D1::Point2F(iWidth, iHeight), L"TEXT 텍스트 리사이즈 Resize()...!!!", D2D1::ColorF(1, 1, 1, 1));
+	SetText(D2D1::Point2F((FLOAT)iWidth, (FLOAT)iHeight), L"TEXT 텍스트 리사이즈 Resize()...!!!", D2D1::ColorF(1, 1, 1, 1));
 }
 
 HRESULT bgDWrite::SetText(D2D1_POINT_2F size, wchar_t* text, D2D1::ColorF Color)

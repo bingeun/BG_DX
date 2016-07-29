@@ -3,6 +3,7 @@
 bgCore::bgCore()
 {
 	m_bPrintKeyState = false;
+	m_iModeViewport = 0; // 단일화면(뷰포트) 모드
 }
 
 bgCore::~bgCore()
@@ -57,9 +58,11 @@ bool bgCore::PreInit()
 	InitDevice(m_hWnd);
 	I_DInput.Create();
 	I_DInput.Init();
-
-	m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&m_pBackScreen);
-	m_DWrite.Set(m_hWnd, m_iClientW, m_iClientH, m_pBackScreen);
+	// 2D 텍스트(Log) 출력을 위한 초기화
+	{
+		m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&m_pBackScreen);
+		m_DWrite.Set(m_hWnd, m_iClientW, m_iClientH, m_pBackScreen);
+	}
 	m_Timer.Init();
 	return true;
 }
@@ -85,8 +88,8 @@ bool bgCore::PostFrame()
 bool bgCore::PreRender()
 {
 	float ClearColor[4] = { 0.0f, 0.25f, 0.5f, 1.0f };
-	m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
-	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	m_pDContext->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
+	m_pDContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	return true;
 }
 
@@ -105,7 +108,9 @@ bool bgCore::PostRender()
 		I_DInput.Render();
 #ifdef _DEBUG
 		TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
-		_stprintf_s(pBuffer, _T("int=%d, float=%f"), 1024, 3.141592f);
+		///////////////////////// 로그 정보 출력 //////////////////////////////////////////////////////////////////////////////////
+		_stprintf_s(pBuffer, _T("m_iModeViewport : %d"), m_iModeViewport);
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		PrintInfo(pBuffer); // FPS 및 로그 출력
 #endif //_DEBUG
 		m_pSwapChain->Present(0, 0);

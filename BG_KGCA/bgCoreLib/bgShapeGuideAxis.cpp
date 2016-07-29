@@ -6,12 +6,11 @@ bgShapeGuideAxis::bgShapeGuideAxis()
 
 bgShapeGuideAxis::~bgShapeGuideAxis()
 {
-	Release();
 }
 
 bool bgShapeGuideAxis::Init()
 {
-	m_uPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST; //D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_ePrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	return true;
 }
 
@@ -22,140 +21,116 @@ bool bgShapeGuideAxis::Frame()
 
 bool bgShapeGuideAxis::Render()
 {
-	D3DXMatrixIdentity(&m_matWorld);
-	D3DXVECTOR3 vEye(0.0f, 0.0f, -20.0f);
-	D3DXVECTOR3 vAt(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 vUp(0.0f, 1.0f, 0.0f);
-	D3DXMatrixLookAtLH(&m_matView, &vEye, &vAt, &vUp);
-	D3DXMatrixPerspectiveFovLH(&m_matProj, (FLOAT)D3DX_PI * 0.25f, g_pWindow->m_iClientW / (FLOAT)g_pWindow->m_iClientH, 0.1f, 1000.0f);
+	m_pDContext->UpdateSubresource(m_pCB, 0, NULL, &g_MatrixBuffer, 0, 0);
 
-	D3DXMatrixTranspose(&m_ConstantData.matWorld, &m_matWorld);
-	D3DXMatrixTranspose(&m_ConstantData.matView, &m_matView);
-	D3DXMatrixTranspose(&m_ConstantData.matProj, &m_matProj);
+	m_pDContext->IASetInputLayout(m_pInputLayout);
+	m_pDContext->VSSetShader(m_pVS, NULL, 0);
+	m_pDContext->HSSetShader(NULL, NULL, 0);
+	m_pDContext->DSSetShader(NULL, NULL, 0);
+	m_pDContext->GSSetShader(NULL, NULL, 0);
+	m_pDContext->PSSetShader(m_pPS, NULL, 0);
 
-	m_pDeviceContext->UpdateSubresource(m_pConstantBuffer, 0, NULL, &m_ConstantData, 0, 0);
-
-
-	m_pDeviceContext->VSSetShader(m_pVertexShader, NULL, 0);
-	m_pDeviceContext->PSSetShader(m_pPixelShader, NULL, 0);
-	m_pDeviceContext->GSSetShader(NULL, NULL, 0);
-	m_pDeviceContext->IASetInputLayout(m_pInputLayout);
-
-	UINT uStride = sizeof(VertexPC);
-	UINT uOffset = 0;
-		
-	m_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uStride, &uOffset);
-	m_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	m_pDeviceContext->IASetPrimitiveTopology(m_uPrimitiveTopology);
-	m_pDeviceContext->DrawIndexed(6, 0, 0);
-
+	UINT iStride = sizeof(VertexPC);
+	UINT iOffset = 0;
+	m_pDContext->IASetVertexBuffers(0, 1, &m_pVB, &iStride, &iOffset);
+	m_pDContext->IASetIndexBuffer(m_pIB, DXGI_FORMAT_R16_UINT, 0);
+	m_pDContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
+	m_pDContext->RSSetState(m_pRasterizerState);
+	m_pDContext->DrawIndexed(m_iNumIndex, 0, 0);
 	return true;
 }
 
 bool bgShapeGuideAxis::Release()
 {
-	SAFE_RELEASE(m_pIndexBuffer);
-	SAFE_RELEASE(m_pVertexBuffer);
 	return true;
 }
 
-HRESULT bgShapeGuideAxis::Create()
+HRESULT bgShapeGuideAxis::CreateBuffer()
 {
 	HRESULT hr = S_OK;
 
-	VertexPC vVertices[] =
+	// 버텍스 정보
+	VertexPC Vertices[] =
 	{
-		{ { 0.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // 원점 빨강
-		{ { 0.5f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // x축 빨강
-		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // 원점 초록
-		{ { 0.0f, 0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // y축 초록
-		{ { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // 원점 파랑
-		{ { 0.0f, 0.0f, 0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // z축 파랑
+		{ { 0.0f, 0.0f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f } }, // 원점 빨강
+		{ { 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f } }, // x축 빨강
+		{ { 0.0f, 0.0f, 0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f } }, // 원점 초록
+		{ { 0.0f, 1.0f, 0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f } }, // y축 초록
+		{ { 0.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f } }, // 원점 파랑
+		{ { 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f, 1.0f } }, // z축 파랑
 	};
-	UINT uIndices[] =
+	m_iNumVertex = COUNTOF(Vertices);
+
+	// 인덱스 정보
+	UINT iIndices[] =
 	{
 		0, 1, // x축 빨강
 		2, 3, // y축 초록
 		4, 5, // z축 파랑
 	};
+	m_iNumIndex = COUNTOF(iIndices);
 
-	m_iNumVertex = COUNTOF(vVertices);
-	m_iNumIndex = COUNTOF(uIndices);
+	// 버텍스버퍼 생성
+	D3D11_BUFFER_DESC VBDesc;
+	VBDesc.ByteWidth = sizeof(VertexPC) * m_iNumVertex;
+	VBDesc.Usage = D3D11_USAGE_DEFAULT;
+	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	VBDesc.CPUAccessFlags = 0;
+	VBDesc.MiscFlags = 0;
+	VBDesc.StructureByteStride = 0;
 
-	D3D11_BUFFER_DESC BufferDescVertex;
-	BufferDescVertex.ByteWidth = sizeof(VertexPC) * m_iNumVertex;
-	BufferDescVertex.Usage = D3D11_USAGE_DEFAULT;
-	BufferDescVertex.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	BufferDescVertex.CPUAccessFlags = 0;
-	BufferDescVertex.MiscFlags = 0;
-	BufferDescVertex.StructureByteStride = 0;
+	D3D11_SUBRESOURCE_DATA VData;
+	VData.pSysMem = Vertices;
+	VData.SysMemPitch = 0;
+	VData.SysMemSlicePitch = 0;
 
-	D3D11_SUBRESOURCE_DATA DataVertex;
-	DataVertex.pSysMem = vVertices;
-	DataVertex.SysMemPitch = 0;
-	DataVertex.SysMemSlicePitch = 0;
-	HR_RETURN(m_pDevice->CreateBuffer(&BufferDescVertex, &DataVertex, &m_pVertexBuffer));
+	HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_pVB));
 
-	D3D11_BUFFER_DESC BufferDescIndex;
-	BufferDescIndex.ByteWidth = sizeof(UINT) * m_iNumIndex;
-	BufferDescIndex.Usage = D3D11_USAGE_DEFAULT;
-	BufferDescIndex.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	BufferDescIndex.CPUAccessFlags = 0;
-	BufferDescIndex.MiscFlags = 0;
-	BufferDescIndex.StructureByteStride = 0;
+	// 인덱스버퍼 생성
+	D3D11_BUFFER_DESC IBDesc;
+	IBDesc.ByteWidth = sizeof(UINT) * m_iNumIndex;
+	IBDesc.Usage = D3D11_USAGE_DEFAULT;
+	IBDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	IBDesc.CPUAccessFlags = 0;
+	IBDesc.MiscFlags = 0;
+	IBDesc.StructureByteStride = 0;
 
-	D3D11_SUBRESOURCE_DATA DataIndex;
-	DataIndex.pSysMem = uIndices;
-	DataIndex.SysMemPitch = 0;
-	DataIndex.SysMemSlicePitch = 0;
-	HR_RETURN(m_pDevice->CreateBuffer(&BufferDescIndex, &DataIndex, &m_pIndexBuffer));
+	D3D11_SUBRESOURCE_DATA IData;
+	IData.pSysMem = iIndices;
+	IData.SysMemPitch = 0;
+	IData.SysMemSlicePitch = 0;
 
-	hr = CreateCB();
+	HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_pIB));
 
 	return hr;
 }
 
-HRESULT bgShapeGuideAxis::Load()
+HRESULT bgShapeGuideAxis::LoadShader()
 {
 	HRESULT hr = S_OK;
 
 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-
 #if defined( _DEBUG ) || defined( _DEBUG )
 	dwShaderFlags |= D3DCOMPILE_DEBUG;
 #endif
 
-	ID3DBlob* pVSBuf = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PC_VS.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSBuf, NULL, NULL));
-	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), NULL, &m_pVertexShader));
+	// 정점쉐이더 로드
+	ID3DBlob* pVSB = NULL;
+	HR_RETURN(D3DX11CompileFromFile(L"PC.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
+	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pVSB->GetBufferPointer(), pVSB->GetBufferSize(), NULL, &m_pVS));
 
-	ID3DBlob* pPSBuf = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PC_PS.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSBuf, NULL, NULL));
-	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pPSBuf->GetBufferPointer(), pPSBuf->GetBufferSize(), NULL, &m_pPixelShader));
-	/*
-	ID3DBlob* pGSBuf = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PC_GS.hlsl", NULL, NULL, "GS", "gs_5_0", dwShaderFlags, NULL, NULL, &pGSBuf, NULL, NULL));
-	HR_RETURN(m_pDevice->CreateGeometryShader((DWORD*)pGSBuf->GetBufferPointer(), pGSBuf->GetBufferSize(), NULL, &m_pGeometryShader));
-	*/
+	// 픽셀쉐이더 로드
+	ID3DBlob* pPSB = NULL;
+	HR_RETURN(D3DX11CompileFromFile(L"PC.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
+	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pPSB->GetBufferPointer(), pPSB->GetBufferSize(), NULL, &m_pPS));
+
+	// 레이아웃 생성
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	HR_RETURN(m_pDevice->CreateInputLayout(layout, 2, pVSBuf->GetBufferPointer(), pVSBuf->GetBufferSize(), &m_pInputLayout));
-
-	SAFE_RELEASE(pVSBuf);
-	SAFE_RELEASE(pPSBuf);
-	//SAFE_RELEASE(pGSBuf);
-	SAFE_RELEASE(m_pRasterizerState);
-
-	D3D11_RASTERIZER_DESC RSDesc;
-	memset(&RSDesc, 0, sizeof(D3D11_RASTERIZER_DESC));
-	RSDesc.FillMode = D3D11_FILL_SOLID;
-	RSDesc.CullMode = D3D11_CULL_NONE;
-	RSDesc.DepthClipEnable = TRUE;
-
-	HR_RETURN(m_pDevice->CreateRasterizerState(&RSDesc, &m_pRasterizerState));
+	HR_RETURN(m_pDevice->CreateInputLayout(layout, 2, pVSB->GetBufferPointer(), pVSB->GetBufferSize(), &m_pInputLayout));
 
 	return hr;
 }
