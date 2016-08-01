@@ -90,6 +90,7 @@ bool bgCore::PreRender()
 	float ClearColor[4] = { 0.0f, 0.25f, 0.5f, 1.0f };
 	m_pDContext->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
 	m_pDContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	TransMatrixBuffer(&g_MatrixBuffer, &m_CameraViewport[0]);
 	return true;
 }
 

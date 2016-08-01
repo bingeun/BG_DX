@@ -16,19 +16,26 @@ bool bgShapeGuideAxis::Init()
 
 bool bgShapeGuideAxis::Frame()
 {
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
+	pCBData->matWorld = g_MatrixBuffer.matWorld;
+	pCBData->matView = g_MatrixBuffer.matView;
+	pCBData->matProj = g_MatrixBuffer.matProj;
+	m_pDContext->Unmap(m_pCB, 0);
 	return true;
 }
 
 bool bgShapeGuideAxis::Render()
 {
-	m_pDContext->UpdateSubresource(m_pCB, 0, NULL, &g_MatrixBuffer, 0, 0);
-
-	m_pDContext->IASetInputLayout(m_pInputLayout);
+	m_pDContext->VSSetConstantBuffers(0, 1, &m_pCB);
+	//m_pDContext->UpdateSubresource(m_pCB, 0, NULL, &g_MatrixBuffer, 0, 0);
 	m_pDContext->VSSetShader(m_pVS, NULL, 0);
 	m_pDContext->HSSetShader(NULL, NULL, 0);
 	m_pDContext->DSSetShader(NULL, NULL, 0);
 	m_pDContext->GSSetShader(NULL, NULL, 0);
 	m_pDContext->PSSetShader(m_pPS, NULL, 0);
+	m_pDContext->IASetInputLayout(m_pInputLayout);
 
 	UINT iStride = sizeof(VertexPC);
 	UINT iOffset = 0;

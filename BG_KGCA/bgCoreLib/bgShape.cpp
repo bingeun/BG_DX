@@ -54,6 +54,7 @@ bool bgShape::Release()
 	SAFE_RELEASE(m_pDS);
 	SAFE_RELEASE(m_pCS);
 
+	SAFE_RELEASE(m_pCB);
 	SAFE_RELEASE(m_pIB);
 	SAFE_RELEASE(m_pVB);
 	return true;

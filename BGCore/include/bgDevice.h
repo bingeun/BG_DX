@@ -1,6 +1,7 @@
 #pragma once
 #include "bgStd.h"
 #include "bgCamera.h"
+#include "bgShape.h"
 
 #define SIZE_VIEWPORT	(1+4+4)
 
@@ -20,16 +21,11 @@ public:
 	ID3D11RasterizerState*	m_pRSSolidNone;
 	ID3D11RasterizerState*	m_pRSSolidFront;
 
-	//ID3D11VertexShader*     m_pVertexShader;
-	//ID3D11PixelShader*      m_pPixelShader;
-
 	D3D11_VIEWPORT			m_Viewport[SIZE_VIEWPORT];
 	D3D_DRIVER_TYPE			m_DriverType;
 	BOOL					m_bVsync;
 
 public:
-	//D3DXMATRIX		m_matWorld;
-	//D3DXMATRIX		m_matProj;
 	ID3D11Buffer*	m_pMatrixBuffer; // Matrix(Constant) Buffer
 	bgCamera		m_CameraViewport[SIZE_VIEWPORT];
 
@@ -37,6 +33,8 @@ public:
 	float	m_fAspect;
 	float	m_fScreenNear;
 	float	m_fScreenFar;
+
+	float	m_fSpeedCamera;
 
 public:
 	bgDevice();
@@ -47,4 +45,5 @@ public:
 	void	ReleaseDevice();
 
 	HRESULT CreateCB();
+	void	TransMatrixBuffer(MATRIX_BUFFER* pMatrixBuffer, bgCamera* pCamera);
 };

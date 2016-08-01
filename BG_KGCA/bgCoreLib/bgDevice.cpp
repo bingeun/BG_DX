@@ -3,6 +3,7 @@
 
 bgDevice::bgDevice()
 {
+	m_fSpeedCamera = 2.0f;
 }
 
 bgDevice::~bgDevice()
@@ -86,7 +87,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	HR_RETURN(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer));
 	HR_RETURN(m_pDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pRenderTargetView));
 	SAFE_RELEASE(pBackBuffer);
-
+	
 	D3D11_TEXTURE2D_DESC DepthBufferDesc;
 	ZeroMemory(&DepthBufferDesc, sizeof(DepthBufferDesc));
 	DepthBufferDesc.Width = iWidth;
@@ -128,7 +129,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	DepthStencilViewDesc.Texture2D.MipSlice = 0;
 	HR_RETURN(m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, &DepthStencilViewDesc, &m_pDepthStencilView));
-
+	
 	m_pDContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
 	int iViewport;
@@ -251,19 +252,12 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	RSDesc.CullMode = D3D11_CULL_FRONT;
 	m_pDevice->CreateRasterizerState(&RSDesc, &m_pRSSolidFront);
 
-
+	CreateCB();
 
 	m_fFieldOfView = (float)D3DX_PI / 4.0f;
 	m_fAspect = (float)iWidth / (float)iHeight;
 	m_fScreenNear = 0.1f;
 	m_fScreenFar = 1000.0f;
-	D3DXMatrixIdentity(&g_MatrixBuffer.matWorld);
-	D3DXMatrixLookAtLH(&g_MatrixBuffer.matView, &m_CameraViewport[0].m_Eye, &m_CameraViewport[0].m_At, &m_CameraViewport[0].m_Up);
-	D3DXMatrixPerspectiveFovLH(&g_MatrixBuffer.matProj, m_fFieldOfView, m_fAspect, m_fScreenNear, m_fScreenFar);
-
-	D3DXMatrixTranspose(&g_MatrixBuffer.matWorld, &g_MatrixBuffer.matWorld);
-	D3DXMatrixTranspose(&g_MatrixBuffer.matView, &g_MatrixBuffer.matView);
-	D3DXMatrixTranspose(&g_MatrixBuffer.matProj, &g_MatrixBuffer.matProj);
 
 	return hr;
 }
@@ -274,6 +268,8 @@ void bgDevice::ReleaseDevice()
 	{
 		m_pSwapChain->SetFullscreenState(FALSE, NULL);
 	}
+
+	SAFE_RELEASE(m_pMatrixBuffer);
 
 	SAFE_RELEASE(m_pRSWireNone);
 	SAFE_RELEASE(m_pRSSolidNone);
@@ -302,4 +298,15 @@ HRESULT bgDevice::CreateCB()
 	HR_RETURN(m_pDevice->CreateBuffer(&CBDesc, NULL, &m_pMatrixBuffer));
 
 	return hr;
+}
+
+void bgDevice::TransMatrixBuffer(MATRIX_BUFFER* pMatrixBuffer, bgCamera* pCamera)
+{
+	D3DXMatrixIdentity(&pMatrixBuffer->matWorld);
+	D3DXMatrixLookAtLH(&pMatrixBuffer->matView, &pCamera->m_Eye, &pCamera->m_At, &pCamera->m_Up);
+	D3DXMatrixPerspectiveFovLH(&pMatrixBuffer->matProj, m_fFieldOfView, m_fAspect, m_fScreenNear, m_fScreenFar);
+
+	D3DXMatrixTranspose(&pMatrixBuffer->matWorld, &pMatrixBuffer->matWorld);
+	D3DXMatrixTranspose(&pMatrixBuffer->matView, &pMatrixBuffer->matView);
+	D3DXMatrixTranspose(&pMatrixBuffer->matProj, &pMatrixBuffer->matProj);
 }

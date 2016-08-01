@@ -39,6 +39,34 @@ bool dx01::Init()
 
 bool dx01::Frame()
 {
+	if (I_DInput.IsKeyDown(DIK_A)) // LEFT
+	{
+		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera;
+	}
+	if (I_DInput.IsKeyDown(DIK_D)) // RIGHT
+	{
+		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera;
+	}
+	if (I_DInput.IsKeyDown(DIK_W)) // UP
+	{
+		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera;
+	}
+	if (I_DInput.IsKeyDown(DIK_S)) // DOWN
+	{
+		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera;
+	}
+	if (I_DInput.IsKeyDown(DIK_Q)) // BACK
+	{
+		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera;
+	}
+	if (I_DInput.IsKeyDown(DIK_E)) // FRONT
+	{
+		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera;
+	}
+
+	//m_objBox.Frame();
+	//m_objPlane.Frame();
+	m_objGuideAxis.Frame();
 	return true;
 }
 
