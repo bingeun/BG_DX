@@ -64,8 +64,8 @@ public:
 	virtual bool	Render();
 	virtual bool	Release();
 
-	virtual HRESULT	CreateBuffer() = 0;
-	virtual HRESULT	LoadShader() = 0;
+	virtual HRESULT	CreateBuffer() { return true; }
+	virtual HRESULT	LoadShader() { return true; }
 
 public:
 	bool	SetDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pDeviceContext, ID3D11RasterizerState* pRasterizerState, ID3D11Buffer* pCB = NULL);

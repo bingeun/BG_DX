@@ -30,10 +30,10 @@ bool dx01::Init()
 	//m_objPlane.CreateBuffer();
 	//m_objPlane.LoadShader();
 
-	m_objGuideAxis.Init();
-	m_objGuideAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
-	m_objGuideAxis.CreateBuffer();
-	m_objGuideAxis.LoadShader();
+	m_objWorldAxis.Init();
+	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
+	m_objWorldAxis.CreateBuffer(1000.0f);
+	m_objWorldAxis.LoadShader();
 	return true;
 }
 
@@ -49,11 +49,11 @@ bool dx01::Frame()
 	}
 	if (I_DInput.IsKeyDown(DIK_W)) // UP
 	{
-		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera;
+		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera;
 	}
 	if (I_DInput.IsKeyDown(DIK_S)) // DOWN
 	{
-		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera;
+		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera;
 	}
 	if (I_DInput.IsKeyDown(DIK_Q)) // BACK
 	{
@@ -66,7 +66,7 @@ bool dx01::Frame()
 
 	//m_objBox.Frame();
 	//m_objPlane.Frame();
-	m_objGuideAxis.Frame();
+	m_objWorldAxis.Frame();
 	return true;
 }
 
@@ -74,7 +74,7 @@ bool dx01::Render()
 {
 	//m_objBox.Render();
 	//m_objPlane.Render();
-	m_objGuideAxis.Render();
+	m_objWorldAxis.Render();
 	return true;
 }
 

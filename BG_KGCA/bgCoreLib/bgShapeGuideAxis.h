@@ -14,6 +14,6 @@ public:
 	bool	Render();
 	bool	Release();
 
-	HRESULT	CreateBuffer();
+	HRESULT	CreateBuffer(float fLength = 1.0f);
 	HRESULT	LoadShader();
 };

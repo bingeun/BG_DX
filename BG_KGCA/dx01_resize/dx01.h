@@ -8,7 +8,7 @@
 class dx01 : public bgCore
 {
 public:
-	bgShapeGuideAxis	m_objGuideAxis;
+	bgShapeGuideAxis	m_objWorldAxis;
 	//bgShapePlane		m_objPlane;
 	//bgShapeBox			m_objBox;
 

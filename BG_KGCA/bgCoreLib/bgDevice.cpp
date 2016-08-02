@@ -140,7 +140,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	m_Viewport[iViewport].MaxDepth = 1.0f;
 	m_Viewport[iViewport].TopLeftX = 0.0f;
 	m_Viewport[iViewport].TopLeftY = 0.0f;
-	m_CameraViewport[iViewport].m_Eye = D3DXVECTOR3(1.0f, 1.0f, -5.0f);
+	m_CameraViewport[iViewport].m_Eye = D3DXVECTOR3(5.0f, 5.0f, -5.0f); // 기본 뷰포트, 기본 카메라
 	m_CameraViewport[iViewport].m_At = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_CameraViewport[iViewport].m_Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
