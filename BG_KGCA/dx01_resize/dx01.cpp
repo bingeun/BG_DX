@@ -20,15 +20,15 @@ dx01::~dx01()
 
 bool dx01::Init()
 {
-	//m_objBox.Init();
-	//m_objBox.SetDevice(m_pDevice, m_pDeviceContext, m_pRSSolidFront);
-	//m_objBox.CreateBuffer();
-	//m_objBox.LoadShader();
+	m_objWorldBox.Init();
+	m_objWorldBox.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
+	m_objWorldBox.CreateBuffer(1.0f);
+	m_objWorldBox.LoadShader();
 
-	//m_objPlane.Init();
-	//m_objPlane.SetDevice(m_pDevice, m_pDeviceContext, m_pRSSolidFront);
-	//m_objPlane.CreateBuffer();
-	//m_objPlane.LoadShader();
+	m_objWorldPlane.Init();
+	m_objWorldPlane.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
+	m_objWorldPlane.CreateBuffer(10.0f);
+	m_objWorldPlane.LoadShader();
 
 	m_objWorldAxis.Init();
 	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
@@ -47,33 +47,33 @@ bool dx01::Frame()
 	{
 		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera;
 	}
-	if (I_DInput.IsKeyDown(DIK_W)) // UP
+	if (I_DInput.IsKeyDown(DIK_E)) // UP
 	{
 		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera;
 	}
-	if (I_DInput.IsKeyDown(DIK_S)) // DOWN
+	if (I_DInput.IsKeyDown(DIK_Q)) // DOWN
 	{
 		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera;
 	}
-	if (I_DInput.IsKeyDown(DIK_Q)) // BACK
-	{
-		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera;
-	}
-	if (I_DInput.IsKeyDown(DIK_E)) // FRONT
+	if (I_DInput.IsKeyDown(DIK_W)) // FRONT
 	{
 		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera;
 	}
+	if (I_DInput.IsKeyDown(DIK_S)) // BACK
+	{
+		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera;
+	}
 
-	//m_objBox.Frame();
-	//m_objPlane.Frame();
+	m_objWorldBox.Frame();
+	m_objWorldPlane.Frame();
 	m_objWorldAxis.Frame();
 	return true;
 }
 
 bool dx01::Render()
 {
-	//m_objBox.Render();
-	//m_objPlane.Render();
+	m_objWorldBox.Render();
+	m_objWorldPlane.Render();
 	m_objWorldAxis.Render();
 	return true;
 }

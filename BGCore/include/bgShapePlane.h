@@ -1,5 +1,6 @@
 #pragma once
 #include "bgShape.h"
+#include "bgSys.h"
 
 class bgShapePlane : public bgShape
 {
@@ -13,6 +14,6 @@ public:
 	bool	Render();
 	bool	Release();
 
-	HRESULT	Create();
-	HRESULT	Load();
+	HRESULT	CreateBuffer(float fSize = 1.0f);
+	HRESULT	LoadShader();
 };

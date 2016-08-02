@@ -89,6 +89,12 @@
     <ClInclude Include="bgDInput.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
+    <ClInclude Include="bgShapePlane.h">
+      <Filter>헤더 파일\bgShape</Filter>
+    </ClInclude>
+    <ClInclude Include="bgShapeBox.h">
+      <Filter>헤더 파일\bgShape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
@@ -123,6 +129,12 @@
     </ClCompile>
     <ClCompile Include="bgDInput.cpp">
       <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgShapePlane.cpp">
+      <Filter>소스 파일\bgShape</Filter>
+    </ClCompile>
+    <ClCompile Include="bgShapeBox.cpp">
+      <Filter>소스 파일\bgShape</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

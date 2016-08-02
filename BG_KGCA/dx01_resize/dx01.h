@@ -2,15 +2,15 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "bgCore.h"
 #include "bgShapeGuideAxis.h"
-//#include "bgShapePlane.h"
-//#include "bgShapeBox.h"
+#include "bgShapePlane.h"
+#include "bgShapeBox.h"
 
 class dx01 : public bgCore
 {
 public:
 	bgShapeGuideAxis	m_objWorldAxis;
-	//bgShapePlane		m_objPlane;
-	//bgShapeBox			m_objBox;
+	bgShapePlane		m_objWorldPlane;
+	bgShapeBox			m_objWorldBox;
 
 public:
 	dx01();

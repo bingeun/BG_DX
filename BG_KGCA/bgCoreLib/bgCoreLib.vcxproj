@@ -33,7 +33,9 @@
     <ClInclude Include="bgDWrite.h" />
     <ClInclude Include="bgDInput.h" />
     <ClInclude Include="bgShape.h" />
+    <ClInclude Include="bgShapeBox.h" />
     <ClInclude Include="bgShapeGuideAxis.h" />
+    <ClInclude Include="bgShapePlane.h" />
     <ClInclude Include="bgSound.h" />
     <ClInclude Include="bgStd.h" />
     <ClInclude Include="bgSys.h" />
@@ -48,7 +50,9 @@
     <ClCompile Include="bgDWrite.cpp" />
     <ClCompile Include="bgDInput.cpp" />
     <ClCompile Include="bgShape.cpp" />
+    <ClCompile Include="bgShapeBox.cpp" />
     <ClCompile Include="bgShapeGuideAxis.cpp" />
+    <ClCompile Include="bgShapePlane.cpp" />
     <ClCompile Include="bgSound.cpp" />
     <ClCompile Include="bgTimer.cpp" />
     <ClCompile Include="bgWindow.cpp" />
