@@ -35,6 +35,7 @@
     <ClInclude Include="bgShape.h" />
     <ClInclude Include="bgShapeBox.h" />
     <ClInclude Include="bgShapeGuideAxis.h" />
+    <ClInclude Include="bgShapeGuideProj.h" />
     <ClInclude Include="bgShapePlane.h" />
     <ClInclude Include="bgSound.h" />
     <ClInclude Include="bgStd.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="bgShape.cpp" />
     <ClCompile Include="bgShapeBox.cpp" />
     <ClCompile Include="bgShapeGuideAxis.cpp" />
+    <ClCompile Include="bgShapeGuideProj.cpp" />
     <ClCompile Include="bgShapePlane.cpp" />
     <ClCompile Include="bgSound.cpp" />
     <ClCompile Include="bgTimer.cpp" />
