@@ -21,20 +21,27 @@ bool bgShapePlane::Frame()
 
 bool bgShapePlane::Render()
 {
-	m_pDContext->VSSetConstantBuffers(0, 1, &m_pCB);
-	m_pDContext->VSSetShader(m_pVS, NULL, 0);
-	m_pDContext->HSSetShader(NULL, NULL, 0);
-	m_pDContext->DSSetShader(NULL, NULL, 0);
-	m_pDContext->GSSetShader(NULL, NULL, 0);
-	m_pDContext->PSSetShader(m_pPS, NULL, 0);
-	m_pDContext->IASetInputLayout(m_pInputLayout);
-
 	UINT iStride = sizeof(VertexPCT);
 	UINT iOffset = 0;
 	m_pDContext->IASetVertexBuffers(0, 1, &m_pVB, &iStride, &iOffset);
 	m_pDContext->IASetIndexBuffer(m_pIB, DXGI_FORMAT_R32_UINT, 0);
+	m_pDContext->IASetInputLayout(m_pInputLayout);
 	m_pDContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
+
+	m_pDContext->VSSetShader(m_pVS, NULL, 0);
+	m_pDContext->VSSetConstantBuffers(0, 1, &m_pCB);
+	m_pDContext->HSSetShader(NULL, NULL, 0);
+	m_pDContext->DSSetShader(NULL, NULL, 0);
+	m_pDContext->GSSetShader(NULL, NULL, 0);
+	//m_pDContext->GSSetConstantBuffers(0, 1, &m_pCB);
 	m_pDContext->RSSetState(m_pRasterizerState);
+	m_pDContext->PSSetShader(m_pPS, NULL, 0);
+	//m_pDContext->PSSetConstantBuffers(0, 1, &m_pCB);
+
+	//m_pDContext->OMSetRenderTargets(1, &, &);
+	//m_pDContext->OMSetBlendState(1, &, &);
+	//m_pDContext->OMSetDepthStencilState(&, 0);
+
 	m_pDContext->DrawIndexed(m_iNumIndex, 0, 0);
 	return true;
 }
