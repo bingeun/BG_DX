@@ -55,7 +55,7 @@ bool bgCore::GameRelease()
 
 bool bgCore::PreInit()
 {
-	InitDevice(m_hWnd);
+	InitDevice(m_hWnd, m_iClientW, m_iClientH);
 	I_DInput.Create();
 	I_DInput.Init();
 	// 2D 텍스트(Log) 출력을 위한 초기화
@@ -133,20 +133,22 @@ bool bgCore::PrintInfo(TCHAR* pszString)
 	TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
 	if (m_bPrintKeyState)
 	{
-		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Pos[%d,%d,%d]\n%s%s%s %s%s%s %s%s%s\n%s%s%s %s%s%s %s%s%s\n%s"),
+		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Pos[%d,%d,%d]\n%s%s%s%s %s%s%s %s%s%s\n%s%s%s%s %s%s%s %s%s%s\n%s"),
 			g_iFPS, g_fSPF*1000.0f, g_fCurrent, I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,
 			(I_DInput.IsKeyDown(DIK_Q)) ? _T("[Q]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_W)) ? _T("[W]") : _T(" - "),
-			(I_DInput.IsKeyDown(DIK_E)) ? _T("[E]") : _T(" - "),		// QWE
-			_T("   "), //(I_DInput.IsKeyDown(DIK_O)) ? _T("[O]") : _T(" - "),
+			(I_DInput.IsKeyDown(DIK_E)) ? _T("[E]") : _T(" - "),
+			(I_DInput.IsKeyDown(DIK_R)) ? _T("[R]") : _T(" - "),		// QWER
+			_T("   "),
 			(I_DInput.IsKeyDown(DIK_UP)) ? _T("[U]") : _T(" - "),
-			_T("   "), //(I_DInput.IsKeyDown(DIK_P)) ? _T("[P]") : _T(" - "),		//  U
+			_T("   "),													//  U
 			(I_DInput.IsKeyDown(DIK_INSERT)) ? _T("Ins") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_HOME)) ? _T("Hom") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_PGUP)) ? _T("PgU") : _T(" - "),		// InsHomPgUp
 			(I_DInput.IsKeyDown(DIK_A)) ? _T("[A]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_S)) ? _T("[S]") : _T(" - "),
-			(I_DInput.IsKeyDown(DIK_D)) ? _T("[D]") : _T(" - "),		// ASD
+			(I_DInput.IsKeyDown(DIK_D)) ? _T("[D]") : _T(" - "),
+			(I_DInput.IsKeyDown(DIK_F)) ? _T("[F]") : _T(" - "),		// ASDF
 			(I_DInput.IsKeyDown(DIK_LEFT)) ? _T("[L]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_DOWN)) ? _T("[D]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_RIGHT)) ? _T("[R]") : _T(" - "),	// LDR

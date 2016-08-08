@@ -1,99 +1,53 @@
-#include "dx01.h"
+#include "ProjectCandy.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	dx01 core;
-	if (core.InitWindow(hInstance, L"BG Project!", 800, 600))
+	ProjectCandy core;
+	if (core.InitWindow(hInstance, L"BG Project!", CLIENT_W, CLIENT_H))
 	{
 		core.AppRun();
 	}
 	return 1;
 }
 
-dx01::dx01()
+ProjectCandy::ProjectCandy()
 {
 }
 
-dx01::~dx01()
+ProjectCandy::~ProjectCandy()
 {
+	Release();
 }
 
-bool dx01::Init()
+bool ProjectCandy::Init()
 {
-	m_objWorldBox.Init();
-	m_objWorldBox.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_objWorldBox.CreateBuffer(1.0f);
-	m_objWorldBox.LoadShader();
-
-	m_objWorldPlane.Init();
-	m_objWorldPlane.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_objWorldPlane.CreateBuffer(10.0f);
-	m_objWorldPlane.LoadShader();
-
-	m_objWorldAxis.Init();
-	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
-	m_objWorldAxis.CreateBuffer(1000.0f);
-	m_objWorldAxis.LoadShader();
+	m_objBoard.Init();
+	m_objBoard.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
+	m_objBoard.CreateBuffer();
+	m_objBoard.LoadShader();
+	InitPlay();
 	return true;
 }
 
-bool dx01::Frame()
+bool ProjectCandy::Frame()
 {
-	// 카메라 이동
-	if (I_DInput.IsKeyDown(DIK_W))
-	{
-		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-	if (I_DInput.IsKeyDown(DIK_S))
-	{
-		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-	if (I_DInput.IsKeyDown(DIK_A))
-	{
-		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-	if (I_DInput.IsKeyDown(DIK_D))
-	{
-		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-	// 카메라 회전
-	if (I_DInput.IsKeyDown(DIK_Q))
-	{
-		m_CameraViewport[0].RotateLeft(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-	if (I_DInput.IsKeyDown(DIK_E))
-	{
-		m_CameraViewport[0].RotateRight(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-	if (I_DInput.IsKeyDown(DIK_R))
-	{
-		m_CameraViewport[0].RotateUp(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-	if (I_DInput.IsKeyDown(DIK_F))
-	{
-		m_CameraViewport[0].RotateDown(m_Timer.m_fSPF * m_fSpeedCamera);
-	}
-
-	m_objWorldBox.Frame();
-	m_objWorldPlane.Frame();
-	m_objWorldAxis.Frame();
+	m_objBoard.Frame();
 	return true;
 }
 
-bool dx01::Render()
+bool ProjectCandy::Render()
 {
-	m_objWorldBox.Render();
-	m_objWorldPlane.Render();
-	m_objWorldAxis.Render();
+	m_objBoard.Render();
 	return true;
 }
 
-bool dx01::Release()
+bool ProjectCandy::Release()
 {
+	m_objBoard.Release();
 	return true;
 }
 
-LRESULT CALLBACK dx01::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK ProjectCandy::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
@@ -191,4 +145,31 @@ LRESULT CALLBACK dx01::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	}
 	break;
 	}
+}
+
+void ProjectCandy::InitPlay()
+{
+	m_v2BoardPos = D3DXVECTOR2((float)BOARD_X, (float)BOARD_Y);
+	m_v2TileStride = D3DXVECTOR2((float)TILE_W, (float)TILE_H);
+	m_v2TileStrideUV = D3DXVECTOR2(1.0f / 8.0f, 1.0f / 8.0f);
+
+	for (int y = 0; y < BOARD_H; y++)
+	{
+		for (int x = 0; x < BOARD_W; x++)
+		{
+			m_Board[x][y].Candy.iType = 0;
+			m_Board[x][y].Candy.iValue = (x + y) % 6;
+			m_Board[x][y].Tile.iType = 0;
+			m_Board[x][y].Tile.iValue = 0;
+		}
+	}
+}
+
+void ProjectCandy::PutTile(float fX, float fY, int iNum)
+{
+
+}
+
+void ProjectCandy::PutBoard()
+{
 }

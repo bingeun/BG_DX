@@ -98,6 +98,12 @@
     <ClInclude Include="bgShapeGuideProj.h">
       <Filter>헤더 파일\bgShape</Filter>
     </ClInclude>
+    <ClInclude Include="bgArcBall.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgTexture.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
@@ -141,6 +147,12 @@
     </ClCompile>
     <ClCompile Include="bgShapeGuideProj.cpp">
       <Filter>소스 파일\bgShape</Filter>
+    </ClCompile>
+    <ClCompile Include="bgArcBall.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgTexture.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

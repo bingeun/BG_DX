@@ -11,5 +11,17 @@ public:
 public:
 	bgCamera();
 	virtual ~bgCamera();
-};
 
+public:
+	void	MoveForward(float fValue);
+	void	MoveBackward(float fValue);
+	void	MoveLeft(float fValue);
+	void	MoveRight(float fValue);
+	void	MoveUp(float fValue);
+	void	MoveDown(float fValue);
+
+	void	RotateLeft(float fValue);
+	void	RotateRight(float fValue);
+	void	RotateUp(float fValue);
+	void	RotateDown(float fValue);
+};

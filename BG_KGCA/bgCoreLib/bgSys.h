@@ -12,5 +12,8 @@ extern int			g_iFPS;
 extern float		g_fSPF;
 extern float		g_fCurrent;
 
+// bgDevice
+extern ID3D11Device*	g_pDevice;
+
 // bgShape
 extern MATRIX_BUFFER	g_MatrixBuffer;

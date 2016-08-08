@@ -45,4 +45,6 @@ public:
 
 	virtual bool	PrintInfo(TCHAR* pszString);
 	virtual bool	PrintLog(TCHAR* pszString, int iX, int iY);
+
+public:
 };

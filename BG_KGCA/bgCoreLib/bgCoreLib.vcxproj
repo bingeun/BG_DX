@@ -26,6 +26,7 @@
     <ClInclude Include="..\..\FMOD\include\fmod_errors.h" />
     <ClInclude Include="..\..\FMOD\include\fmod_memoryinfo.h" />
     <ClInclude Include="..\..\FMOD\include\fmod_output.h" />
+    <ClInclude Include="bgArcBall.h" />
     <ClInclude Include="bgCamera.h" />
     <ClInclude Include="bgCollider.h" />
     <ClInclude Include="bgCore.h" />
@@ -40,10 +41,12 @@
     <ClInclude Include="bgSound.h" />
     <ClInclude Include="bgStd.h" />
     <ClInclude Include="bgSys.h" />
+    <ClInclude Include="bgTexture.h" />
     <ClInclude Include="bgTimer.h" />
     <ClInclude Include="bgWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bgArcBall.cpp" />
     <ClCompile Include="bgCamera.cpp" />
     <ClCompile Include="bgCollider.cpp" />
     <ClCompile Include="bgCore.cpp" />
@@ -56,6 +59,7 @@
     <ClCompile Include="bgShapeGuideProj.cpp" />
     <ClCompile Include="bgShapePlane.cpp" />
     <ClCompile Include="bgSound.cpp" />
+    <ClCompile Include="bgTexture.cpp" />
     <ClCompile Include="bgTimer.cpp" />
     <ClCompile Include="bgWindow.cpp" />
   </ItemGroup>
