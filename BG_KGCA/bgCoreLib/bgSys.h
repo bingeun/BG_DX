@@ -1,5 +1,6 @@
 #pragma once
 #include "bgWindow.h"
+#include "bgDevice.h"
 #include "bgShape.h"
 
 // bgWindow
@@ -13,7 +14,7 @@ extern float		g_fSPF;
 extern float		g_fCurrent;
 
 // bgDevice
-extern ID3D11Device*	g_pDevice;
+extern bgDevice*	g_pDevice;
 
 // bgShape
 extern MATRIX_BUFFER	g_MatrixBuffer;

@@ -13,6 +13,7 @@ public:
 	ID3D11RenderTargetView*	m_pRenderTargetView;
 	IDXGISwapChain*			m_pSwapChain;
 
+	ID3D11Texture2D*		m_pBackBuffer;
 	ID3D11Texture2D*		m_pDepthStencilBuffer;
 	ID3D11DepthStencilState*m_pDepthStencilState;
 	ID3D11DepthStencilView*	m_pDepthStencilView;

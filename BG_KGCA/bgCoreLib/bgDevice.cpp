@@ -1,8 +1,10 @@
 #include "bgDevice.h"
-#include "bgSys.h"
+
+bgDevice*	g_pDevice;
 
 bgDevice::bgDevice()
 {
+	g_pDevice = this;
 	m_fSpeedCamera = 2.0f;
 }
 
@@ -83,10 +85,9 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	HR_RETURN(D3D11CreateDeviceAndSwapChain(NULL, m_DriverType, NULL, createDeviceFlags, &FeatureLevel, 1, D3D11_SDK_VERSION,
 											&SwapChainDesc, &m_pSwapChain, &m_pDevice, NULL, &m_pDContext));
 
-	ID3D11Texture2D* pBackBuffer;
-	HR_RETURN(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer));
-	HR_RETURN(m_pDevice->CreateRenderTargetView(pBackBuffer, NULL, &m_pRenderTargetView));
-	SAFE_RELEASE(pBackBuffer);
+	
+	HR_RETURN(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pBackBuffer));
+	HR_RETURN(m_pDevice->CreateRenderTargetView(m_pBackBuffer, NULL, &m_pRenderTargetView));
 	
 	D3D11_TEXTURE2D_DESC DepthBufferDesc;
 	ZeroMemory(&DepthBufferDesc, sizeof(DepthBufferDesc));
@@ -277,6 +278,7 @@ void bgDevice::ReleaseDevice()
 	SAFE_RELEASE(m_pDepthStencilView);
 	SAFE_RELEASE(m_pDepthStencilState);
 	SAFE_RELEASE(m_pDepthStencilBuffer);
+	SAFE_RELEASE(m_pBackBuffer);
 
 	SAFE_RELEASE(m_pRenderTargetView);
 	SAFE_RELEASE(m_pDContext);

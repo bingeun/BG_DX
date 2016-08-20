@@ -102,7 +102,7 @@
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
     <ClInclude Include="bgTexture.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +152,7 @@
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
     <ClCompile Include="bgTexture.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
