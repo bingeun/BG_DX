@@ -34,6 +34,9 @@ bool dx01::Init()
 	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
+
+	int i;
+	i = I_TextureMgr.Add(L"../../data/char/char1.png", 500, 500);
 	return true;
 }
 
@@ -43,27 +46,33 @@ bool dx01::Frame()
 	if (I_DInput.IsKeyDown(DIK_W))
 	{
 		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_S))
 	{
 		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_A))
 	{
 		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_D))
 	{
 		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera; // 임시
 	}
 	// 카메라 회전
 	if (I_DInput.IsKeyDown(DIK_Q))
 	{
 		m_CameraViewport[0].RotateLeft(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_E))
 	{
 		m_CameraViewport[0].RotateRight(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_R))
 	{
@@ -77,6 +86,7 @@ bool dx01::Frame()
 	m_objWorldBox.Frame();
 	m_objWorldPlane.Frame();
 	m_objWorldAxis.Frame();
+
 	return true;
 }
 
@@ -85,6 +95,7 @@ bool dx01::Render()
 	m_objWorldBox.Render();
 	m_objWorldPlane.Render();
 	m_objWorldAxis.Render();
+
 	return true;
 }
 

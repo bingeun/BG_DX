@@ -27,6 +27,12 @@
     <Filter Include="소스 파일\bgShape">
       <UniqueIdentifier>{628d2304-1882-4216-906c-98cca8b7e6c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\bgObject">
+      <UniqueIdentifier>{86ce8132-64a8-4e29-a11a-1c72bbd5e588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\bgObject">
+      <UniqueIdentifier>{4abb65bb-bdbc-433a-8c33-0ac2cd6da523}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\FMOD\include\fmod.h">
@@ -104,6 +110,12 @@
     <ClInclude Include="bgTexture.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
+    <ClInclude Include="bgHeightMap.h">
+      <Filter>헤더 파일\bgObject</Filter>
+    </ClInclude>
+    <ClInclude Include="bgTextureMgr.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
@@ -152,6 +164,12 @@
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
     <ClCompile Include="bgTexture.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgHeightMap.cpp">
+      <Filter>소스 파일\bgObject</Filter>
+    </ClCompile>
+    <ClCompile Include="bgTextureMgr.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
   </ItemGroup>

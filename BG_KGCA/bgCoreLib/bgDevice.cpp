@@ -87,6 +87,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 
 	
 	HR_RETURN(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&m_pBackBuffer));
+	m_pBackBuffer->GetDesc(&m_descBackBuffer);
 	HR_RETURN(m_pDevice->CreateRenderTargetView(m_pBackBuffer, NULL, &m_pRenderTargetView));
 	
 	D3D11_TEXTURE2D_DESC DepthBufferDesc;
@@ -252,6 +253,20 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	RSDesc.FillMode = D3D11_FILL_SOLID;
 	RSDesc.CullMode = D3D11_CULL_BACK;
 	m_pDevice->CreateRasterizerState(&RSDesc, &m_pRSSolidFront);
+
+	D3D11_BLEND_DESC descBlendState;
+	ZeroMemory(&descBlendState, sizeof(D3D11_BLEND_DESC));
+	descBlendState.AlphaToCoverageEnable = FALSE;
+	descBlendState.IndependentBlendEnable = FALSE;
+	descBlendState.RenderTarget[0].BlendEnable = TRUE;
+	descBlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	descBlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	descBlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	descBlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	descBlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	descBlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	descBlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	m_pDevice->CreateBlendState(&descBlendState, &m_pBSAlphaBlend);
 
 	CreateCB();
 

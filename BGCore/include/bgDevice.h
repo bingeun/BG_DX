@@ -14,9 +14,12 @@ public:
 	IDXGISwapChain*			m_pSwapChain;
 
 	ID3D11Texture2D*		m_pBackBuffer;
+	D3D11_TEXTURE2D_DESC	m_descBackBuffer;
 	ID3D11Texture2D*		m_pDepthStencilBuffer;
 	ID3D11DepthStencilState*m_pDepthStencilState;
 	ID3D11DepthStencilView*	m_pDepthStencilView;
+
+	ID3D11BlendState*		m_pBSAlphaBlend;
 
 	ID3D11RasterizerState*	m_pRSWireNone;
 	ID3D11RasterizerState*	m_pRSSolidNone;
