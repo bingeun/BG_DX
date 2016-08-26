@@ -134,6 +134,15 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	
 	m_pDContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
+	D3D11_BUFFER_DESC CBDesc;
+	CBDesc.ByteWidth = sizeof(MATRIX_BUFFER);
+	CBDesc.Usage = D3D11_USAGE_DYNAMIC;
+	CBDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	CBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	CBDesc.MiscFlags = 0;
+	CBDesc.StructureByteStride = 0;
+	HR_RETURN(m_pDevice->CreateBuffer(&CBDesc, NULL, &m_pMatrixBuffer));
+
 	int iViewport;
 	iViewport = 0; // 0 = 단일모드
 	m_Viewport[iViewport].Width = (float)iWidth;
@@ -266,9 +275,25 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	descBlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	descBlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 	descBlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	m_pDevice->CreateBlendState(&descBlendState, &m_pBSAlphaBlend);
+	m_pDevice->CreateBlendState(&descBlendState, &m_pAlphaBlend);
 
-	CreateCB();
+	m_iTexAddressMode = D3D11_TEXTURE_ADDRESS_WRAP;
+	m_TexFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	D3D11_SAMPLER_DESC descSampler;
+	ZeroMemory(&descSampler, sizeof(D3D11_SAMPLER_DESC));
+	descSampler.Filter = m_TexFilter;
+	descSampler.AddressU = (D3D11_TEXTURE_ADDRESS_MODE)m_iTexAddressMode;
+	descSampler.AddressV = (D3D11_TEXTURE_ADDRESS_MODE)m_iTexAddressMode;
+	descSampler.AddressW = (D3D11_TEXTURE_ADDRESS_MODE)m_iTexAddressMode;
+	descSampler.MaxAnisotropy = 16;
+	descSampler.BorderColor[0] = 1.0f;
+	descSampler.BorderColor[1] = 0.0f;
+	descSampler.BorderColor[2] = 0.0f;
+	descSampler.BorderColor[3] = 1.0f;
+	descSampler.MinLOD = 0;
+	descSampler.MaxLOD = 1;
+	descSampler.MipLODBias = 0;
+	g_pDevice->m_pDevice->CreateSamplerState(&descSampler, &m_pSamplerState);
 
 	m_fFieldOfView = (float)D3DX_PI / 4.0f;
 	m_fAspect = (float)iWidth / (float)iHeight;
@@ -290,6 +315,7 @@ void bgDevice::ReleaseDevice()
 	SAFE_RELEASE(m_pRSWireNone);
 	SAFE_RELEASE(m_pRSSolidNone);
 	SAFE_RELEASE(m_pRSSolidFront);
+	SAFE_RELEASE(m_pAlphaBlend);
 	SAFE_RELEASE(m_pDepthStencilView);
 	SAFE_RELEASE(m_pDepthStencilState);
 	SAFE_RELEASE(m_pDepthStencilBuffer);
@@ -299,22 +325,6 @@ void bgDevice::ReleaseDevice()
 	SAFE_RELEASE(m_pDContext);
 	SAFE_RELEASE(m_pDevice);
 	SAFE_RELEASE(m_pSwapChain);
-}
-
-HRESULT bgDevice::CreateCB()
-{
-	HRESULT hr = S_OK;
-
-	D3D11_BUFFER_DESC CBDesc;
-	CBDesc.ByteWidth = sizeof(MATRIX_BUFFER);
-	CBDesc.Usage = D3D11_USAGE_DYNAMIC;
-	CBDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	CBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	CBDesc.MiscFlags = 0;
-	CBDesc.StructureByteStride = 0;
-	HR_RETURN(m_pDevice->CreateBuffer(&CBDesc, NULL, &m_pMatrixBuffer));
-
-	return hr;
 }
 
 void bgDevice::TransMatrixBuffer(MATRIX_BUFFER* pMatrixBuffer, bgCamera* pCamera)

@@ -91,7 +91,7 @@ bool bgCore::PreRender()
 	m_pDContext->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
 	m_pDContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	TransMatrixBuffer(&g_MatrixBuffer, &m_CameraViewport[0]);
-
+	
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 	m_pDContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
@@ -99,6 +99,7 @@ bool bgCore::PreRender()
 	pCBData->matView = g_MatrixBuffer.matView;
 	pCBData->matProj = g_MatrixBuffer.matProj;
 	m_pDContext->Unmap(m_pMatrixBuffer, 0);
+
 	return true;
 }
 

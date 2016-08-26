@@ -1,8 +1,8 @@
-#include "dx01.h"
+#include "dx02.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	dx01 core;
+	dx02 core;
 	if (core.InitWindow(hInstance, L"BG Project!", 800, 600))
 	{
 		core.AppRun();
@@ -10,15 +10,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	return 1;
 }
 
-dx01::dx01()
+dx02::dx02()
 {
 }
 
-dx01::~dx01()
+dx02::~dx02()
 {
 }
 
-bool dx01::Init()
+bool dx02::Init()
 {
 	m_objWorldBox.Init();
 	m_objWorldBox.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
@@ -35,17 +35,12 @@ bool dx01::Init()
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
 
-	m_objChar.Init();
-	m_objChar.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_objChar.CreateBuffer(5.0f);
-	m_objChar.LoadShader("VS", "PS_Tex");
-
-	m_iTextureID = I_TextureMgr.Add(L"../../data/char/char1.png");
+	m_ParserASE.Open(L"../../data/ase/box.ase");
 
 	return true;
 }
 
-bool dx01::Frame()
+bool dx02::Frame()
 {
 	// 카메라 이동
 	if (I_DInput.IsKeyDown(DIK_W))
@@ -92,32 +87,24 @@ bool dx01::Frame()
 	m_objWorldPlane.Frame();
 	m_objWorldAxis.Frame();
 
-	m_objChar.Frame();
-
 	return true;
 }
 
-bool dx01::Render()
+bool dx02::Render()
 {
 	m_objWorldBox.Render();
 	m_objWorldPlane.Render();
 	m_objWorldAxis.Render();
 
-	I_TextureMgr.GetPtr(m_iTextureID)->Apply();
-	m_pDContext->VSSetSamplers(0, 1, &m_pSamplerState);
-	m_pDContext->PSSetSamplers(0, 1, &m_pSamplerState);
-	m_pDContext->OMSetBlendState(m_pAlphaBlend, 0, -1);
-	m_objChar.Render();
-
 	return true;
 }
 
-bool dx01::Release()
+bool dx02::Release()
 {
 	return true;
 }
 
-LRESULT CALLBACK dx01::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK dx02::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{

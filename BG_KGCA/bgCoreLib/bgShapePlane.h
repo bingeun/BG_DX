@@ -15,5 +15,5 @@ public:
 	bool	Release();
 
 	HRESULT	CreateBuffer(float fSize = 1.0f);
-	HRESULT	LoadShader();
+	HRESULT	LoadShader(CHAR* szVS = "VS", CHAR* szPS = "PS");
 };

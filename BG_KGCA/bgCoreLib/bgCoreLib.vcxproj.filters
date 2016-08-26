@@ -116,6 +116,12 @@
     <ClInclude Include="bgTextureMgr.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
+    <ClInclude Include="bgParser.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
+    <ClInclude Include="bgParserASE.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
@@ -170,6 +176,12 @@
       <Filter>소스 파일\bgObject</Filter>
     </ClCompile>
     <ClCompile Include="bgTextureMgr.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgParser.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgParserASE.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
   </ItemGroup>

@@ -18,87 +18,35 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\FMOD\include\fmod.h" />
-    <ClInclude Include="..\..\FMOD\include\fmod.hpp" />
-    <ClInclude Include="..\..\FMOD\include\fmod_codec.h" />
-    <ClInclude Include="..\..\FMOD\include\fmod_dsp.h" />
-    <ClInclude Include="..\..\FMOD\include\fmod_errors.h" />
-    <ClInclude Include="..\..\FMOD\include\fmod_memoryinfo.h" />
-    <ClInclude Include="..\..\FMOD\include\fmod_output.h" />
-    <ClInclude Include="bgArcBall.h" />
-    <ClInclude Include="bgParserASE.h" />
-    <ClInclude Include="bgCamera.h" />
-    <ClInclude Include="bgCollider.h" />
-    <ClInclude Include="bgCore.h" />
-    <ClInclude Include="bgDevice.h" />
-    <ClInclude Include="bgDWrite.h" />
-    <ClInclude Include="bgDInput.h" />
-    <ClInclude Include="bgHeightMap.h" />
-    <ClInclude Include="bgParser.h" />
-    <ClInclude Include="bgShape.h" />
-    <ClInclude Include="bgShapeBox.h" />
-    <ClInclude Include="bgShapeGuideAxis.h" />
-    <ClInclude Include="bgShapeGuideProj.h" />
-    <ClInclude Include="bgShapePlane.h" />
-    <ClInclude Include="bgSound.h" />
-    <ClInclude Include="bgStd.h" />
-    <ClInclude Include="bgSys.h" />
-    <ClInclude Include="bgTexture.h" />
-    <ClInclude Include="bgTextureMgr.h" />
-    <ClInclude Include="bgTimer.h" />
-    <ClInclude Include="bgWindow.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="bgArcBall.cpp" />
-    <ClCompile Include="bgParserASE.cpp" />
-    <ClCompile Include="bgCamera.cpp" />
-    <ClCompile Include="bgCollider.cpp" />
-    <ClCompile Include="bgCore.cpp" />
-    <ClCompile Include="bgDevice.cpp" />
-    <ClCompile Include="bgDWrite.cpp" />
-    <ClCompile Include="bgDInput.cpp" />
-    <ClCompile Include="bgHeightMap.cpp" />
-    <ClCompile Include="bgParser.cpp" />
-    <ClCompile Include="bgShape.cpp" />
-    <ClCompile Include="bgShapeBox.cpp" />
-    <ClCompile Include="bgShapeGuideAxis.cpp" />
-    <ClCompile Include="bgShapeGuideProj.cpp" />
-    <ClCompile Include="bgShapePlane.cpp" />
-    <ClCompile Include="bgSound.cpp" />
-    <ClCompile Include="bgTexture.cpp" />
-    <ClCompile Include="bgTextureMgr.cpp" />
-    <ClCompile Include="bgTimer.cpp" />
-    <ClCompile Include="bgWindow.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7EEE75F1-7951-4110-A4AD-43E41443A675}</ProjectGuid>
+    <ProjectGuid>{9175BA60-F7CB-4674-B46F-79E20806124B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>bgCoreLib</RootNamespace>
+    <RootNamespace>dx02_ase</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>DX02_ASE</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -123,8 +71,18 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>../../output/bgCoreLib/</OutDir>
-    <IntDir>../../output/bgCoreLib/</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../output/dx02_ase/</OutDir>
+    <IntDir>../../output/dx02_ase/</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -132,22 +90,16 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../FMOD/include;../../DirectX/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../BGCore/include;../../FMOD/include;../../DirectX/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../../BGCore/lib;../../FMOD/lib;../../DirectX/lib/x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>bgCoreLib.lib;fmodex_vc.lib;d3d11.lib;d3dx11d.lib;dxgi.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <Lib>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../FMOD/lib;../../DirectX/x86/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
-    <PostBuildEvent>
-      <Command>copy "*.h*" "..\\..\\BGCore\\include\\"
-copy "..\\..\\output\\bgCoreLib\\bgCoreLib.lib" "..\\..\\BGCore\\lib\\bgCoreLib.lib"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -155,7 +107,7 @@ copy "..\\..\\output\\bgCoreLib\\bgCoreLib.lib" "..\\..\\BGCore\\lib\\bgCoreLib.
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -171,7 +123,7 @@ copy "..\\..\\output\\bgCoreLib\\bgCoreLib.lib" "..\\..\\BGCore\\lib\\bgCoreLib.
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -189,7 +141,7 @@ copy "..\\..\\output\\bgCoreLib\\bgCoreLib.lib" "..\\..\\BGCore\\lib\\bgCoreLib.
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -199,6 +151,23 @@ copy "..\\..\\output\\bgCoreLib\\bgCoreLib.lib" "..\\..\\BGCore\\lib\\bgCoreLib.
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="dx02.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dx02.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PC.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="PCT.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="PCTN.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

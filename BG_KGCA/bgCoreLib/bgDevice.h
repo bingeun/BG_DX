@@ -19,7 +19,12 @@ public:
 	ID3D11DepthStencilState*m_pDepthStencilState;
 	ID3D11DepthStencilView*	m_pDepthStencilView;
 
-	ID3D11BlendState*		m_pBSAlphaBlend;
+	ID3D11BlendState*		m_pAlphaBlend;
+	ID3D11SamplerState*		m_pSamplerState;
+	D3D11_FILTER			m_TexFilter;
+	//UINT					m_iFilterCount;
+	//D3D11_TEXTURE_ADDRESS_MODE	m_TexAddressMode;
+	UINT					m_iTexAddressMode;
 
 	ID3D11RasterizerState*	m_pRSWireNone;
 	ID3D11RasterizerState*	m_pRSSolidNone;
@@ -48,6 +53,5 @@ public:
 	HRESULT	InitDevice(HWND hWnd, UINT iWidth = 800, UINT iHeight = 600, BOOL bFullScreen = FALSE, BOOL bVsync = FALSE);
 	void	ReleaseDevice();
 
-	HRESULT CreateCB();
 	void	TransMatrixBuffer(MATRIX_BUFFER* pMatrixBuffer, bgCamera* pCamera);
 };

@@ -108,7 +108,7 @@ HRESULT bgShapePlane::CreateBuffer(float fSize)
 	return hr;
 }
 
-HRESULT bgShapePlane::LoadShader()
+HRESULT bgShapePlane::LoadShader(CHAR* szVS, CHAR* szPS)
 {
 	HRESULT hr = S_OK;
 
@@ -119,12 +119,12 @@ HRESULT bgShapePlane::LoadShader()
 
 	// 정점쉐이더 로드
 	ID3DBlob* pVSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PCT.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PCT.hlsl", NULL, NULL, szVS, "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pVSB->GetBufferPointer(), pVSB->GetBufferSize(), NULL, &m_pVS));
 
 	// 픽셀쉐이더 로드
 	ID3DBlob* pPSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PCT.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PCT.hlsl", NULL, NULL, szPS, "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pPSB->GetBufferPointer(), pPSB->GetBufferSize(), NULL, &m_pPS));
 
 	// 레이아웃 생성

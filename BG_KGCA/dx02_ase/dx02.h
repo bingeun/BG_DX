@@ -1,25 +1,23 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
 #include "bgCore.h"
+#include "bgParserASE.h"
 #include "bgTextureMgr.h"
 #include "bgShapeGuideAxis.h"
 #include "bgShapePlane.h"
 #include "bgShapeBox.h"
 
-class dx01 : public bgCore
+class dx02 : public bgCore
 {
 public:
 	bgShapeGuideAxis	m_objWorldAxis;
 	bgShapePlane		m_objWorldPlane;
 	bgShapeBox			m_objWorldBox;
 
-	bgShapePlane		m_objChar;
-
-	int			m_iTextureID;
+	bgParserASE		m_ParserASE;
 
 public:
-	dx01();
-	virtual ~dx01();
+	dx02();
+	virtual ~dx02();
 
 public:
 	bool	Init();
