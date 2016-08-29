@@ -27,6 +27,7 @@
     <ClInclude Include="..\..\FMOD\include\fmod_memoryinfo.h" />
     <ClInclude Include="..\..\FMOD\include\fmod_output.h" />
     <ClInclude Include="bgArcBall.h" />
+    <ClInclude Include="bgModel.h" />
     <ClInclude Include="bgParserASE.h" />
     <ClInclude Include="bgCamera.h" />
     <ClInclude Include="bgCollider.h" />
@@ -51,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgArcBall.cpp" />
+    <ClCompile Include="bgModel.cpp" />
     <ClCompile Include="bgParserASE.cpp" />
     <ClCompile Include="bgCamera.cpp" />
     <ClCompile Include="bgCollider.cpp" />

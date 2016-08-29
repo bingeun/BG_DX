@@ -1,6 +1,7 @@
 #pragma once
 #include "bgCore.h"
 #include "bgParserASE.h"
+#include "bgModel.h"
 #include "bgTextureMgr.h"
 #include "bgShapeGuideAxis.h"
 #include "bgShapePlane.h"
@@ -14,6 +15,7 @@ public:
 	bgShapeBox			m_objWorldBox;
 
 	bgParserASE		m_ParserASE;
+	bgModel			m_ModelShip;
 
 public:
 	dx02();

@@ -1,5 +1,6 @@
 #pragma once
 #include "bgParser.h"
+#include "bgModel.h"
 
 enum ASE_SECTIONS
 {
@@ -93,4 +94,5 @@ public:
 public:
 	bool	Init();
 	bool	Read();		// virtual bool bgParser::Read() = 0;
+	bool	ConvertToModel(bgModel* pModel);
 };

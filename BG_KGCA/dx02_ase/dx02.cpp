@@ -35,7 +35,13 @@ bool dx02::Init()
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
 
-	m_ParserASE.Open(L"../../data/ase/box.ase");
+	m_ModelShip.Init();
+	m_ModelShip.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
+	m_ModelShip.CreateBuffer();
+	m_ModelShip.LoadShader("VS", "PS_Tex");
+
+	m_ParserASE.Open(L"../../data/model/box.ase");
+	m_ParserASE.ConvertToModel(&m_ModelShip);
 
 	return true;
 }
@@ -87,14 +93,18 @@ bool dx02::Frame()
 	m_objWorldPlane.Frame();
 	m_objWorldAxis.Frame();
 
+	m_ModelShip.Frame();
+
 	return true;
 }
 
 bool dx02::Render()
 {
-	m_objWorldBox.Render();
+	//m_objWorldBox.Render();
 	m_objWorldPlane.Render();
 	m_objWorldAxis.Render();
+
+	m_ModelShip.Render();
 
 	return true;
 }
