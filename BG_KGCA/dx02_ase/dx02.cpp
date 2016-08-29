@@ -35,13 +35,15 @@ bool dx02::Init()
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
 
+
 	m_ModelShip.Init();
-	m_ModelShip.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
+	m_ModelShip.SetDevice(m_pDevice, m_pDContext, m_pRSSolidNone, m_pMatrixBuffer);
+	//m_ModelShip.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
+	//m_ParserASE.Open(L"../../data/model/box.ase");
+	m_ParserASE.Open(L"../../data/model/ship.ase");
+	m_ParserASE.ConvertToModel(&m_ModelShip);
 	m_ModelShip.CreateBuffer();
 	m_ModelShip.LoadShader("VS", "PS_Tex");
-
-	m_ParserASE.Open(L"../../data/model/box.ase");
-	m_ParserASE.ConvertToModel(&m_ModelShip);
 
 	return true;
 }
@@ -52,33 +54,33 @@ bool dx02::Frame()
 	if (I_DInput.IsKeyDown(DIK_W))
 	{
 		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera);
-		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera; // 임시
+		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_S))
 	{
 		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera);
-		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera; // 임시
+		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_A))
 	{
 		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera);
-		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera; // 임시
+		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_D))
 	{
 		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera);
-		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera; // 임시
+		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
 	}
 	// 카메라 회전
 	if (I_DInput.IsKeyDown(DIK_Q))
 	{
 		m_CameraViewport[0].RotateLeft(m_Timer.m_fSPF * m_fSpeedCamera);
-		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera; // 임시
+		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_E))
 	{
 		m_CameraViewport[0].RotateRight(m_Timer.m_fSPF * m_fSpeedCamera);
-		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera; // 임시
+		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_R))
 	{

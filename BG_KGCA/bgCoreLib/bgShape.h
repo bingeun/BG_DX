@@ -21,12 +21,12 @@ struct VertexPCT
 	D3DXVECTOR2 tex;
 };
 
-struct VertexPCTN
+struct VertexPNCT
 {
 	D3DXVECTOR3 pos;
+	D3DXVECTOR3 nor;
 	D3DXVECTOR4 col;
 	D3DXVECTOR2 tex;
-	D3DXVECTOR3 norm;
 };
 
 class bgShape

@@ -10,17 +10,17 @@ cbuffer MatrixBuffer
 struct VS_INPUT
 {
 	float4 pos : POSITION;
+	float3 nor : NORMAL;
 	float4 col : COLOR;
 	float2 tex : TEXCOORD0;
-	float3 norm : NORMAL;
 };
 
 struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
+	float3 nor : NORMAL;
 	float4 col : COLOR;
 	float2 tex : TEXCOORD0;
-	float3 norm : NORMAL;
 };
 
 ////////////////////////////////
@@ -31,9 +31,9 @@ VS_OUTPUT VS(VS_INPUT input)
 	output.pos = mul(input.pos, matWorld);
 	output.pos = mul(output.pos, matView);
 	output.pos = mul(output.pos, matProj);
+	output.nor = input.nor;
 	output.col = input.col;
 	output.tex = input.tex;
-	output.norm = input.norm;
 
 	return output;
 }

@@ -2,10 +2,12 @@
 
 bgModel::bgModel()
 {
+	Init();
 }
 
 bgModel::~bgModel()
 {
+	Release();
 }
 
 bool bgModel::Init()
@@ -21,7 +23,7 @@ bool bgModel::Frame()
 
 bool bgModel::Render()
 {
-	UINT iStride = sizeof(VertexPCTN);
+	UINT iStride = sizeof(VertexPNCT);
 	UINT iOffset = 0;
 	m_pDContext->IASetVertexBuffers(0, 1, &m_pVB, &iStride, &iOffset);
 	m_pDContext->IASetIndexBuffer(m_pIB, DXGI_FORMAT_R32_UINT, 0);
@@ -42,6 +44,11 @@ bool bgModel::Render()
 	//m_pDContext->OMSetBlendState(1, &, &);
 	//m_pDContext->OMSetDepthStencilState(&, 0);
 
+	I_TextureMgr.GetPtr(m_TextureIDList[0])->Apply();
+	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
+	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
+	//m_pDContext->OMSetBlendState(m_pAlphaBlend, 0, -1);
+
 	m_pDContext->DrawIndexed(m_iNumIndex, 0, 0);
 	return true;
 }
@@ -56,35 +63,13 @@ HRESULT bgModel::CreateBuffer()
 	HRESULT hr = S_OK;
 
 	float fSize = 1.0f;
-	// 버텍스 정보
-	VertexPCTN Vertices[] =
-	{
-		{ { -fSize, +fSize, -fSize },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 0
-		{ { +fSize, +fSize, -fSize },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 1
-		{ { +fSize, -fSize, -fSize },{ 1.0f, 1.0f, 0.0f, 1.0f },{ 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 2
-		{ { -fSize, -fSize, -fSize },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 3
-		{ { -fSize, +fSize, +fSize },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 4
-		{ { +fSize, +fSize, +fSize },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 5
-		{ { +fSize, -fSize, +fSize },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 6
-		{ { -fSize, -fSize, +fSize },{ 0.0f, 1.0f, 1.0f, 1.0f },{ 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 7
-	};
-	m_iNumVertex = COUNTOF(Vertices);
 
-	// 인덱스 정보
-	UINT iIndices[] =
-	{
-		0, 1, 2, 0, 2, 3, // 앞면      4 ======= 5
-		5, 4, 7, 5, 7, 6, // 뒷면    //|      //||
-		4, 0, 3, 4, 3, 7, // 좌측   0 ======= 1 ||
-		1, 5, 6, 1, 6, 2, // 우측   || 7 ----||- 6
-		4, 5, 1, 4, 1, 0, // 상단   ||/      ||//
-		3, 2, 6, 3, 6, 7, // 하단   3 ======= 2
-	};
-	m_iNumIndex = COUNTOF(iIndices);
+	m_iNumVertex = m_VertexList.size();
+	m_iNumIndex = m_IndexList.size();
 
 	// 버텍스버퍼 생성
 	D3D11_BUFFER_DESC VBDesc;
-	VBDesc.ByteWidth = sizeof(VertexPCTN) * m_iNumVertex;
+	VBDesc.ByteWidth = sizeof(VertexPNCT) * m_iNumVertex;
 	VBDesc.Usage = D3D11_USAGE_DEFAULT;
 	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VBDesc.CPUAccessFlags = 0;
@@ -92,7 +77,7 @@ HRESULT bgModel::CreateBuffer()
 	VBDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA VData;
-	VData.pSysMem = Vertices;
+	VData.pSysMem = &m_VertexList.at(0);
 	VData.SysMemPitch = 0;
 	VData.SysMemSlicePitch = 0;
 
@@ -108,7 +93,7 @@ HRESULT bgModel::CreateBuffer()
 	IBDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA IData;
-	IData.pSysMem = iIndices;
+	IData.pSysMem = &m_IndexList.at(0);
 	IData.SysMemPitch = 0;
 	IData.SysMemSlicePitch = 0;
 
@@ -128,21 +113,21 @@ HRESULT bgModel::LoadShader(CHAR* szVS, CHAR* szPS)
 
 	// 정점쉐이더 로드
 	ID3DBlob* pVSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PCTN.hlsl", NULL, NULL, szVS, "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, szVS, "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pVSB->GetBufferPointer(), pVSB->GetBufferSize(), NULL, &m_pVS));
 
 	// 픽셀쉐이더 로드
 	ID3DBlob* pPSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PCTN.hlsl", NULL, NULL, szPS, "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, szPS, "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pPSB->GetBufferPointer(), pPSB->GetBufferSize(), NULL, &m_pPS));
 
 	// 레이아웃 생성
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 40,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HR_RETURN(m_pDevice->CreateInputLayout(layout, 4, pVSB->GetBufferPointer(), pVSB->GetBufferSize(), &m_pInputLayout));
 

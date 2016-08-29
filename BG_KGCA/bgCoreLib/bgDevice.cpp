@@ -298,7 +298,7 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	m_fFieldOfView = (float)D3DX_PI / 4.0f;
 	m_fAspect = (float)iWidth / (float)iHeight;
 	m_fScreenNear = 0.1f;
-	m_fScreenFar = 1000.0f;
+	m_fScreenFar = 10000.0f;
 
 	return hr;
 }

@@ -1,4 +1,6 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
+#include "bgTextureMgr.h"
 #include "bgParser.h"
 #include "bgModel.h"
 
@@ -14,7 +16,10 @@ enum ASE_SECTIONS
 	ASE_MATERIAL_COUNT,
 	ASE_MATERIAL,
 	ASE_MATERIAL_NAME,
+	ASE_NUMSUBMTLS,
+	ASE_SUBMATERIAL,
 	ASE_MAP_DIFFUSE,
+	ASE_MAP_SUBNO,
 	ASE_BITMAP,
 	ASE_GEOMOBJECT,
 	ASE_NODE_TM,
@@ -36,6 +41,11 @@ enum ASE_SECTIONS
 	ASE_MESH_TFACELIST,
 	ASE_MESH_TFACE,
 	ASE_MESH_NUMCVERTEX,
+	ASE_MESH_CVERTLIST,
+	ASE_MESH_VERTCOL,
+	ASE_MESH_NUMCVFACES,
+	ASE_MESH_CFACELIST,
+	ASE_MESH_CFACE,
 	ASE_MESH_NORMALS,
 	ASE_MESH_FACENORMAL,
 	ASE_MESH_VERTEXNORMAL,
@@ -68,9 +78,10 @@ struct GeomObject
 	vector<FaceInfo>		FaceList;		// *MESH_FACE_LIST >> i[0] = A:, i[1] = B:, i[2] = C:, i[3] = *MESH_MTLID
 	vector<D3DXVECTOR3>		TexVertexList;	// *MESH_TVERTLIST
 	vector<FaceInfo>		TexFaceList;	// *MESH_TFACELIST >> i[3] 요소 사용하지 않음
-	vector<D3DXVECTOR4>		ColVertexList;	// 
-	vector<D3DXVECTOR3>		NormVertexList;	// *MESH_NORMALS >> *MESH_VERTEXNORMAL
-	vector<D3DXVECTOR3>		NormFaceList;	// *MESH_NORMALS >> *MESH_FACENORMAL
+	vector<D3DXVECTOR3>		ColVertexList;	// *MESH_CVERTLIST
+	vector<FaceInfo>		ColFaceList;	// *MESH_CFACELIST >> i[3] 요소 사용하지 않음
+	vector<D3DXVECTOR3>		NorVertexList;	// *MESH_VERTEXNORMAL
+	vector<D3DXVECTOR3>		NorFaceList;	// *MESH_FACENORMAL
 	int						iMaterialRef;	// *MATERIAL_REF
 };
 

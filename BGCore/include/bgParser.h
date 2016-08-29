@@ -19,6 +19,7 @@ public:
 	bool	Close();
 
 	bool	FindWord(TCHAR* szFindWord);
+	int		FindWordArray(TCHAR* szFindWords[], int iNumArray);
 
 public:
 	virtual	bool	Read() = 0;

@@ -21,7 +21,7 @@ bool bgShapeBox::Frame()
 
 bool bgShapeBox::Render()
 {
-	UINT iStride = sizeof(VertexPCTN);
+	UINT iStride = sizeof(VertexPNCT);
 	UINT iOffset = 0;
 	m_pDContext->IASetVertexBuffers(0, 1, &m_pVB, &iStride, &iOffset);
 	m_pDContext->IASetIndexBuffer(m_pIB, DXGI_FORMAT_R32_UINT, 0);
@@ -56,16 +56,16 @@ HRESULT bgShapeBox::CreateBuffer(float fSize)
 	HRESULT hr = S_OK;
 
 	// 버텍스 정보
-	VertexPCTN Vertices[] =
+	VertexPNCT Vertices[] =
 	{
-		{ { -fSize, +fSize, -fSize },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 0
-		{ { +fSize, +fSize, -fSize },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 1
-		{ { +fSize, -fSize, -fSize },{ 1.0f, 1.0f, 0.0f, 1.0f },{ 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 2
-		{ { -fSize, -fSize, -fSize },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 3
-		{ { -fSize, +fSize, +fSize },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 4
-		{ { +fSize, +fSize, +fSize },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f },{ 0.0f, 0.0f, 0.0f } }, // 5
-		{ { +fSize, -fSize, +fSize },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 6
-		{ { -fSize, -fSize, +fSize },{ 0.0f, 1.0f, 1.0f, 1.0f },{ 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f } }, // 7
+		{ { -fSize, +fSize, -fSize },{ 0.0f, 0.0f, 0.0f },{ 1.0f, 0.0f, 1.0f, 1.0f },{ 0.0f, 0.0f } }, // 0
+		{ { +fSize, +fSize, -fSize },{ 0.0f, 0.0f, 0.0f },{ 1.0f, 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // 1
+		{ { +fSize, -fSize, -fSize },{ 0.0f, 0.0f, 0.0f },{ 1.0f, 1.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // 2
+		{ { -fSize, -fSize, -fSize },{ 0.0f, 0.0f, 0.0f },{ 1.0f, 1.0f, 1.0f, 1.0f },{ 0.0f, 1.0f } }, // 3
+		{ { -fSize, +fSize, +fSize },{ 0.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f, 1.0f },{ 1.0f, 0.0f } }, // 4
+		{ { +fSize, +fSize, +fSize },{ 0.0f, 0.0f, 0.0f },{ 0.0f, 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } }, // 5
+		{ { +fSize, -fSize, +fSize },{ 0.0f, 0.0f, 0.0f },{ 0.0f, 1.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } }, // 6
+		{ { -fSize, -fSize, +fSize },{ 0.0f, 0.0f, 0.0f },{ 0.0f, 1.0f, 1.0f, 1.0f },{ 1.0f, 1.0f } }, // 7
 	};
 	m_iNumVertex = COUNTOF(Vertices);
 
@@ -83,7 +83,7 @@ HRESULT bgShapeBox::CreateBuffer(float fSize)
 
 	// 버텍스버퍼 생성
 	D3D11_BUFFER_DESC VBDesc;
-	VBDesc.ByteWidth = sizeof(VertexPCTN) * m_iNumVertex;
+	VBDesc.ByteWidth = sizeof(VertexPNCT) * m_iNumVertex;
 	VBDesc.Usage = D3D11_USAGE_DEFAULT;
 	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VBDesc.CPUAccessFlags = 0;
@@ -127,21 +127,21 @@ HRESULT bgShapeBox::LoadShader()
 
 	// 정점쉐이더 로드
 	ID3DBlob* pVSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PCTN.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pVSB->GetBufferPointer(), pVSB->GetBufferSize(), NULL, &m_pVS));
 
 	// 픽셀쉐이더 로드
 	ID3DBlob* pPSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PCTN.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pPSB->GetBufferPointer(), pPSB->GetBufferSize(), NULL, &m_pPS));
 
 	// 레이아웃 생성
 	const D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 28,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 40,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HR_RETURN(m_pDevice->CreateInputLayout(layout, 4, pVSB->GetBufferPointer(), pVSB->GetBufferSize(), &m_pInputLayout));
 

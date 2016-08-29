@@ -30,7 +30,7 @@
     <FxCompile Include="PCT.hlsl">
       <Filter>리소스 파일</Filter>
     </FxCompile>
-    <FxCompile Include="PCTN.hlsl">
+    <FxCompile Include="PNCT.hlsl">
       <Filter>리소스 파일</Filter>
     </FxCompile>
   </ItemGroup>

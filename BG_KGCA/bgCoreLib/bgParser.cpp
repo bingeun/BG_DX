@@ -49,3 +49,23 @@ bool bgParser::FindWord(TCHAR* szFindWord)
 	}
 	return false;
 }
+
+int bgParser::FindWordArray(TCHAR* szFindWords[], int iNumArray)
+{
+	int iWordArrayIndex;
+
+	while (!feof(m_pFile))
+	{
+		_fgetts(m_szLine, MAX_PATH, m_pFile);
+		_stscanf(m_szLine, _T("%s"), m_szWord);
+		for (iWordArrayIndex = 0; iWordArrayIndex < iNumArray; iWordArrayIndex++)
+		{
+			if (!_tcsicmp(m_szWord, szFindWords[iWordArrayIndex]))
+			{
+				return iWordArrayIndex; // 찾은 단어의 인덱스 번호 리턴
+			}
+		}
+	}
+
+	return -1; // 찾는 단어 없음 리턴
+}
