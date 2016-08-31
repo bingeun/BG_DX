@@ -6,9 +6,12 @@
 class bgModel : public bgShape
 {
 public:
-	vector<VertexPNCT>	m_VertexList;
-	vector<UINT>		m_IndexList;
-	vector<UINT>		m_TextureIDList;
+	vector<ID3D11Buffer*>		m_pVBList;		// Vertex Buffer;
+	vector<ID3D11Buffer*>		m_pIBList;		// Index Buffer;
+
+	vector<vector<VertexPNCT>>	m_VertexList;
+	vector<vector<UINT>>		m_IndexList;
+	vector<MaterialTexID>		m_TexIDList;
 
 public:
 	bgModel();

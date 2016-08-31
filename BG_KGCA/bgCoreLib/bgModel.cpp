@@ -25,8 +25,7 @@ bool bgModel::Render()
 {
 	UINT iStride = sizeof(VertexPNCT);
 	UINT iOffset = 0;
-	m_pDContext->IASetVertexBuffers(0, 1, &m_pVB, &iStride, &iOffset);
-	m_pDContext->IASetIndexBuffer(m_pIB, DXGI_FORMAT_R32_UINT, 0);
+
 	m_pDContext->IASetInputLayout(m_pInputLayout);
 	m_pDContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
 
@@ -35,21 +34,20 @@ bool bgModel::Render()
 	m_pDContext->HSSetShader(NULL, NULL, 0);
 	m_pDContext->DSSetShader(NULL, NULL, 0);
 	m_pDContext->GSSetShader(NULL, NULL, 0);
-	//m_pDContext->GSSetConstantBuffers(0, 1, &m_pCB);
 	m_pDContext->RSSetState(m_pRasterizerState);
 	m_pDContext->PSSetShader(m_pPS, NULL, 0);
-	//m_pDContext->PSSetConstantBuffers(0, 1, &m_pCB);
 
-	//m_pDContext->OMSetRenderTargets(1, &, &);
-	//m_pDContext->OMSetBlendState(1, &, &);
-	//m_pDContext->OMSetDepthStencilState(&, 0);
+	for (int i = 0; i < m_IndexList.size(); i++)
+	{
+		m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
+		m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
 
-	I_TextureMgr.GetPtr(m_TextureIDList[0])->Apply();
-	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
-	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
-	//m_pDContext->OMSetBlendState(m_pAlphaBlend, 0, -1);
+		I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
+		m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
+		m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
+		m_pDContext->DrawIndexed(m_IndexList[0].size(), 0, 0);
+	}
 
-	m_pDContext->DrawIndexed(m_iNumIndex, 0, 0);
 	return true;
 }
 
@@ -62,14 +60,8 @@ HRESULT bgModel::CreateBuffer()
 {
 	HRESULT hr = S_OK;
 
-	float fSize = 1.0f;
-
-	m_iNumVertex = m_VertexList.size();
-	m_iNumIndex = m_IndexList.size();
-
-	// 버텍스버퍼 생성
+	// 버텍스버퍼
 	D3D11_BUFFER_DESC VBDesc;
-	VBDesc.ByteWidth = sizeof(VertexPNCT) * m_iNumVertex;
 	VBDesc.Usage = D3D11_USAGE_DEFAULT;
 	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VBDesc.CPUAccessFlags = 0;
@@ -77,15 +69,19 @@ HRESULT bgModel::CreateBuffer()
 	VBDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA VData;
-	VData.pSysMem = &m_VertexList.at(0);
 	VData.SysMemPitch = 0;
 	VData.SysMemSlicePitch = 0;
 
-	HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_pVB));
+	m_pVBList.resize(m_VertexList.size());
+	for (int i = 0; i < m_VertexList.size(); i++)
+	{
+		VBDesc.ByteWidth = sizeof(VertexPNCT) * m_VertexList[i].size();
+		VData.pSysMem = &m_VertexList[i][0];
+		HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_pVBList[i]));
+	}
 
-	// 인덱스버퍼 생성
+	// 인덱스버퍼
 	D3D11_BUFFER_DESC IBDesc;
-	IBDesc.ByteWidth = sizeof(UINT) * m_iNumIndex;
 	IBDesc.Usage = D3D11_USAGE_DEFAULT;
 	IBDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	IBDesc.CPUAccessFlags = 0;
@@ -93,11 +89,16 @@ HRESULT bgModel::CreateBuffer()
 	IBDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA IData;
-	IData.pSysMem = &m_IndexList.at(0);
 	IData.SysMemPitch = 0;
 	IData.SysMemSlicePitch = 0;
 
-	HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_pIB));
+	m_pIBList.resize(m_IndexList.size());
+	for (int i = 0; i < m_IndexList.size(); i++)
+	{
+		IBDesc.ByteWidth = sizeof(UINT) * m_IndexList[i].size();
+		IData.pSysMem = &m_IndexList[i][0];
+		HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_pIBList[i]));
+	}
 
 	return hr;
 }

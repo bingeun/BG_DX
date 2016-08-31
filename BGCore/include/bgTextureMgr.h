@@ -3,6 +3,12 @@
 
 #define I_TextureMgr bgTextureMgr::GetInstance()
 
+struct MaterialTexID
+{
+	int		iID;
+	vector<MaterialTexID>	SubIDList;
+};
+
 class bgTextureMgr : public bgSingleton<bgTextureMgr>
 {
 private:

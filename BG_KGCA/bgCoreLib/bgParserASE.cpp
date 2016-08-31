@@ -219,14 +219,14 @@ bool bgParserASE::Read()
 		if (!FindWord(szWordASE[ASE_MESH_FACE])) return false;				//				*MESH_FACE
 		_stscanf(m_szLine, _T("%s%s %s%d %s%d %s%d %s%d %s%d %s%d %s%d %s%d"),
 			m_szWord, m_szWord,			// *MESH_FACE  0:
-			m_szWord, &i4Data.i[0],
-			m_szWord, &i4Data.i[2],
-			m_szWord, &i4Data.i[1],		// A:  B:  C:
+			m_szWord, &i4Data.iA,
+			m_szWord, &i4Data.iC,
+			m_szWord, &i4Data.iB,		// A:  B:  C:
 			m_szWord, &iData,
 			m_szWord, &iData,
 			m_szWord, &iData,			// AB: BC: CA:
 			m_szWord, &iData,			// *MESH_SMOOTHING
-			m_szWord, &i4Data.i[3]);	// *MESH_MTLID
+			m_szWord, &i4Data.iID);		// *MESH_MTLID
 		m_ASE.ObjectList[0].FaceList[iLoop] = i4Data;
 	}
 	if (!FindWord(szWordASE[ASE_END_OF_SECTION])) return false;				//			}
@@ -347,74 +347,76 @@ bool bgParserASE::Read()
 	return true;
 }
 
+// ASE 파일에서 읽은 데이터를 모델(출력용) 데이터로 변환
 bool bgParserASE::ConvertToModel(bgModel* pModel)
 {
-	int iFace;			// 페이스 반복
-	int iTriangle;		// 삼각형 반복(페이스의 3개 정점)
-	int iIndex;			// 모든 정점마다의 고유한 인덱스 (페이스 * 삼각형(3))
+	pModel->m_pVBList;		// 버텍스버퍼 *
+	pModel->m_pIBList;		// 인덱스버퍼 *
+	pModel->m_VertexList;	// 버텍스 데이터 {}
+	pModel->m_IndexList;	// 인덱스 데이터 {}
+	pModel->m_TexIDList;	// 메터리얼.서브메터리얼 텍스쳐ID
 
-	pModel->m_IndexList.resize(m_ASE.ObjectList[0].FaceList.size() * 3);	// 실제 랜더링될 정점들의 인덱스여야 하므로 최대값 (페이스 * 3)
-	pModel->m_VertexList.resize(m_ASE.ObjectList[0].FaceList.size() * 3);	// 실제 버텍스 정보이므로... 중복 제거 필요함!
+	int iLoop, iLoopSub;
+	int iFace, iTri;
+	int iNumMaterial;
+	int iNumSubMaterial;
 
-	// 모든 텍스쳐 로드하여 ID를 리스트에 저장
-	pModel->m_TextureIDList.clear();
-	for (int iLoop = 0; iLoop < m_ASE.MaterialList.size(); iLoop++)
-		for (int iLoopSub = 0; iLoopSub < m_ASE.MaterialList[iLoop].SubMaterialList.size(); iLoopSub++)
-			pModel->m_TextureIDList.push_back(I_TextureMgr.Add(m_ASE.MaterialList[iLoop].SubMaterialList[iLoopSub].szBitmap));
-
-	for (iFace = 0; iFace < m_ASE.ObjectList[0].FaceList.size(); iFace++)	// 루프 한번에 페이스 하나(정점3개)에 대한 처리
+	// 메터리얼 텍스쳐 로드
+	pModel->m_TexIDList.resize(m_ASE.MaterialList.size());
+	iNumMaterial = 0;
+	for (iLoop = 0; iLoop < m_ASE.MaterialList.size(); iLoop++)
 	{
-		for (iTriangle = 0; iTriangle < 3; iTriangle++)
-		{
-			// 인덱스 버퍼용 값 저장
-			iIndex = iFace * 3 + iTriangle;
-			pModel->m_IndexList[iIndex] = iIndex;
-
-			// 버텍스 버퍼용 값 저장
-			VertexPNCT vertexTemp;
-			vertexTemp.pos = D3DXVECTOR3(m_ASE.ObjectList[0].VertexList[m_ASE.ObjectList[0].FaceList[iFace].i[iTriangle]]);
-			vertexTemp.col = D3DXVECTOR4(m_ASE.ObjectList[0].ColVertexList[m_ASE.ObjectList[0].ColFaceList[iFace].i[iTriangle]], 1.0f);
-			vertexTemp.tex = D3DXVECTOR2(m_ASE.ObjectList[0].TexVertexList[m_ASE.ObjectList[0].TexFaceList[iFace].i[iTriangle]].x,
-				1.0f - m_ASE.ObjectList[0].TexVertexList[m_ASE.ObjectList[0].TexFaceList[iFace].i[iTriangle]].y);
-			vertexTemp.nor = D3DXVECTOR3(m_ASE.ObjectList[0].NorVertexList[iIndex]);
-			pModel->m_VertexList[iIndex] = vertexTemp;
-		}
-	}
-
-	iFace = 0;
-	/* 중복제거 코드... 추후 작업
-	for (iFace = 0; iFace < m_ASE.ObjectList[0].FaceList.size(); iFace++) // 루프 한번에 페이스 하나(정점3개)에 대한 처리
-	{
-		for (iTriangle = 0; iTriangle < 3; iTriangle++)
-		{
-			// iIndexTemp에 임시로 *MESH_FACE의 A: B: C: 값을 넣기
-			int iIndexTemp = m_ASE.ObjectList[0].FaceList[iFace].i[iTriangle];
-			pModel->m_IndexList[iFace * 3 + iTriangle] = iIndexTemp;
-
-			// 버텍스리스트의 가장 뒤에서부터 차례대로 탐색
-			// (iFace가 값이 커질수록 배열의 뒷부분에 존재할 가능성이 크므로...)
-			for (iVertex = pModel->m_VertexList.size() - 1; iVertex >= 0; iVertex--)
+		// 서브 메터리얼이 있으면
+		if (m_ASE.MaterialList[iLoop].SubMaterialList.size())
+		{	
+			iNumSubMaterial = m_ASE.MaterialList[iLoop].SubMaterialList.size();
+			pModel->m_TexIDList[iLoop].SubIDList.resize(iNumSubMaterial);
+			for (iLoopSub = 0; iLoopSub < iNumSubMaterial; iLoopSub++)
 			{
-				// 두 정점의 PCTN이 같으면 추가하지 않고 넘김
-				if ()
-				{
-
-				}
-				// 두 정점의 PCTN이 서로 다르면 버텍스에 추가
-				else
-				{
-					VertexPNCT vertexTemp;
-					vertexTemp.pos = m_ASE.ObjectList[0].VertexList[iIndexTemp];
-					vertexTemp.col = m_ASE.ObjectList[0].ColVertexList[iIndexTemp];
-					vertexTemp.tex.x = m_ASE.ObjectList[0].TexVertexList[].x;
-					vertexTemp.tex.y = m_ASE.ObjectList[0].TexVertexList[].y;
-					vertexTemp.nor = m_ASE.ObjectList[0].NorVertexList[iFace * 3 + iTriangle];
-					pModel->m_VertexList.push_back(vertexTemp);
-				}
+				iNumMaterial++;
+				pModel->m_TexIDList[iLoop].SubIDList[iLoopSub].iID =
+					I_TextureMgr.Add(m_ASE.MaterialList[iLoop].SubMaterialList[iLoopSub].szBitmap);
 			}
 		}
+		// 서브 메터리얼이 없으면
+		else
+		{
+			iNumMaterial++;
+			pModel->m_TexIDList[iLoop].iID = I_TextureMgr.Add(m_ASE.MaterialList[iLoop].szBitmap);
+		}
 	}
-	*/
+	
+	// 종류별로 분류하여 데이터 추가
+	VertexPNCT vertexTemp;
+	int iTexID, iTriIndex;
+	pModel->m_VertexList.resize(iNumMaterial);
+	for (iFace = 0; iFace < m_ASE.ObjectList[0].FaceList.size(); iFace++)
+	{
+		for (iTri = 0; iTri < 3; iTri++)
+		{
+			iTexID = m_ASE.ObjectList[0].FaceList[iFace].iID;
+
+			iTriIndex = m_ASE.ObjectList[0].FaceList[iFace].i[iTri];
+			vertexTemp.pos = m_ASE.ObjectList[0].VertexList[iTriIndex];
+			vertexTemp.nor = m_ASE.ObjectList[0].NorVertexList[iFace * 3 + iTri];
+			iTriIndex = m_ASE.ObjectList[0].ColFaceList[iFace].i[iTri];
+			vertexTemp.col = D3DXVECTOR4(m_ASE.ObjectList[0].ColVertexList[iTriIndex], 1.0f);
+			iTriIndex = m_ASE.ObjectList[0].TexFaceList[iFace].i[iTri];
+			vertexTemp.tex = D3DXVECTOR2(m_ASE.ObjectList[0].TexVertexList[iTriIndex].x, m_ASE.ObjectList[0].TexVertexList[iTriIndex].y);
+			pModel->m_VertexList[iTexID].push_back(vertexTemp);
+		}
+	}
+
+	// 텍스쳐 종류별(iLoop => MTLID)로 해당종류의 갯수(iLoopSub)만큼 반복하며 인덱스번호 카운트
+	pModel->m_IndexList.resize(iNumMaterial);
+	for (iLoop = 0; iLoop < iNumMaterial; iLoop++)
+	{
+		for (iLoopSub = 0; iLoopSub < pModel->m_VertexList[iLoop].size(); iLoopSub++)
+		{
+			pModel->m_IndexList[iLoop].push_back(iLoopSub);
+		}
+	}
+
 	return true;
 }
 

@@ -50,6 +50,26 @@ bool dx02::Init()
 
 bool dx02::Frame()
 {
+	if (I_DInput.IsKeyDown(DIK_UP))
+	{
+		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+	}
+	if (I_DInput.IsKeyDown(DIK_DOWN))
+	{
+		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+	}
+	if (I_DInput.IsKeyDown(DIK_LEFT))
+	{
+		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+	}
+	if (I_DInput.IsKeyDown(DIK_RIGHT))
+	{
+		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+	}
 	// 카메라 이동
 	if (I_DInput.IsKeyDown(DIK_W))
 	{

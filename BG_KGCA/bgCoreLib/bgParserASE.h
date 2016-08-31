@@ -62,19 +62,33 @@ struct SceneInfo
 
 struct SubMaterialInfo
 {
-	int		iMapSubno;				// *MAP_SUBNO
-	TCHAR	szBitmap[MAX_PATH];		// *BITMAP
+	TCHAR	szMaterialName[MAX_PATH];			// *MATERIAL_NAME
+	TCHAR	szBitmap[MAX_PATH];					// *BITMAP
 };
 
 struct MaterialInfo
 {
 	TCHAR	szMaterialName[MAX_PATH];			// *MATERIAL_NAME
+	TCHAR	szBitmap[MAX_PATH];					// *BITMAP
+	// 서브 메터리얼
+	int		iMapSubno;							// *MAP_SUBNO
 	vector<SubMaterialInfo>	SubMaterialList;	// *SUBMATERIAL
 };
 
 struct FaceInfo
 {
-	int		i[4];	// *MESH_FACE_LIST 에서만 [3]요소 사용(*MESH_MTLID)
+	union
+	{
+		// *MESH_FACE_LIST 에서만 i[3] 또는 iID요소 사용(*MESH_MTLID)
+		struct
+		{
+			int iA;
+			int iB;
+			int iC;
+			int iID;
+		};
+		int		i[4];
+	};
 };
 
 struct GeomObject
