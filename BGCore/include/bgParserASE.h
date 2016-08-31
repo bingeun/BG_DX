@@ -60,15 +60,21 @@ struct SceneInfo
 	int iTicksPerFrame;		// *SCENE_TICKSPERFRAME
 };
 
+struct SubMaterialInfo
+{
+	int		iMapSubno;				// *MAP_SUBNO
+	TCHAR	szBitmap[MAX_PATH];		// *BITMAP
+};
+
 struct MaterialInfo
 {
-	TCHAR	szName[MAX_PATH];		// *MATERIAL_NAME
-	TCHAR	szBitmap[MAX_PATH];		// *MAP_DIFFUSE >> *BITMAP
+	TCHAR	szMaterialName[MAX_PATH];			// *MATERIAL_NAME
+	vector<SubMaterialInfo>	SubMaterialList;	// *SUBMATERIAL
 };
 
 struct FaceInfo
 {
-	int		i[4];	// *MESH_FACE_LIST 에서는 >> A:, B:, C:, *MESH_MTLID 이고, *MESH_TFACELIST 에서는 i[3] 요소 사용하지 않음
+	int		i[4];	// *MESH_FACE_LIST 에서만 [3]요소 사용(*MESH_MTLID)
 };
 
 struct GeomObject
