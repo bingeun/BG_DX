@@ -45,7 +45,7 @@ bool bgModel::Render()
 		I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
 		m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 		m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
-		m_pDContext->DrawIndexed(m_IndexList[0].size(), 0, 0);
+		m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
 	}
 
 	return true;

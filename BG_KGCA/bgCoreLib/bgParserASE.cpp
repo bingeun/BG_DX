@@ -402,7 +402,8 @@ bool bgParserASE::ConvertToModel(bgModel* pModel)
 			iTriIndex = m_ASE.ObjectList[0].ColFaceList[iFace].i[iTri];
 			vertexTemp.col = D3DXVECTOR4(m_ASE.ObjectList[0].ColVertexList[iTriIndex], 1.0f);
 			iTriIndex = m_ASE.ObjectList[0].TexFaceList[iFace].i[iTri];
-			vertexTemp.tex = D3DXVECTOR2(m_ASE.ObjectList[0].TexVertexList[iTriIndex].x, m_ASE.ObjectList[0].TexVertexList[iTriIndex].y);
+			vertexTemp.tex = D3DXVECTOR2(m_ASE.ObjectList[0].TexVertexList[iTriIndex].x,
+				1.0f - m_ASE.ObjectList[0].TexVertexList[iTriIndex].y);
 			pModel->m_VertexList[iTexID].push_back(vertexTemp);
 		}
 	}
