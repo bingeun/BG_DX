@@ -138,13 +138,13 @@ bool bgParserASE::Read()
 		// 서브 메터리얼 없이 곧바로 비트맵이 있다면
 		else if (iFindWordIndex == 1)
 		{
-			m_ASE.MaterialList[iLoop].SubMaterialList.resize(1);
+			m_ASE.MaterialList.resize(1);
 
 			if (!FindWord(szWordASE[ASE_BITMAP])) return false;				//			*MAP_??? { *BITMAP
-			ZeroMemory(m_ASE.MaterialList[iLoop].SubMaterialList[0].szBitmap, MAX_PATH);
+			ZeroMemory(m_ASE.MaterialList[0].szBitmap, MAX_PATH);
 			pszToken = _tcstok(m_szLine, _T("\""));
 			pszToken = _tcstok(NULL, _T("\""));
-			_tcscpy(m_ASE.MaterialList[iLoop].SubMaterialList[0].szBitmap, pszToken);
+			_tcscpy(m_ASE.MaterialList[0].szBitmap, pszToken);
 
 			if (!FindWord(szWordASE[ASE_END_OF_SECTION])) return false;		//			}
 			if (!FindWord(szWordASE[ASE_END_OF_SECTION])) return false;		//		}
@@ -367,7 +367,7 @@ bool bgParserASE::ConvertToModel(bgModel* pModel)
 	for (iLoop = 0; iLoop < m_ASE.MaterialList.size(); iLoop++)
 	{
 		// 서브 메터리얼이 있으면
-		if (m_ASE.MaterialList[iLoop].SubMaterialList.size())
+		if (m_ASE.MaterialList[iLoop].SubMaterialList.size() > 1)
 		{	
 			iNumSubMaterial = m_ASE.MaterialList[iLoop].SubMaterialList.size();
 			pModel->m_TexIDList[iLoop].SubIDList.resize(iNumSubMaterial);
@@ -392,10 +392,14 @@ bool bgParserASE::ConvertToModel(bgModel* pModel)
 	pModel->m_VertexList.resize(iNumMaterial);
 	for (iFace = 0; iFace < m_ASE.ObjectList[0].FaceList.size(); iFace++)
 	{
-		for (iTri = 0; iTri < 3; iTri++)
-		{
+		// 서브메터리얼이 없으면 단일 ID로 사용
+		if (iNumMaterial == 1)
+			iTexID = pModel->m_TexIDList[0].iID;
+		else
 			iTexID = m_ASE.ObjectList[0].FaceList[iFace].iID;
 
+		for (iTri = 0; iTri < 3; iTri++)
+		{
 			iTriIndex = m_ASE.ObjectList[0].FaceList[iFace].i[iTri];
 			vertexTemp.pos = m_ASE.ObjectList[0].VertexList[iTriIndex];
 			vertexTemp.nor = m_ASE.ObjectList[0].NorVertexList[iFace * 3 + iTri];

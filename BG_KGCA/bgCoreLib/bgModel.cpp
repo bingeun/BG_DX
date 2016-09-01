@@ -34,18 +34,32 @@ bool bgModel::Render()
 	m_pDContext->HSSetShader(NULL, NULL, 0);
 	m_pDContext->DSSetShader(NULL, NULL, 0);
 	m_pDContext->GSSetShader(NULL, NULL, 0);
-	m_pDContext->RSSetState(m_pRasterizerState);
 	m_pDContext->PSSetShader(m_pPS, NULL, 0);
 
-	for (int i = 0; i < m_IndexList.size(); i++)
+	if (m_TexIDList[0].SubIDList.size() == 0)
 	{
-		m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
-		m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
+		m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[0], &iStride, &iOffset);
+		m_pDContext->IASetIndexBuffer(m_pIBList[0], DXGI_FORMAT_R32_UINT, 0);
+		m_pDContext->RSSetState(m_pRasterizerState);
 
-		I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
+		I_TextureMgr.GetPtr(m_TexIDList[0].iID)->Apply();
 		m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 		m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
-		m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
+		m_pDContext->DrawIndexed(m_IndexList[0].size(), 0, 0);
+	}
+	else
+	{
+		for (int i = 0; i < m_IndexList.size(); i++)
+		{
+			m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
+			m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
+			m_pDContext->RSSetState(m_pRasterizerState);
+
+			I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
+			m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
+			m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
+			m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
+		}
 	}
 
 	return true;

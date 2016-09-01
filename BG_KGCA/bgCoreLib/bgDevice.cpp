@@ -255,6 +255,10 @@ HRESULT bgDevice::InitDevice(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScr
 	RSDesc.CullMode = D3D11_CULL_NONE;
 	m_pDevice->CreateRasterizerState(&RSDesc, &m_pRSWireNone);
 
+	RSDesc.FillMode = D3D11_FILL_WIREFRAME;
+	RSDesc.CullMode = D3D11_CULL_BACK;
+	m_pDevice->CreateRasterizerState(&RSDesc, &m_pRSWireFront);
+
 	RSDesc.FillMode = D3D11_FILL_SOLID;
 	RSDesc.CullMode = D3D11_CULL_NONE;
 	m_pDevice->CreateRasterizerState(&RSDesc, &m_pRSSolidNone);
