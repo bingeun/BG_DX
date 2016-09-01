@@ -5,8 +5,9 @@ TCHAR* szASEFileName[] =
 	_T("../../data/model/box.ase"),				// 0	박스
 	_T("../../data/model/ship.ase"),			// 1	공중부양 배
 	_T("../../data/model/MultiCameras.ase"),	// 2	멀티카메라
+	_T("../../data/model/Turret_Deploy.ASE"),	// 3	터렛 - 애니메이션
 };
-int g_iASEFileIndex = 1;
+int g_iASEFileIndex = 2; // <<=== ASE 인덱스 넣기
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
