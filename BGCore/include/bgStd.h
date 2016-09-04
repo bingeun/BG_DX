@@ -53,6 +53,9 @@ public:
 #ifndef BOOL_RETURN
 #define BOOL_RETURN(A)	{ hr = (A); if (FAILED(hr)) { return false; } }
 #endif
+#ifndef IF_FALSE_RETURN
+#define IF_FALSE_RETURN(A)	{ hr = (A); if (hr == false) { return false; } }
+#endif
 
 #ifndef SAFE_ZERO
 #define SAFE_ZERO(A)			{ (A) = 0; }

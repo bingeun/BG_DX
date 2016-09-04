@@ -4,52 +4,25 @@
 #include "bgParser.h"
 #include "bgModel.h"
 
-enum ASE_SECTIONS
+enum ASE_NODE_TYPE
 {
-	ASE_END_OF_SECTION = 0,
-	ASE_SCENE,
-	ASE_SCENE_FIRSTFRAME,
-	ASE_SCENE_LASTFRAME,
-	ASE_SCENE_FRAMESPEED,
-	ASE_SCENE_TICKSPERFRAME,
-	ASE_MATERIAL_LIST,
-	ASE_MATERIAL_COUNT,
-	ASE_MATERIAL,
-	ASE_MATERIAL_NAME,
-	ASE_NUMSUBMTLS,
-	ASE_SUBMATERIAL,
-	ASE_MAP_DIFFUSE,
-	ASE_MAP_SUBNO,
-	ASE_BITMAP,
-	ASE_GEOMOBJECT,
-	ASE_NODE_TM,
-	ASE_TM_ROW0,
-	ASE_TM_ROW1,
-	ASE_TM_ROW2,
-	ASE_TM_ROW3,
-	ASE_MESH,
-	ASE_MESH_NUMVERTEX,
-	ASE_MESH_NUMFACES,
-	ASE_MESH_VERTEX_LIST,
-	ASE_MESH_VERTEX,
-	ASE_MESH_FACE_LIST,
-	ASE_MESH_FACE,
-	ASE_MESH_NUMTVERTEX,
-	ASE_MESH_TVERTLIST,
-	ASE_MESH_TVERT,
-	ASE_MESH_NUMTVFACES,
-	ASE_MESH_TFACELIST,
-	ASE_MESH_TFACE,
-	ASE_MESH_NUMCVERTEX,
-	ASE_MESH_CVERTLIST,
-	ASE_MESH_VERTCOL,
-	ASE_MESH_NUMCVFACES,
-	ASE_MESH_CFACELIST,
-	ASE_MESH_CFACE,
-	ASE_MESH_NORMALS,
-	ASE_MESH_FACENORMAL,
-	ASE_MESH_VERTEXNORMAL,
-	ASE_MATERIAL_REF,
+	ASE_NODE_TYPE_GEOMOBJECT = 0,
+	ASE_NODE_TYPE_HELPEROBJECT,
+};
+
+struct FaceInfo
+{
+	union
+	{
+		struct
+		{
+			int iA;
+			int iB;
+			int iC;
+			int iID;
+		};
+		int i[4];
+	};
 };
 
 struct SceneInfo
@@ -70,46 +43,83 @@ struct MaterialInfo
 {
 	TCHAR	szMaterialName[MAX_PATH];			// *MATERIAL_NAME
 	TCHAR	szBitmap[MAX_PATH];					// *BITMAP
-	// 서브 메터리얼
 	int		iMapSubno;							// *MAP_SUBNO
 	vector<SubMaterialInfo>	SubMaterialList;	// *SUBMATERIAL
 };
 
-struct FaceInfo
+struct NodeTM
 {
-	union
+	TCHAR			szNodeName[MAX_PATH];		// *NODE_NAME
+	D3DXMATRIX		matWorld;					// *TM_ROW0~3
+	D3DXVECTOR3		vPos;						// *TM_POS
+	D3DXVECTOR3		vRotAxis;					// *TM_ROTAXIS
+	float			fRotAngle;					// *TM_ROTANGLE
+	D3DXVECTOR3		vScale;						// *TM_SCALE
+	D3DXVECTOR3		vScaleAxis;					// *TM_SCALEAXIS
+	float			fScaleAxisAngle;			// *TM_SCALEAXISANG
+};
+
+struct AnimTrackInfo
+{
+	int				iTick;
+	D3DXVECTOR3		vVector;
+	D3DXVECTOR4		vRotAxis;
+	AnimTrackInfo*	pPrev;
+	AnimTrackInfo*	pNext;
+
+public:
+	AnimTrackInfo()
 	{
-		// *MESH_FACE_LIST 에서만 i[3] 또는 iID요소 사용(*MESH_MTLID)
-		struct
-		{
-			int iA;
-			int iB;
-			int iC;
-			int iID;
-		};
-		int		i[4];
-	};
+		iTick = 0;
+		vVector = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		vRotAxis = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+		pPrev = pNext = NULL;
+	}
+};
+
+struct TMAnimation
+{
+	vector<AnimTrackInfo>	PosTrack;			// *CONTROL_POS_TRACK
+	vector<AnimTrackInfo>	RotTrack;			// *CONTROL_ROT_TRACK
+	vector<AnimTrackInfo>	ScaleTrack;			// *CONTROL_SCALE_TRACK
 };
 
 struct GeomObject
 {
-	D3DXMATRIX				matWorld;		// *TM_ROW0~3
-	vector<D3DXVECTOR3>		VertexList;		// *MESH_VERTEX_LIST
-	vector<FaceInfo>		FaceList;		// *MESH_FACE_LIST >> i[0] = A:, i[1] = B:, i[2] = C:, i[3] = *MESH_MTLID
-	vector<D3DXVECTOR3>		TexVertexList;	// *MESH_TVERTLIST
-	vector<FaceInfo>		TexFaceList;	// *MESH_TFACELIST >> i[3] 요소 사용하지 않음
-	vector<D3DXVECTOR3>		ColVertexList;	// *MESH_CVERTLIST
-	vector<FaceInfo>		ColFaceList;	// *MESH_CFACELIST >> i[3] 요소 사용하지 않음
-	vector<D3DXVECTOR3>		NorVertexList;	// *MESH_VERTEXNORMAL
-	vector<D3DXVECTOR3>		NorFaceList;	// *MESH_FACENORMAL
-	int						iMaterialRef;	// *MATERIAL_REF
+	vector<D3DXVECTOR3>		VertexList;			// *MESH_VERTEX_LIST
+	vector<FaceInfo>		FaceList;			// *MESH_FACE_LIST >> A: B: C: MTLID:
+	vector<D3DXVECTOR3>		TexVertexList;		// *MESH_TVERTLIST
+	vector<FaceInfo>		TexFaceList;		// *MESH_TFACELIST >> iID = i[3] 요소 사용안함
+	vector<D3DXVECTOR3>		ColVertexList;		// *MESH_CVERTLIST
+	vector<FaceInfo>		ColFaceList;		// *MESH_CFACELIST >> iID = i[3] 요소 사용안함
+	vector<D3DXVECTOR3>		NorVertexList;		// *MESH_VERTEXNORMAL
+	vector<D3DXVECTOR3>		NorFaceList;		// *MESH_FACENORMAL
+	int						iMaterialRef;		// *MATERIAL_REF
+};
+
+struct ASENode
+{
+	ASE_NODE_TYPE	eNodeType;					// Node 종류
+	TCHAR			szNodeName[MAX_PATH];		// *NODE_NAME
+	TCHAR			szNodeParent[MAX_PATH];		// *NODE_PARENT
+	ASENode*		pNodeParent;				// 부모 Node 에 대한 포인터
+
+	NodeTM			nodeTM;						// 월드 행렬 정보
+	void*			vpObj;						// Node 종류에 해당하는 데이터 포인터
+	TMAnimation		Anim;						// 애니메이션 정보
+
+public:
+	virtual ~ASENode()
+	{
+		SAFE_DEL(vpObj);
+	}
 };
 
 struct ASEObject
 {
-	SceneInfo				Scene;
-	vector<MaterialInfo>	MaterialList;
-	vector<GeomObject>		ObjectList;
+	SceneInfo				Scene;				// *SCENE
+	vector<MaterialInfo>	MaterialList;		// *MATERIAL_LIST
+	vector<ASENode>			ObjectList;			// *XXXXXOBJECT
 };
 
 //////////////////////////////////////////////////////
@@ -124,6 +134,17 @@ public:
 
 public:
 	bool	Init();
-	bool	Read();		// virtual bool bgParser::Read() = 0;
+
+	bool	Read();				// 부모객체의 필수 재정의 함수 virtual Read() = 0;
+	bool	ReadScene();
+	bool	ReadMaterial();
+	bool	ReadGeomObject();
+	bool	ReadHelperObject();
+	bool	ReadShapeObject();
+	bool	ReadCameraObject();
+	bool	ReadLightObject();
+
+	bool	ReadTMAnimation(int iNumGeom);
+
 	bool	ConvertToModel(bgModel* pModel);
 };

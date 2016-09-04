@@ -50,7 +50,7 @@ bool bgParser::FindWord(TCHAR* szFindWord)
 	return false;
 }
 
-int bgParser::FindWordArray(TCHAR* szFindWords[], int iNumArray)
+int bgParser::FindWordArray(TCHAR szFindWords[][MAX_PATH], int iNumArray)
 {
 	int iWordArrayIndex;
 
@@ -62,10 +62,23 @@ int bgParser::FindWordArray(TCHAR* szFindWords[], int iNumArray)
 		{
 			if (!_tcsicmp(m_szWord, szFindWords[iWordArrayIndex]))
 			{
-				return iWordArrayIndex; // 찾은 단어의 인덱스 번호 리턴
+				return iWordArrayIndex; // 찾은 단어의 배열 인덱스 번호 리턴
 			}
 		}
 	}
 
 	return -1; // 찾는 단어 없음 리턴
+}
+
+TCHAR* bgParser::GetPathToFileName(TCHAR* szPath)
+{
+	TCHAR szDrive[MAX_PATH] = { 0, };
+	TCHAR szDir[MAX_PATH] = { 0, };
+	TCHAR szName[MAX_PATH] = { 0, };
+	TCHAR szExt[MAX_PATH] = { 0, };
+	_tsplitpath_s(szPath, szDrive, szDir, szName, szExt);
+	ZeroMemory(m_szFileName, sizeof(TCHAR) * MAX_PATH);
+	_stprintf_s(m_szFileName, _T("../../data/model/%s%s"), szName, szExt);
+
+	return m_szFileName;
 }
