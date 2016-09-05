@@ -30,29 +30,18 @@ dx03::~dx03()
 
 bool dx03::Init()
 {
-	m_objWorldBox.Init();
-	m_objWorldBox.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_objWorldBox.CreateBuffer(1.0f);
-	m_objWorldBox.LoadShader();
-
-	m_objWorldPlane.Init();
-	m_objWorldPlane.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_objWorldPlane.CreateBuffer(10.0f);
-	m_objWorldPlane.LoadShader();
-
 	m_objWorldAxis.Init();
 	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
 
 
-	m_ModelShip.Init();
 	// m_pRSWireFront 선 앞 m_pRSWireNone 선 앞뒤 m_pRSSolidFront 면 앞 m_pRSSolidNone 면 앞뒤 
-	m_ModelShip.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
+	m_ParserASE.Init(&m_Model);
 	m_ParserASE.Open(szASEFileName[g_iASEFileIndex]);
-	m_ParserASE.ConvertToModel(&m_ModelShip);
-	m_ModelShip.CreateBuffer();
-	m_ModelShip.LoadShader("VS", "PS_Tex");
+	m_Model.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
+	m_Model.CreateBuffer();
+	m_Model.LoadShader("VS", "PS_Tex");
 
 	return true;
 }
@@ -130,22 +119,16 @@ bool dx03::Frame()
 		m_CameraViewport[0].RotateDown(m_Timer.m_fSPF * m_fSpeedCamera);
 	}
 
-	m_objWorldBox.Frame();
-	m_objWorldPlane.Frame();
 	m_objWorldAxis.Frame();
-
-	m_ModelShip.Frame();
+	m_Model.Frame();
 
 	return true;
 }
 
 bool dx03::Render()
 {
-	//m_objWorldBox.Render();
-	m_objWorldPlane.Render();
 	m_objWorldAxis.Render();
-
-	m_ModelShip.Render();
+	m_Model.Render();
 
 	return true;
 }

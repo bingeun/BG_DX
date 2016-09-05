@@ -11,11 +11,9 @@ class dx03 : public bgCore
 {
 public:
 	bgShapeGuideAxis	m_objWorldAxis;
-	bgShapePlane		m_objWorldPlane;
-	bgShapeBox			m_objWorldBox;
 
 	bgParserASE		m_ParserASE;
-	bgModel			m_ModelShip;
+	bgModel			m_Model;
 
 public:
 	dx03();
