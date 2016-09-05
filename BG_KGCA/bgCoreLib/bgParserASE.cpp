@@ -54,13 +54,13 @@ bool bgParserASE::ReadScene()
 	bool hr = true;
 
 	IF_FALSE_RETURN(FindWord(_T("*SCENE_FIRSTFRAME")));
-	_stscanf(m_szLine, _T("%s%d"), m_szWord, &m_ASE.Scene.iFirstFrame);
+	_stscanf(m_szLine, _T("%s %d"), m_szWord, &m_ASE.Scene.iFirstFrame);
 	IF_FALSE_RETURN(FindWord(_T("*SCENE_LASTFRAME")));
-	_stscanf(m_szLine, _T("%s%d"), m_szWord, &m_ASE.Scene.iLastFrame);
+	_stscanf(m_szLine, _T("%s %d"), m_szWord, &m_ASE.Scene.iLastFrame);
 	IF_FALSE_RETURN(FindWord(_T("*SCENE_FRAMESPEED")));
-	_stscanf(m_szLine, _T("%s%d"), m_szWord, &m_ASE.Scene.iFrameSpeed);
+	_stscanf(m_szLine, _T("%s %d"), m_szWord, &m_ASE.Scene.iFrameSpeed);
 	IF_FALSE_RETURN(FindWord(_T("*SCENE_TICKSPERFRAME")));
-	_stscanf(m_szLine, _T("%s%d"), m_szWord, &m_ASE.Scene.iTicksPerFrame);
+	_stscanf(m_szLine, _T("%s %d"), m_szWord, &m_ASE.Scene.iTicksPerFrame);
 
 	IF_FALSE_RETURN(FindWord(_T("}"))); // SCENE 탈출
 
@@ -281,7 +281,7 @@ bool bgParserASE::ReadGeomObject()
 	for (iLoop = 0; iLoop < iLoopMax; iLoop++)
 	{
 		IF_FALSE_RETURN(FindWord(_T("*MESH_VERTEX")));
-		_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
+		_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
 		D3DXVec3TransformCoord(&v3Data, &v3Data, &matInverse);
 		static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->VertexList[iLoop] = v3Data;
 	}
@@ -317,7 +317,7 @@ bool bgParserASE::ReadGeomObject()
 	for (iLoop = 0; iLoop < iLoopMax; iLoop++)
 	{
 		IF_FALSE_RETURN(FindWord(_T("*MESH_TVERT")));
-		_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.y, &v3Data.z);
+		_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.y, &v3Data.z);
 		static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->TexVertexList[iLoop] = v3Data;
 	}
 	IF_FALSE_RETURN(FindWord(_T("}")));
@@ -332,7 +332,7 @@ bool bgParserASE::ReadGeomObject()
 	for (iLoop = 0; iLoop < iLoopMax; iLoop++)
 	{
 		IF_FALSE_RETURN(FindWord(_T("*MESH_TFACE")));
-		_stscanf(m_szLine, _T("%s %d%d%d%d"), m_szWord, &iData, &i4Data.i[0], &i4Data.i[2], &i4Data.i[1]);
+		_stscanf(m_szLine, _T("%s %d %d%d%d"), m_szWord, &iData, &i4Data.i[0], &i4Data.i[2], &i4Data.i[1]);
 		i4Data.i[3] = 0;
 		static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->TexFaceList[iLoop] = i4Data;
 	}
@@ -373,7 +373,7 @@ bool bgParserASE::ReadGeomObject()
 		for (iLoop = 0; iLoop < iLoopMax; iLoop++)
 		{
 			IF_FALSE_RETURN(FindWord(_T("*MESH_VERTCOL")));
-			_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.y, &v3Data.z);
+			_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.y, &v3Data.z);
 			static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->ColVertexList[iLoop] = v3Data;
 		}
 		IF_FALSE_RETURN(FindWord(_T("}")));
@@ -389,7 +389,7 @@ bool bgParserASE::ReadGeomObject()
 		for (iLoop = 0; iLoop < iLoopMax; iLoop++)
 		{
 			IF_FALSE_RETURN(FindWord(_T("*MESH_CFACE")));
-			_stscanf(m_szLine, _T("%s %d%d%d%d"), m_szWord, &iData, &i4Data.i[0], &i4Data.i[2], &i4Data.i[1]);
+			_stscanf(m_szLine, _T("%s %d %d%d%d"), m_szWord, &iData, &i4Data.i[0], &i4Data.i[2], &i4Data.i[1]);
 			static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->ColFaceList[iLoop] = i4Data;
 		}
 		IF_FALSE_RETURN(FindWord(_T("}")));
@@ -405,19 +405,19 @@ bool bgParserASE::ReadGeomObject()
 	for (iLoop = 0; iLoop < iLoopMax; iLoop++)
 	{
 		IF_FALSE_RETURN(FindWord(_T("*MESH_FACENORMAL")));
-		_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
+		_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
 		static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->NorFaceList[iLoop] = v3Data;
 
 		IF_FALSE_RETURN(FindWord(_T("*MESH_VERTEXNORMAL")));
-		_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
+		_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
 		static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->NorVertexList[iLoop * 3 + 0] = v3Data;
 
 		IF_FALSE_RETURN(FindWord(_T("*MESH_VERTEXNORMAL")));
-		_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
+		_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
 		static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->NorVertexList[iLoop * 3 + 2] = v3Data;
 
 		IF_FALSE_RETURN(FindWord(_T("*MESH_VERTEXNORMAL")));
-		_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
+		_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &iData, &v3Data.x, &v3Data.z, &v3Data.y);
 		static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->NorVertexList[iLoop * 3 + 1] = v3Data;
 	}
 	IF_FALSE_RETURN(FindWord(_T("}"))); // MESH_NORMALS 탈출
@@ -434,12 +434,12 @@ bool bgParserASE::ReadGeomObject()
 		IF_FALSE_RETURN(ReadTMAnimation(iNumGeom));
 
 		IF_FALSE_RETURN(FindWord(_T("*MATERIAL_REF")));
-		_stscanf(m_szLine, _T("%s%d"), m_szWord, &static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->iMaterialRef);
+		_stscanf(m_szLine, _T("%s %d"), m_szWord, &static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->iMaterialRef);
 	}
 	break;
 	case 1:		// *MATERIAL_REF	애니메이션 없이 곧바로 매터리얼 REF이면 =================
 	{
-		_stscanf(m_szLine, _T("%s%d"), m_szWord, &static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->iMaterialRef);
+		_stscanf(m_szLine, _T("%s %d"), m_szWord, &static_cast<GeomObject*>(m_ASE.ObjectList[iNumGeom].vpObj)->iMaterialRef);
 	}
 	break;
 	case -1:	// 찾는 단어 없음 =========================================================
@@ -484,7 +484,7 @@ bool bgParserASE::ReadTMAnimation(int iNumGeom)
 	TCHAR szWordArray[2][MAX_PATH];
 	TCHAR szWordTrack[4][MAX_PATH];
 	AnimTrackInfo animData;
-	bool bTrackEnd;
+	bool bAnimEnd, bTrackEnd;
 
 	m_ASE.ObjectList[iNumGeom].Anim.PosTrack.clear();
 	m_ASE.ObjectList[iNumGeom].Anim.RotTrack.clear();
@@ -494,113 +494,123 @@ bool bgParserASE::ReadTMAnimation(int iNumGeom)
 	_tcscpy(szWordTrack[1], _T("*CONTROL_ROT_TRACK"));
 	_tcscpy(szWordTrack[2], _T("*CONTROL_SCALE_TRACK"));
 	_tcscpy(szWordTrack[3], _T("}"));
-	switch (FindWordArray(szWordTrack, 4))
+
+	bAnimEnd = false;
+	while (bAnimEnd == false)
 	{
-	case 0:		// *CONTROL_POS_TRACK ==========================================
-	{
-		_tcscpy(szWordArray[0], _T("*CONTROL_POS_SAMPLE"));
-		_tcscpy(szWordArray[1], _T("}"));
-		bTrackEnd = false;
-		while (bTrackEnd == false)
+		switch (FindWordArray(szWordTrack, 4))
 		{
-			switch (FindWordArray(szWordArray, 2))
+		case 0:		// *CONTROL_POS_TRACK ==========================================
+		{
+			_tcscpy(szWordArray[0], _T("*CONTROL_POS_SAMPLE"));
+			_tcscpy(szWordArray[1], _T("}"));
+			animData.Init();
+			bTrackEnd = false;
+			while (bTrackEnd == false)
 			{
-			case 0:		// *CONTROL_POS_SAMPLE	----------------------------
-			{
-				// 트랙 추가
-				_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &animData.iTick,
-					&animData.vVector.x, &animData.vVector.z, &animData.vVector.y);
-				m_ASE.ObjectList[iNumGeom].Anim.PosTrack.push_back(animData);
-				continue;
-			}
-			break;
-			case 1:		// }					----------------------------
-			{
-				// 트랙 종료 처리
-				bTrackEnd = true;
-			}
-			break;
-			case -1:	// 찾는 단어 없음 -----------------------------------
-			default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
-				return false;
+				switch (FindWordArray(szWordArray, 2))
+				{
+				case 0:		// *CONTROL_POS_SAMPLE	----------------------------
+				{
+					// 트랙 추가
+					_stscanf(m_szLine, _T("%s %d %f%f%f"), m_szWord, &animData.iTick,
+						&animData.vVector.x, &animData.vVector.z, &animData.vVector.y);
+					m_ASE.ObjectList[iNumGeom].Anim.PosTrack.push_back(animData);
+					continue;
+				}
 				break;
+				case 1:		// }					----------------------------
+				{
+					// 트랙 종료 처리
+					bTrackEnd = true;
+				}
+				break;
+				case -1:	// 찾는 단어 없음 -----------------------------------
+				default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
+					return false;
+					break;
+				}
 			}
 		}
-	}
-	break;
-	case 1:		// *CONTROL_ROT_TRACK ==========================================
-	{
-		_tcscpy(szWordArray[0], _T("*CONTROL_ROT_SAMPLE"));
-		_tcscpy(szWordArray[1], _T("}"));
-		bTrackEnd = false;
-		while (bTrackEnd == false)
-		{
-			switch (FindWordArray(szWordArray, 2))
-			{
-			case 0:		// *CONTROL_ROT_SAMPLE	----------------------------
-			{
-				// 트랙 추가
-				_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &animData.iTick,
-					&animData.vVector.x, &animData.vVector.z, &animData.vVector.y);
-				m_ASE.ObjectList[iNumGeom].Anim.RotTrack.push_back(animData);
-				continue;
-			}
-			break;
-			case 1:		// }					----------------------------
-			{
-				// 트랙 종료 처리
-				bTrackEnd = true;
-			}
-			break;
-			case -1:	// 찾는 단어 없음 -----------------------------------
-			default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
-				return false;
-				break;
-			}
-		}
-	}
-	break;
-	case 2:		// *CONTROL_SCALE_TRACK ==========================================
-	{
-		_tcscpy(szWordArray[0], _T("*CONTROL_SCALE_SAMPLE"));
-		_tcscpy(szWordArray[1], _T("}"));
-		bTrackEnd = false;
-		while (bTrackEnd == false)
-		{
-			switch (FindWordArray(szWordArray, 2))
-			{
-			case 0:		// *CONTROL_SCALE_SAMPLE	----------------------------
-			{
-				// 트랙 추가
-				_stscanf(m_szLine, _T("%s %d%f%f%f"), m_szWord, &animData.iTick,
-					&animData.vVector.x, &animData.vVector.z, &animData.vVector.y);
-				m_ASE.ObjectList[iNumGeom].Anim.ScaleTrack.push_back(animData);
-				continue;
-			}
-			break;
-			case 1:		// }					----------------------------
-			{
-				// 트랙 종료 처리
-				bTrackEnd = true;
-			}
-			break;
-			case -1:	// 찾는 단어 없음 -----------------------------------
-			default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
-				return false;
-				break;
-			}
-		}
-	}
-	break;
-	case 3:		// }	========================================================
-	{
-		// 
-	}
-	break;
-	case -1:	// 찾는 단어 없음 ===============================================
-	default:	// 나머지 (배열 요소가 4개이므로 나올 수 없음)
-		return false;
 		break;
+		case 1:		// *CONTROL_ROT_TRACK ==========================================
+		{
+			_tcscpy(szWordArray[0], _T("*CONTROL_ROT_SAMPLE"));
+			_tcscpy(szWordArray[1], _T("}"));
+			animData.Init();
+			bTrackEnd = false;
+			while (bTrackEnd == false)
+			{
+				switch (FindWordArray(szWordArray, 2))
+				{
+				case 0:		// *CONTROL_ROT_SAMPLE	----------------------------
+				{
+					// 트랙 추가
+					_stscanf(m_szLine, _T("%s %d %f%f%f %f"), m_szWord, &animData.iTick,
+						&animData.vRotAxis.x, &animData.vRotAxis.z, &animData.vRotAxis.y, &animData.vRotAxis.w);
+					m_ASE.ObjectList[iNumGeom].Anim.RotTrack.push_back(animData);
+					continue;
+				}
+				break;
+				case 1:		// }					----------------------------
+				{
+					// 트랙 종료 처리
+					bTrackEnd = true;
+				}
+				break;
+				case -1:	// 찾는 단어 없음 -----------------------------------
+				default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
+					return false;
+					break;
+				}
+			}
+		}
+		break;
+		case 2:		// *CONTROL_SCALE_TRACK ========================================
+		{
+			_tcscpy(szWordArray[0], _T("*CONTROL_SCALE_SAMPLE"));
+			_tcscpy(szWordArray[1], _T("}"));
+			animData.Init();
+			bTrackEnd = false;
+			while (bTrackEnd == false)
+			{
+				switch (FindWordArray(szWordArray, 2))
+				{
+				case 0:		// *CONTROL_SCALE_SAMPLE	------------------------
+				{
+					// 트랙 추가
+					_stscanf(m_szLine, _T("%s %d %f%f%f %f%f%f%f"), m_szWord, &animData.iTick,
+						&animData.vVector.x, &animData.vVector.z, &animData.vVector.y,
+						&animData.vRotAxis.x, &animData.vRotAxis.z, &animData.vRotAxis.y, &animData.vRotAxis.w);
+					m_ASE.ObjectList[iNumGeom].Anim.ScaleTrack.push_back(animData);
+					continue;
+				}
+				break;
+				case 1:		// }					----------------------------
+				{
+					// 트랙 종료 처리
+					bTrackEnd = true;
+				}
+				break;
+				case -1:	// 찾는 단어 없음 -----------------------------------
+				default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
+					return false;
+					break;
+				}
+			}
+		}
+		break;
+		case 3:		// }	========================================================
+		{
+			// 애니메이션 종료 처리
+			bAnimEnd = true;
+		}
+		break;
+		case -1:	// 찾는 단어 없음 ===============================================
+		default:	// 나머지 (배열 요소가 4개이므로 나올 수 없음)
+			return false;
+			break;
+		}
 	}
 
 	return hr;
@@ -689,4 +699,9 @@ bool bgParserASE::ConvertToModel(bgModel* pModel)
 	}
 
 	return true;
+}
+
+void ASENode::Interpolate(float fFrameTick)
+{
+
 }

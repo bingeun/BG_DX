@@ -57,6 +57,20 @@ struct NodeTM
 	D3DXVECTOR3		vScale;						// *TM_SCALE
 	D3DXVECTOR3		vScaleAxis;					// *TM_SCALEAXIS
 	float			fScaleAxisAngle;			// *TM_SCALEAXISANG
+
+public:
+	NodeTM()
+	{
+		Init();
+	}
+	void Init()
+	{
+		szNodeName[0] = _T('\0');
+		D3DXMatrixIdentity(&matWorld);
+		vPos = vRotAxis = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		vScale = vScaleAxis = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		fRotAngle = fScaleAxisAngle = 0.0f;
+	}
 };
 
 struct AnimTrackInfo
@@ -69,6 +83,10 @@ struct AnimTrackInfo
 
 public:
 	AnimTrackInfo()
+	{
+		Init();
+	}
+	void Init()
 	{
 		iTick = 0;
 		vVector = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -107,19 +125,25 @@ struct ASENode
 	NodeTM			nodeTM;						// 월드 행렬 정보
 	void*			vpObj;						// Node 종류에 해당하는 데이터 포인터
 	TMAnimation		Anim;						// 애니메이션 정보
+	
+	D3DXMATRIX		matWorldPos;				// 월드 이동행렬
+	D3DXMATRIX		matWorldRot;				// 월드 회전행렬
+	D3DXMATRIX		matWorldScale;				// 월드 신축행렬
 
 public:
 	virtual ~ASENode()
 	{
 		SAFE_DEL(vpObj);
 	}
+
+	void Interpolate(float fFrameTick);
 };
 
 struct ASEObject
 {
 	SceneInfo				Scene;				// *SCENE
 	vector<MaterialInfo>	MaterialList;		// *MATERIAL_LIST
-	vector<ASENode>			ObjectList;			// *XXXXXOBJECT
+	vector<ASENode>			ObjectList;			// *XxxOBJECT
 };
 
 //////////////////////////////////////////////////////

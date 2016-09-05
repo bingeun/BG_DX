@@ -8,7 +8,7 @@ TCHAR* szASEFileName[] =
 	_T("../../data/model/scaleanimationmodel.ASE"),	// 3	박스 스케일 애니메이션
 	_T("../../data/model/Turret_Deploy.ASE"),		// 4	터렛 애니메이션
 };
-int g_iASEFileIndex = 3; // <<=== ASE 인덱스 넣기
+int g_iASEFileIndex = 2; // <<=== ASE 인덱스 넣기
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
