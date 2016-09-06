@@ -12,12 +12,14 @@
 // AUTHOR: 
 //***************************************************************************/
 
-#include "Max01_Exporter100.h"
+#include "bgMaxExporter.h"
 
 #define Max01_Exporter100_CLASS_ID	Class_ID(0x6ad6710f, 0x80408113)
 
 class Max01_Exporter100 : public SceneExport {
 public:
+	bgMaxExporter	m_BGMaxExporter;
+
 	//Constructor/Destructor
 	Max01_Exporter100();
 	~Max01_Exporter100();
@@ -65,7 +67,7 @@ ClassDesc2* GetMax01_Exporter100Desc() {
 
 
 
-INT_PTR CALLBACK Max01_Exporter100OptionsDlgProc(HWND hWnd,UINT message,WPARAM,LPARAM lParam) {
+INT_PTR CALLBACK Max01_Exporter100OptionsDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	static Max01_Exporter100* imp = nullptr;
 
 	switch(message) {
@@ -74,6 +76,19 @@ INT_PTR CALLBACK Max01_Exporter100OptionsDlgProc(HWND hWnd,UINT message,WPARAM,L
 			CenterWindow(hWnd,GetParent(hWnd));
 			return TRUE;
 
+		case WM_COMMAND:
+		{
+			switch (LOWORD(wParam))
+			{
+			case IDC_EXPORT:
+			{
+				imp->m_BGMaxExporter.Exporter();
+				EndDialog(hWnd, 1);
+			}
+			break;
+			}
+		}
+		break;
 		case WM_CLOSE:
 			EndDialog(hWnd, 0);
 			return 1;
@@ -102,25 +117,25 @@ int Max01_Exporter100::ExtCount()
 const TCHAR *Max01_Exporter100::Ext(int /*i*/)
 {		
 	#pragma message(TODO("Return the 'i-th' file name extension (i.e. \"3DS\")."))
-	return _T("");
+	return _T("bg3d");
 }
 
 const TCHAR *Max01_Exporter100::LongDesc()
 {
 	#pragma message(TODO("Return long ASCII description (i.e. \"Targa 2.0 Image File\")"))
-	return _T("");
+	return _T("KGCA BG 3D Model Export Format.");
 }
 	
 const TCHAR *Max01_Exporter100::ShortDesc() 
 {			
 	#pragma message(TODO("Return short ASCII description (i.e. \"Targa\")"))
-	return _T("");
+	return _T("KGCA BG 3D Model");
 }
 
 const TCHAR *Max01_Exporter100::AuthorName()
 {			
 	#pragma message(TODO("Return ASCII Author name"))
-	return _T("");
+	return _T("BG");
 }
 
 const TCHAR *Max01_Exporter100::CopyrightMessage() 
@@ -159,9 +174,9 @@ BOOL Max01_Exporter100::SupportsOptions(int /*ext*/, DWORD /*options*/)
 }
 
 
-int	Max01_Exporter100::DoExport(const TCHAR* /*name*/, ExpInterface* /*ei*/, Interface* /*ip*/, BOOL suppressPrompts, DWORD /*options*/)
+int	Max01_Exporter100::DoExport(const TCHAR* name, ExpInterface* ei, Interface* ip, BOOL suppressPrompts, DWORD options)
 {
-	#pragma message(TODO("Implement the actual file Export here and"))
+	m_BGMaxExporter.Init(name, ip);
 
 	if(!suppressPrompts)
 		DialogBoxParam(hInstance, 
@@ -169,8 +184,6 @@ int	Max01_Exporter100::DoExport(const TCHAR* /*name*/, ExpInterface* /*ei*/, Int
 				GetActiveWindow(), 
 				Max01_Exporter100OptionsDlgProc, (LPARAM)this);
 
-	#pragma message(TODO("return TRUE If the file is exported properly"))
-	return FALSE;
+	m_BGMaxExporter.Release();
+	return TRUE;
 }
-
-
