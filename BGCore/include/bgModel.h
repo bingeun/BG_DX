@@ -3,10 +3,10 @@
 #include "bgTextureMgr.h"
 #include "bgSys.h"
 
-enum ASE_NODE_TYPE
+enum OBJECT_NODE_TYPE
 {
-	ASE_NODE_TYPE_GEOMOBJECT = 0,
-	ASE_NODE_TYPE_HELPEROBJECT,
+	OBJECT_NODE_TYPE_GEOMOBJECT = 0,
+	OBJECT_NODE_TYPE_HELPEROBJECT,
 };
 
 struct FaceInfo
@@ -114,23 +114,23 @@ struct GeomObject
 	int						iMaterialRef;		// *MATERIAL_REF
 };
 
-struct ASENode
+struct ObjectNode
 {
-	ASE_NODE_TYPE	eNodeType;					// Node 종류
-	TCHAR			szNodeName[MAX_PATH];		// *NODE_NAME
-	TCHAR			szNodeParent[MAX_PATH];		// *NODE_PARENT
-	ASENode*		pNodeParent;				// 부모 Node 에 대한 포인터
+	OBJECT_NODE_TYPE	eNodeType;					// Node 종류
+	TCHAR				szNodeName[MAX_PATH];		// *NODE_NAME
+	TCHAR				szNodeParent[MAX_PATH];		// *NODE_PARENT
+	ObjectNode*			pNodeParent;				// 부모 Node 에 대한 포인터
 
-	NodeTM			nodeTM;						// 월드 행렬 정보
-	void*			vpObj;						// Node 종류에 해당하는 데이터 포인터
-	TMAnimation		Anim;						// 애니메이션 정보
+	NodeTM				nodeTM;						// 월드 행렬 정보
+	void*				vpObj;						// Node 종류에 해당하는 데이터 포인터
+	TMAnimation			Anim;						// 애니메이션 정보
 
-	D3DXMATRIX		matWorldPos;				// 월드 이동행렬
-	D3DXMATRIX		matWorldRot;				// 월드 회전행렬
-	D3DXMATRIX		matWorldScale;				// 월드 신축행렬
+	D3DXMATRIX			matWorldPos;				// 월드 이동행렬
+	D3DXMATRIX			matWorldRot;				// 월드 회전행렬
+	D3DXMATRIX			matWorldScale;				// 월드 신축행렬
 
 public:
-	virtual ~ASENode()
+	virtual ~ObjectNode()
 	{
 		SAFE_DEL(vpObj);
 	}
@@ -138,16 +138,12 @@ public:
 	void Interpolate(float fFrameTick);
 };
 
-struct ASEObject
-{
-};
-
 class bgModel : public bgShape
 {
 public:
 	SceneInfo					m_Scene;			// *SCENE
 	vector<MaterialInfo>		m_MaterialList;		// *MATERIAL_LIST
-	vector<ASENode>				m_ObjectList;		// *XxxOBJECT
+	vector<ObjectNode>			m_ObjectList;		// *XxxOBJECT
 
 public:
 	vector<ID3D11Buffer*>		m_pVBList;			// Vertex Buffer;

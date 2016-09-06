@@ -144,3 +144,8 @@ HRESULT bgModel::LoadShader(CHAR* szVS, CHAR* szPS)
 
 	return hr;
 }
+
+void ObjectNode::Interpolate(float fFrameTick)
+{
+
+}

@@ -14,6 +14,7 @@ public:
 
 	bgParserASE		m_ParserASE;
 	bgModel			m_Model;
+	bgModel			m_Model2;
 
 public:
 	dx03();

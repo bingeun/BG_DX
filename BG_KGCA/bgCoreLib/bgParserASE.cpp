@@ -676,7 +676,7 @@ bool bgParserASE::ConvertToModel()
 	{
 		// 서브메터리얼이 없으면 단일 ID로 사용
 		if (iNumMaterial == 1)
-			iTexID = m_pModel->m_TexIDList[0].iID;
+			iTexID = 0;
 		else
 			iTexID = static_cast<GeomObject*>(m_pModel->m_ObjectList[0].vpObj)->FaceList[iFace].iID;
 
@@ -705,9 +705,4 @@ bool bgParserASE::ConvertToModel()
 	}
 
 	return true;
-}
-
-void ASENode::Interpolate(float fFrameTick)
-{
-
 }
