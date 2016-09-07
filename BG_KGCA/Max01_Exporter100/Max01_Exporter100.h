@@ -21,8 +21,8 @@
 #include <iparamm2.h>
 #include <maxtypes.h>
 //SIMPLE TYPE
-
-
+#include <stdmat.h>
+#include <max.h>
 #include <impexp.h>
 
 
