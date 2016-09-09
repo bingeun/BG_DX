@@ -235,36 +235,61 @@ bool bgParserASE::ReadGeomObject()
 		&m_pModel->m_ObjectList[iNumGeom].nodeTM.matWorld._42);
 	m_pModel->m_ObjectList[iNumGeom].nodeTM.matWorld._44 = 1.0f;
 
+	// 인버스 매트릭스 확인 코드
+	D3DXVECTOR3 v0, v1, v2, v3;
+	v0 = m_pModel->m_ObjectList[iNumGeom].nodeTM.matWorld.m[0];
+	v1 = m_pModel->m_ObjectList[iNumGeom].nodeTM.matWorld.m[1];
+	v2 = m_pModel->m_ObjectList[iNumGeom].nodeTM.matWorld.m[2];
+	D3DXVec3Cross(&v3, &v1, &v2);
+	if (D3DXVec3Dot(&v3, &v0) < 0.0f)
+	{
+		D3DXMATRIX matW;
+		D3DXMatrixScaling(&matW, -1.0f, -1.0f, -1.0f);
+		D3DXMatrixMultiply(&m_pModel->m_ObjectList[iNumGeom].nodeTM.matWorld,
+			&m_pModel->m_ObjectList[iNumGeom].nodeTM.matWorld,
+			&matW);
+	}
+
 	// 분해된 월드행렬 정보 저장
+	float			fAngle;
+	D3DXQUATERNION	qRotate;
+	D3DXVECTOR3		vVector, vAxis;
+	D3DXMATRIX		matRotation, matRotationInv;
+
 	IF_FALSE_RETURN(FindWord(_T("*TM_POS")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vPos.x,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vPos.z,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vPos.y);
+	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
+	m_pModel->m_ObjectList[iNumGeom].nodeTM.vPos = vVector;
+
+	D3DXMatrixTranslation(&m_pModel->m_ObjectList[iNumGeom].matWorldPos, vVector.x, vVector.y, vVector.z);
 
 	IF_FALSE_RETURN(FindWord(_T("*TM_ROTAXIS")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vRotAxis.x,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vRotAxis.z,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vRotAxis.y);
+	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
+	m_pModel->m_ObjectList[iNumGeom].nodeTM.vRotAxis = vVector;
 
 	IF_FALSE_RETURN(FindWord(_T("*TM_ROTANGLE")));
-	_stscanf(m_szLine, _T("%s %f"), m_szWord, &m_pModel->m_ObjectList[iNumGeom].nodeTM.fRotAngle);
+	_stscanf(m_szLine, _T("%s %f"), m_szWord, &fAngle);
+	m_pModel->m_ObjectList[iNumGeom].nodeTM.fRotAngle = fAngle;
+
+	D3DXQuaternionRotationAxis(&qRotate, &vVector, fAngle);
+	D3DXMatrixRotationQuaternion(&m_pModel->m_ObjectList[iNumGeom].matWorldRot, &qRotate);
 
 	IF_FALSE_RETURN(FindWord(_T("*TM_SCALE")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vScale.x,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vScale.z,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vScale.y);
+	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
+	m_pModel->m_ObjectList[iNumGeom].nodeTM.vScale = vVector;
+	
+	D3DXMatrixScaling(&m_pModel->m_ObjectList[iNumGeom].matWorldScl, vVector.x, vVector.y, vVector.z);
 
 	IF_FALSE_RETURN(FindWord(_T("*TM_SCALEAXIS")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vScaleAxis.x,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vScaleAxis.z,
-		&m_pModel->m_ObjectList[iNumGeom].nodeTM.vScaleAxis.y);
+	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vAxis.x, &vAxis.z, &vAxis.y);
+	m_pModel->m_ObjectList[iNumGeom].nodeTM.vScaleAxis = vAxis;
 
 	IF_FALSE_RETURN(FindWord(_T("*TM_SCALEAXISANG")));
-	_stscanf(m_szLine, _T("%s %f"), m_szWord, &m_pModel->m_ObjectList[iNumGeom].nodeTM.fScaleAxisAngle);
+	_stscanf(m_szLine, _T("%s %f"), m_szWord, &fAngle);
+	m_pModel->m_ObjectList[iNumGeom].nodeTM.fScaleAxisAngle = fAngle;
+
+	D3DXMatrixRotationAxis(&matRotation, &vAxis, fAngle);
+	D3DXMatrixInverse(&matRotationInv, NULL, &matRotation);
+	m_pModel->m_ObjectList[iNumGeom].matWorldScl = matRotationInv * m_pModel->m_ObjectList[iNumGeom].matWorldScl  * matRotation;
 
 	IF_FALSE_RETURN(FindWord(_T("}"))); // NODE_TM 탈출
 
@@ -494,7 +519,7 @@ bool bgParserASE::ReadTMAnimation(int iNumGeom)
 
 	m_pModel->m_ObjectList[iNumGeom].Anim.PosTrack.clear();
 	m_pModel->m_ObjectList[iNumGeom].Anim.RotTrack.clear();
-	m_pModel->m_ObjectList[iNumGeom].Anim.ScaleTrack.clear();
+	m_pModel->m_ObjectList[iNumGeom].Anim.SclTrack.clear();
 
 	_tcscpy(szWordTrack[0], _T("*CONTROL_POS_TRACK"));
 	_tcscpy(szWordTrack[1], _T("*CONTROL_ROT_TRACK"));
@@ -553,7 +578,19 @@ bool bgParserASE::ReadTMAnimation(int iNumGeom)
 				{
 					// 트랙 추가
 					_stscanf(m_szLine, _T("%s %d %f%f%f %f"), m_szWord, &animData.iTick,
-						&animData.vRotAxis.x, &animData.vRotAxis.z, &animData.vRotAxis.y, &animData.vRotAxis.w);
+						&animData.qRotate.x, &animData.qRotate.z, &animData.qRotate.y, &animData.qRotate.w);
+
+					D3DXQuaternionRotationAxis(&animData.qRotate,
+						&D3DXVECTOR3(animData.qRotate.x, animData.qRotate.y, animData.qRotate.z),
+						animData.qRotate.w);
+
+					int iRotTrackSize = m_pModel->m_ObjectList[iNumGeom].Anim.RotTrack.size();
+					if (iRotTrackSize)
+					{
+						D3DXQuaternionMultiply(&animData.qRotate,
+							&m_pModel->m_ObjectList[iNumGeom].Anim.RotTrack[iRotTrackSize - 1].qRotate,
+							&animData.qRotate);
+					}
 					m_pModel->m_ObjectList[iNumGeom].Anim.RotTrack.push_back(animData);
 					continue;
 				}
@@ -587,8 +624,13 @@ bool bgParserASE::ReadTMAnimation(int iNumGeom)
 					// 트랙 추가
 					_stscanf(m_szLine, _T("%s %d %f%f%f %f%f%f%f"), m_szWord, &animData.iTick,
 						&animData.vVector.x, &animData.vVector.z, &animData.vVector.y,
-						&animData.vRotAxis.x, &animData.vRotAxis.z, &animData.vRotAxis.y, &animData.vRotAxis.w);
-					m_pModel->m_ObjectList[iNumGeom].Anim.ScaleTrack.push_back(animData);
+						&animData.qRotate.x, &animData.qRotate.z, &animData.qRotate.y, &animData.qRotate.w);
+
+					D3DXQuaternionRotationAxis(&animData.qRotate,
+						&D3DXVECTOR3(animData.qRotate.x, animData.qRotate.y, animData.qRotate.z),
+						animData.qRotate.w);
+
+					m_pModel->m_ObjectList[iNumGeom].Anim.SclTrack.push_back(animData);
 					continue;
 				}
 				break;

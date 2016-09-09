@@ -76,9 +76,7 @@ struct AnimTrackInfo
 {
 	int				iTick;
 	D3DXVECTOR3		vVector;
-	D3DXVECTOR4		vRotAxis;
-	AnimTrackInfo*	pPrev;
-	AnimTrackInfo*	pNext;
+	D3DXQUATERNION	qRotate;
 
 public:
 	AnimTrackInfo()
@@ -89,8 +87,7 @@ public:
 	{
 		iTick = 0;
 		vVector = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		vRotAxis = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
-		pPrev = pNext = NULL;
+		qRotate = D3DXQUATERNION(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 };
 
@@ -98,7 +95,7 @@ struct TMAnimation
 {
 	vector<AnimTrackInfo>	PosTrack;			// *CONTROL_POS_TRACK
 	vector<AnimTrackInfo>	RotTrack;			// *CONTROL_ROT_TRACK
-	vector<AnimTrackInfo>	ScaleTrack;			// *CONTROL_SCALE_TRACK
+	vector<AnimTrackInfo>	SclTrack;			// *CONTROL_SCALE_TRACK
 };
 
 struct GeomObject
@@ -116,35 +113,29 @@ struct GeomObject
 
 struct ObjectNode
 {
-	OBJECT_NODE_TYPE	eNodeType;					// Node 종류
-	TCHAR				szNodeName[MAX_PATH];		// *NODE_NAME
-	TCHAR				szNodeParent[MAX_PATH];		// *NODE_PARENT
-	ObjectNode*			pNodeParent;				// 부모 Node 에 대한 포인터
+	OBJECT_NODE_TYPE	eNodeType;				// Node 종류
+	TCHAR				szNodeName[MAX_PATH];	// *NODE_NAME
+	TCHAR				szNodeParent[MAX_PATH];	// *NODE_PARENT
+	ObjectNode*			pNodeParent;			// 부모 Node 에 대한 포인터
 
-	NodeTM				nodeTM;						// 월드 행렬 정보
-	void*				vpObj;						// Node 종류에 해당하는 데이터 포인터
-	TMAnimation			Anim;						// 애니메이션 정보
+	NodeTM				nodeTM;					// 월드 행렬 정보
+	void*				vpObj;					// Node 종류에 해당하는 데이터 포인터
+	TMAnimation			Anim;					// 애니메이션 정보
 
-	D3DXMATRIX			matWorldPos;				// 월드 이동행렬
-	D3DXMATRIX			matWorldRot;				// 월드 회전행렬
-	D3DXMATRIX			matWorldScale;				// 월드 신축행렬
+	D3DXMATRIX			matWorldPos;			// 월드 이동행렬
+	D3DXMATRIX			matWorldRot;			// 월드 회전행렬
+	D3DXMATRIX			matWorldScl;			// 월드 신축행렬
+	D3DXMATRIX			matCalculation;			// 행렬연산 결과
 
 public:
 	virtual ~ObjectNode()
 	{
 		SAFE_DEL(vpObj);
 	}
-
-	void Interpolate(float fFrameTick);
 };
 
 class bgModel : public bgShape
 {
-public:
-	SceneInfo					m_Scene;			// *SCENE
-	vector<MaterialInfo>		m_MaterialList;		// *MATERIAL_LIST
-	vector<ObjectNode>			m_ObjectList;		// *XxxOBJECT
-
 public:
 	vector<ID3D11Buffer*>		m_pVBList;			// Vertex Buffer;
 	vector<ID3D11Buffer*>		m_pIBList;			// Index Buffer;
@@ -152,6 +143,15 @@ public:
 	vector<vector<VertexPNCT>>	m_VertexList;
 	vector<vector<UINT>>		m_IndexList;
 	vector<MaterialTexID>		m_TexIDList;
+
+public:
+	SceneInfo					m_Scene;			// *SCENE
+	vector<MaterialInfo>		m_MaterialList;		// *MATERIAL_LIST
+	vector<ObjectNode>			m_ObjectList;		// *XxxOBJECT
+
+	MATRIX_BUFFER	m_MatrixBuffer;
+	float			m_fCurrentTick;
+
 
 public:
 	bgModel();
@@ -165,4 +165,8 @@ public:
 
 	HRESULT	CreateBuffer();
 	HRESULT	LoadShader(CHAR* szVS = "VS", CHAR* szPS = "PS");
+	void	SetMatrix(D3DXMATRIX* pWorld, D3DXMATRIX* pView, D3DXMATRIX* pProj);
+
+	void	Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX* matParent);
+	int		GetTrackIndex(float fTick, vector<AnimTrackInfo>* pTrackList);
 };
