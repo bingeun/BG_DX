@@ -61,21 +61,21 @@ bool bgModel::Render()
 	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 
+	SetMatrix(&m_ObjectList[0].matCalculation, &m_MatrixBuffer.matView, &m_MatrixBuffer.matProj);
+
+	if (!m_ObjectList[0].bAnim)
+		m_MatrixBuffer.matWorld = g_MatrixBuffer.matWorld;
+
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
+	pCBData->matWorld = m_MatrixBuffer.matWorld;
+	pCBData->matView = g_MatrixBuffer.matView;
+	pCBData->matProj = g_MatrixBuffer.matProj;
+	m_pDContext->Unmap(m_pCB, 0);
+
 	for (int i = 0; i < m_IndexList.size(); i++)
 	{
-		SetMatrix(&m_ObjectList[0].matCalculation, &m_MatrixBuffer.matView, &m_MatrixBuffer.matProj);
-
-		D3D11_MAPPED_SUBRESOURCE MappedResource;
-		m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-		MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
-		if (m_ObjectList[0].bAnim)
-			pCBData->matWorld = m_MatrixBuffer.matWorld;
-		else
-			pCBData->matWorld = g_MatrixBuffer.matWorld;
-		pCBData->matView = g_MatrixBuffer.matView;
-		pCBData->matProj = g_MatrixBuffer.matProj;
-		m_pDContext->Unmap(m_pCB, 0);
-
 		m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
 		m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
 		if (m_TexIDList[0].SubIDList.size() == 0)
