@@ -28,7 +28,10 @@ bool bgModel::Frame()
 	D3DXMatrixIdentity(&matWorld);
 	for (int iLoop = 0; iLoop < m_ObjectList.size(); iLoop++)
 	{
-		Interpolate(&m_ObjectList[iLoop], m_fCurrentTick, &matWorld);
+		if (m_ObjectList[iLoop].bAnim)
+		{
+			Interpolate(&m_ObjectList[iLoop], m_fCurrentTick, &matWorld);
+		}
 	}
 
 	for (int iLoop = 0; iLoop < m_ObjectList.size(); iLoop++)
@@ -58,33 +61,29 @@ bool bgModel::Render()
 	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 
-	if (m_TexIDList[0].SubIDList.size() == 0)
+	for (int i = 0; i < m_IndexList.size(); i++)
 	{
 		SetMatrix(&m_ObjectList[0].matCalculation, &m_MatrixBuffer.matView, &m_MatrixBuffer.matProj);
 
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 		MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
-		pCBData->matWorld = m_MatrixBuffer.matWorld;
+		if (m_ObjectList[0].bAnim)
+			pCBData->matWorld = m_MatrixBuffer.matWorld;
+		else
+			pCBData->matWorld = g_MatrixBuffer.matWorld;
 		pCBData->matView = g_MatrixBuffer.matView;
 		pCBData->matProj = g_MatrixBuffer.matProj;
 		m_pDContext->Unmap(m_pCB, 0);
 
+		m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
+		m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
+		if (m_TexIDList[0].SubIDList.size() == 0)
+			I_TextureMgr.GetPtr(m_TexIDList[0].iID)->Apply();
+		else
+			I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
 
-		m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[0], &iStride, &iOffset);
-		m_pDContext->IASetIndexBuffer(m_pIBList[0], DXGI_FORMAT_R32_UINT, 0);
-		I_TextureMgr.GetPtr(m_TexIDList[0].iID)->Apply();
-		m_pDContext->DrawIndexed(m_IndexList[0].size(), 0, 0);
-	}
-	else
-	{
-		for (int i = 0; i < m_IndexList.size(); i++)
-		{
-			m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
-			m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
-			I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply(); // PSSetShaderResources(0, 1, &m_pTextureSRV);
-			m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
-		}
+		m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
 	}
 
 	return true;

@@ -121,6 +121,7 @@ struct ObjectNode
 	NodeTM				nodeTM;					// 월드 행렬 정보
 	void*				vpObj;					// Node 종류에 해당하는 데이터 포인터
 	TMAnimation			Anim;					// 애니메이션 정보
+	bool				bAnim;					// 애니메이션 존재 여부
 
 	D3DXMATRIX			matWorldPos;			// 월드 이동행렬
 	D3DXMATRIX			matWorldRot;			// 월드 회전행렬

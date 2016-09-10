@@ -462,6 +462,7 @@ bool bgParserASE::ReadGeomObject()
 	{
 	case 0:		// *TM_ANIMATION	애니메이션이 있다면 ====================================
 	{
+		m_pModel->m_ObjectList[iNumGeom].bAnim = true;
 		IF_FALSE_RETURN(ReadTMAnimation(iNumGeom));
 
 		IF_FALSE_RETURN(FindWord(_T("*MATERIAL_REF")));
@@ -470,6 +471,7 @@ bool bgParserASE::ReadGeomObject()
 	break;
 	case 1:		// *MATERIAL_REF	애니메이션 없이 곧바로 매터리얼 REF이면 =================
 	{
+		m_pModel->m_ObjectList[iNumGeom].bAnim = false;
 		_stscanf(m_szLine, _T("%s %d"), m_szWord, &static_cast<GeomObject*>(m_pModel->m_ObjectList[iNumGeom].vpObj)->iMaterialRef);
 	}
 	break;
