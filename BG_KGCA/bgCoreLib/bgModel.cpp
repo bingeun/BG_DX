@@ -13,6 +13,13 @@ bgModel::~bgModel()
 bool bgModel::Init()
 {
 	m_ePrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	int i;
+	for (i = 0; i < m_pVBList.size(); i++)
+		m_pVBList[i] = NULL;
+	for (i = 0; i < m_pIBList.size(); i++)
+		m_pIBList[i] = NULL;
+
 	return true;
 }
 
@@ -76,14 +83,17 @@ bool bgModel::Render()
 
 	for (int i = 0; i < m_IndexList.size(); i++)
 	{
-		m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
-		m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
-		if (m_TexIDList[0].SubIDList.size() == 0)
-			I_TextureMgr.GetPtr(m_TexIDList[0].iID)->Apply();
-		else
-			I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
+		if (m_IndexList[i].size() > 0)
+		{
+			m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
+			m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
+			if (m_TexIDList[0].SubIDList.size() == 0)
+				I_TextureMgr.GetPtr(m_TexIDList[0].iID)->Apply();
+			else
+				I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
 
-		m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
+			m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
+		}
 	}
 
 	return true;
@@ -113,9 +123,12 @@ HRESULT bgModel::CreateBuffer()
 	m_pVBList.resize(m_VertexList.size());
 	for (int i = 0; i < m_VertexList.size(); i++)
 	{
-		VBDesc.ByteWidth = sizeof(VertexPNCT) * m_VertexList[i].size();
-		VData.pSysMem = &m_VertexList[i][0];
-		HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_pVBList[i]));
+		if (m_VertexList[i].size() > 0)
+		{
+			VBDesc.ByteWidth = sizeof(VertexPNCT) * m_VertexList[i].size();
+			VData.pSysMem = &m_VertexList[i][0];
+			HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_pVBList[i]));
+		}
 	}
 
 	// 인덱스버퍼
@@ -133,9 +146,12 @@ HRESULT bgModel::CreateBuffer()
 	m_pIBList.resize(m_IndexList.size());
 	for (int i = 0; i < m_IndexList.size(); i++)
 	{
-		IBDesc.ByteWidth = sizeof(UINT) * m_IndexList[i].size();
-		IData.pSysMem = &m_IndexList[i][0];
-		HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_pIBList[i]));
+		if (m_IndexList[i].size() > 0)
+		{
+			IBDesc.ByteWidth = sizeof(UINT) * m_IndexList[i].size();
+			IData.pSysMem = &m_IndexList[i][0];
+			HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_pIBList[i]));
+		}
 	}
 
 	return hr;
@@ -194,7 +210,7 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 	AnimTrackInfo* pPrevTrack;
 	AnimTrackInfo* pNextTrack;
 	float fPrevTick, fNextTick;
-	int iTrackIndex;
+	int iTrackIndex, iTrackSize;
 
 	D3DXMatrixIdentity(&pNodeObject->matCalculation);
 	matPos = pNodeObject->matWorldPos;
@@ -211,6 +227,13 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 	if (pNodeObject->Anim.RotTrack.size())
 	{
 		iTrackIndex = GetTrackIndex(fFrameTick, &pNodeObject->Anim.RotTrack);
+
+		// 트랙범위 한정
+		iTrackSize = pNodeObject->Anim.RotTrack.size();
+		if (iTrackIndex >= iTrackSize)
+			iTrackIndex = iTrackSize - 1;
+		else if (iTrackIndex < 0)
+			iTrackIndex = 0;
 
 		// 제일 첫번째 트랙 이후이면
 		if (iTrackIndex >= 0)
@@ -235,6 +258,13 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 	{
 		iTrackIndex = GetTrackIndex(fFrameTick, &pNodeObject->Anim.PosTrack);
 
+		// 트랙범위 한정
+		iTrackSize = pNodeObject->Anim.PosTrack.size();
+		if (iTrackIndex >= iTrackSize)
+			iTrackIndex = iTrackSize - 1;
+		else if (iTrackIndex < 0)
+			iTrackIndex = 0;
+
 		// 제일 첫번째 트랙 이후이면
 		if (iTrackIndex >= 0)
 		{
@@ -258,6 +288,13 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 	if (pNodeObject->Anim.SclTrack.size())
 	{
 		iTrackIndex = GetTrackIndex(fFrameTick, &pNodeObject->Anim.SclTrack);
+
+		// 트랙범위 한정
+		iTrackSize = pNodeObject->Anim.SclTrack.size();
+		if (iTrackIndex >= iTrackSize)
+			iTrackIndex = iTrackSize - 1;
+		else if (iTrackIndex < 0)
+			iTrackIndex = 0;
 
 		// 제일 첫번째 트랙 이후이면
 		if (iTrackIndex >= 0)

@@ -111,6 +111,12 @@ struct GeomObject
 	int						iMaterialRef;		// *MATERIAL_REF
 };
 
+struct HelperObject
+{
+	D3DXVECTOR3			vBBoxMin;				// *BOUNDINGBOX_MIN
+	D3DXVECTOR3			vBBoxMax;				// *BOUNDINGBOX_MAX
+};
+
 struct ObjectNode
 {
 	OBJECT_NODE_TYPE	eNodeType;				// Node Á¾·ù
@@ -131,7 +137,7 @@ struct ObjectNode
 public:
 	virtual ~ObjectNode()
 	{
-		SAFE_DEL(vpObj);
+		//SAFE_DEL(vpObj);
 	}
 };
 

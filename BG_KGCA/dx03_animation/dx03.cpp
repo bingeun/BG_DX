@@ -9,7 +9,7 @@ TCHAR* szASEFileName[] =
 	_T("../../data/model/Turret_Deploy.ASE"),		// 4	터렛 애니메이션
 };
 int g_iASEFileIndex = 3;	// <<=== ASE 인덱스 넣기
-int g_iASEFileIndex2 = 0;	// <<=== ASE 인덱스 넣기
+int g_iASEFileIndex2 = 4;	// <<=== ASE 인덱스 넣기
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInsteance, LPWSTR lpCmdLine, int nCmdShow)
 {

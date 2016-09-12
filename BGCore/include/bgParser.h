@@ -9,6 +9,7 @@ public:
 	TCHAR	m_szLine[MAX_PATH];
 	TCHAR	m_szWord[MAX_PATH];
 	TCHAR	m_szFileName[MAX_PATH];
+	TCHAR*	m_pszToken;
 
 public:
 	bgParser();

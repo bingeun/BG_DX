@@ -25,7 +25,7 @@ public:
 	bool	ReadCameraObject();
 	bool	ReadLightObject();
 
-	bool	ReadTMAnimation(int iNumGeom);
+	bool	ReadTMAnimation(int iNumObject);
 
 	bool	ConvertToModel();
 };
