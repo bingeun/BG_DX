@@ -135,6 +135,12 @@ struct ObjectNode
 	D3DXMATRIX			matWorldScl;			// 월드 신축행렬
 	D3DXMATRIX			matCalculation;			// 행렬연산 결과
 
+	vector<ID3D11Buffer*>		m_pVBList;		// 버텍스 버퍼
+	vector<ID3D11Buffer*>		m_pIBList;		// 인덱스 버퍼
+
+	vector<vector<VertexPNCT>>	m_VertexList;	// 메터리얼별 버텍스 리스트
+	vector<vector<UINT>>		m_IndexList;	// 메터리얼별 인덱스 리스트
+
 public:
 	virtual ~ObjectNode()
 	{
@@ -145,21 +151,13 @@ public:
 class bgModel : public bgShape
 {
 public:
-	vector<ID3D11Buffer*>		m_pVBList;			// Vertex Buffer;
-	vector<ID3D11Buffer*>		m_pIBList;			// Index Buffer;
+	SceneInfo				m_Scene;			// *SCENE
+	vector<MaterialInfo>	m_MaterialList;		// *MATERIAL_LIST
+	vector<ObjectNode>		m_ObjectList;		// *XxxOBJECT
 
-	vector<vector<VertexPNCT>>	m_VertexList;
-	vector<vector<UINT>>		m_IndexList;
-	vector<MaterialTexID>		m_TexIDList;
-
-public:
-	SceneInfo					m_Scene;			// *SCENE
-	vector<MaterialInfo>		m_MaterialList;		// *MATERIAL_LIST
-	vector<ObjectNode>			m_ObjectList;		// *XxxOBJECT
-
-	MATRIX_BUFFER	m_MatrixBuffer;
-	float			m_fCurrentTick;
-
+	vector<MaterialTexID>	m_TexIDList;
+	MATRIX_BUFFER			m_MatrixBuffer;
+	float					m_fCurrentTick;
 
 public:
 	bgModel();

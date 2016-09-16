@@ -944,6 +944,7 @@ void bgParserASE::ConvertToModel()
 	int iObj, iFace, iTri;
 	int iNumMaterial;
 	int iNumSubMaterial;
+	int iMaterialRef;
 
 	// 메터리얼 텍스쳐 로드
 	m_pModel->m_TexIDList.resize(m_pModel->m_MaterialList.size());
@@ -951,7 +952,7 @@ void bgParserASE::ConvertToModel()
 	for (iLoop = 0; iLoop < m_pModel->m_MaterialList.size(); iLoop++)
 	{
 		// 서브 메터리얼이 있으면
-		if (m_pModel->m_MaterialList[iLoop].SubMaterialList.size() > 1)
+		if (m_pModel->m_MaterialList[iLoop].SubMaterialList.size() > 0)
 		{
 			iNumSubMaterial = m_pModel->m_MaterialList[iLoop].SubMaterialList.size();
 			m_pModel->m_TexIDList[iLoop].SubIDList.resize(iNumSubMaterial);
@@ -973,8 +974,6 @@ void bgParserASE::ConvertToModel()
 	// 종류별로 분류하여 정점배열에 데이터 추가
 	VertexPNCT vertexTemp;
 	int iSubTexID, iTriIndex;
-	m_pModel->m_VertexList.resize(iNumMaterial);
-
 	for (iObj = 0; iObj < m_pModel->m_ObjectList.size(); iObj++)
 	{
 		switch (m_pModel->m_ObjectList[iObj].eNodeType)
@@ -982,11 +981,18 @@ void bgParserASE::ConvertToModel()
 		case OBJECT_NODE_TYPE_GEOMOBJECT:
 		{
 			GeomObject* GeomObj = static_cast<GeomObject*>(m_pModel->m_ObjectList[iObj].vpObj);
+			iMaterialRef = GeomObj->iMaterialRef;
+			iNumSubMaterial = m_pModel->m_MaterialList[iMaterialRef].SubMaterialList.size();
+
+			if (iNumSubMaterial == 0)
+				m_pModel->m_ObjectList[iObj].m_VertexList.resize(1);
+			else
+				m_pModel->m_ObjectList[iObj].m_VertexList.resize(iNumSubMaterial);
 
 			for (iFace = 0; iFace < GeomObj->FaceList.size(); iFace++)
 			{
 				// 서브메터리얼이 없으면 단일 ID로 사용 (0번)
-				if (iNumMaterial == 1)
+				if (iNumSubMaterial == 0)
 					iSubTexID = 0;
 				// MTLID 가 서브메터리얼 갯수보다 크면 0 번으로 사용
 				else if (GeomObj->FaceList[iFace].iID >= m_pModel->m_MaterialList[GeomObj->iMaterialRef].SubMaterialList.size())
@@ -1003,7 +1009,7 @@ void bgParserASE::ConvertToModel()
 					vertexTemp.col = D3DXVECTOR4(GeomObj->ColVertexList[iTriIndex], 1.0f);
 					iTriIndex = GeomObj->TexFaceList[iFace].i[iTri];
 					vertexTemp.tex = D3DXVECTOR2(GeomObj->TexVertexList[iTriIndex].x, 1.0f - GeomObj->TexVertexList[iTriIndex].y);
-					m_pModel->m_VertexList[iSubTexID].push_back(vertexTemp);
+					m_pModel->m_ObjectList[iObj].m_VertexList[iSubTexID].push_back(vertexTemp);
 				}
 			}
 		}
@@ -1018,13 +1024,22 @@ void bgParserASE::ConvertToModel()
 	}
 
 	// 텍스쳐 종류별(iLoop => MTLID)로 해당종류의 갯수(iLoopSub)만큼 반복하며 인덱스번호 지정
-	// 인덱스번호는 0,1,2,  3,4,5,  6,7,8... 처럼 번호대로 카운트 증가
-	m_pModel->m_IndexList.resize(iNumMaterial);
-	for (iLoop = 0; iLoop < iNumMaterial; iLoop++)
+	for (iObj = 0; iObj < m_pModel->m_ObjectList.size(); iObj++)
 	{
-		for (iLoopSub = 0; iLoopSub < m_pModel->m_VertexList[iLoop].size(); iLoopSub++)
+		if (m_pModel->m_ObjectList[iObj].eNodeType == OBJECT_NODE_TYPE_GEOMOBJECT)
 		{
-			m_pModel->m_IndexList[iLoop].push_back(iLoopSub);
+			GeomObject* GeomObj = static_cast<GeomObject*>(m_pModel->m_ObjectList[iObj].vpObj);
+			iMaterialRef = GeomObj->iMaterialRef;
+			iNumSubMaterial = m_pModel->m_MaterialList[iMaterialRef].SubMaterialList.size();
+
+			m_pModel->m_ObjectList[iObj].m_IndexList.resize(iNumSubMaterial);
+			for (iLoop = 0; iLoop < iNumMaterial; iLoop++)
+			{
+				for (iLoopSub = 0; iLoopSub < m_pModel->m_ObjectList[iObj].m_VertexList[iLoop].size(); iLoopSub++)
+				{
+					m_pModel->m_ObjectList[iObj].m_IndexList[iLoop].push_back(iLoopSub);
+				}
+			}
 		}
 	}
 }

@@ -14,12 +14,6 @@ bool bgModel::Init()
 {
 	m_ePrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	int i;
-	for (i = 0; i < m_pVBList.size(); i++)
-		m_pVBList[i] = NULL;
-	for (i = 0; i < m_pIBList.size(); i++)
-		m_pIBList[i] = NULL;
-
 	return true;
 }
 
@@ -65,31 +59,37 @@ bool bgModel::Render()
 	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
 
-	SetMatrix(&m_ObjectList[0].matCalculation, &m_MatrixBuffer.matView, &m_MatrixBuffer.matProj);
-
-	if (!m_ObjectList[0].bAnim)
-		m_MatrixBuffer.matWorld = g_MatrixBuffer.matWorld;
-
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
-	pCBData->matWorld = m_MatrixBuffer.matWorld;
-	pCBData->matView = g_MatrixBuffer.matView;
-	pCBData->matProj = g_MatrixBuffer.matProj;
-	m_pDContext->Unmap(m_pCB, 0);
-
-	for (int i = 0; i < m_IndexList.size(); i++)
+	for (int iObj = 0; iObj < m_ObjectList.size(); iObj++)
 	{
-		if (m_IndexList[i].size() > 0)
-		{
-			m_pDContext->IASetVertexBuffers(0, 1, &m_pVBList[i], &iStride, &iOffset);
-			m_pDContext->IASetIndexBuffer(m_pIBList[i], DXGI_FORMAT_R32_UINT, 0);
-			if (m_TexIDList[0].SubIDList.size() == 0)
-				I_TextureMgr.GetPtr(m_TexIDList[0].iID)->Apply();
-			else
-				I_TextureMgr.GetPtr(m_TexIDList[0].SubIDList[i].iID)->Apply();
+		SetMatrix(&m_ObjectList[iObj].matCalculation, &m_MatrixBuffer.matView, &m_MatrixBuffer.matProj);
 
-			m_pDContext->DrawIndexed(m_IndexList[i].size(), 0, 0);
+		if (!m_ObjectList[iObj].bAnim)
+			m_MatrixBuffer.matWorld = g_MatrixBuffer.matWorld;
+
+		if (m_ObjectList[iObj].eNodeType == OBJECT_NODE_TYPE_GEOMOBJECT)
+		{
+			D3D11_MAPPED_SUBRESOURCE MappedResource;
+			m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+			MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
+			pCBData->matWorld = m_MatrixBuffer.matWorld;
+			pCBData->matView = g_MatrixBuffer.matView;
+			pCBData->matProj = g_MatrixBuffer.matProj;
+			m_pDContext->Unmap(m_pCB, 0);
+
+			for (int iMaterial = 0; iMaterial < m_ObjectList[iObj].m_IndexList.size(); iMaterial++)
+			{
+				if (m_ObjectList[iObj].m_IndexList[iMaterial].size() > 0)
+				{
+					m_pDContext->IASetVertexBuffers(0, 1, &m_ObjectList[iObj].m_pVBList[iMaterial], &iStride, &iOffset);
+					m_pDContext->IASetIndexBuffer(m_ObjectList[iObj].m_pIBList[iMaterial], DXGI_FORMAT_R32_UINT, 0);
+					if (m_TexIDList[iObj].SubIDList.size() == 0)
+						I_TextureMgr.GetPtr(m_TexIDList[iObj].iID)->Apply();
+					else
+						I_TextureMgr.GetPtr(m_TexIDList[iObj].SubIDList[iMaterial].iID)->Apply();
+
+					m_pDContext->DrawIndexed(m_ObjectList[iObj].m_IndexList[iMaterial].size(), 0, 0);
+				}
+			}
 		}
 	}
 
@@ -105,6 +105,8 @@ HRESULT bgModel::CreateBuffer()
 {
 	HRESULT hr = S_OK;
 
+	int iObj, iMaterial;
+
 	// 버텍스버퍼
 	D3D11_BUFFER_DESC VBDesc;
 	VBDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -117,14 +119,17 @@ HRESULT bgModel::CreateBuffer()
 	VData.SysMemPitch = 0;
 	VData.SysMemSlicePitch = 0;
 
-	m_pVBList.resize(m_VertexList.size());
-	for (int i = 0; i < m_VertexList.size(); i++)
+	for (iObj = 0; iObj < m_ObjectList.size(); iObj++)
 	{
-		if (m_VertexList[i].size() > 0)
+		m_ObjectList[iObj].m_pVBList.resize(m_ObjectList[iObj].m_VertexList.size());
+		for (iMaterial = 0; iMaterial < m_ObjectList[iObj].m_VertexList.size(); iMaterial++)
 		{
-			VBDesc.ByteWidth = sizeof(VertexPNCT) * m_VertexList[i].size();
-			VData.pSysMem = &m_VertexList[i][0];
-			HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_pVBList[i]));
+			if (m_ObjectList[iObj].m_VertexList[iMaterial].size() > 0)
+			{
+				VBDesc.ByteWidth = sizeof(VertexPNCT) * m_ObjectList[iObj].m_VertexList[iMaterial].size();
+				VData.pSysMem = &m_ObjectList[iObj].m_VertexList[iMaterial][0];
+				HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_ObjectList[iObj].m_pVBList[iMaterial]));
+			}
 		}
 	}
 
@@ -140,14 +145,17 @@ HRESULT bgModel::CreateBuffer()
 	IData.SysMemPitch = 0;
 	IData.SysMemSlicePitch = 0;
 
-	m_pIBList.resize(m_IndexList.size());
-	for (int i = 0; i < m_IndexList.size(); i++)
+	for (iObj = 0; iObj < m_ObjectList.size(); iObj++)
 	{
-		if (m_IndexList[i].size() > 0)
+		m_ObjectList[iObj].m_pIBList.resize(m_ObjectList[iObj].m_IndexList.size());
+		for (int iMaterial = 0; iMaterial < m_ObjectList[iObj].m_IndexList.size(); iMaterial++)
 		{
-			IBDesc.ByteWidth = sizeof(UINT) * m_IndexList[i].size();
-			IData.pSysMem = &m_IndexList[i][0];
-			HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_pIBList[i]));
+			if (m_ObjectList[iObj].m_IndexList[iMaterial].size() > 0)
+			{
+				IBDesc.ByteWidth = sizeof(UINT) * m_ObjectList[iObj].m_IndexList[iMaterial].size();
+				IData.pSysMem = &m_ObjectList[iObj].m_IndexList[iMaterial][0];
+				HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_ObjectList[iObj].m_pIBList[iMaterial]));
+			}
 		}
 	}
 
