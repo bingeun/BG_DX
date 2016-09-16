@@ -175,6 +175,6 @@ public:
 	HRESULT	LoadShader(CHAR* szVS = "VS", CHAR* szPS = "PS");
 	void	SetMatrix(D3DXMATRIX* pWorld, D3DXMATRIX* pView, D3DXMATRIX* pProj);
 
-	void	Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX* matParent);
+	void	Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX* matWorld);
 	int		GetTrackIndex(float fTick, vector<AnimTrackInfo>* pTrackList);
 };

@@ -35,10 +35,7 @@ bool bgModel::Frame()
 	D3DXMatrixIdentity(&matWorld);
 	for (int iLoop = 0; iLoop < m_ObjectList.size(); iLoop++)
 	{
-		if (m_ObjectList[iLoop].bAnim)
-		{
-			Interpolate(&m_ObjectList[iLoop], m_fCurrentTick, &matWorld);
-		}
+		Interpolate(&m_ObjectList[iLoop], m_fCurrentTick, &matWorld);
 	}
 
 	for (int iLoop = 0; iLoop < m_ObjectList.size(); iLoop++)
@@ -203,7 +200,7 @@ void bgModel::SetMatrix(D3DXMATRIX* pWorld, D3DXMATRIX* pView, D3DXMATRIX* pProj
 	D3DXMatrixTranspose(&m_MatrixBuffer.matProj, &m_MatrixBuffer.matProj);
 }
 
-void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX* matParent)
+void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX* matWorld)
 {
 	D3DXQUATERNION qRot, qScl;
 	D3DXMATRIX matAnim, matPos, matRot, matScl;
@@ -317,15 +314,21 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 		D3DXMatrixScaling(&matScl, vScl.x, vScl.y, vScl.z);
 		D3DXMatrixRotationQuaternion(&matScaleRot, &qScl);
 		D3DXMatrixInverse(&matInvScaleRot, NULL, &matScaleRot);
-		matScl = matInvScaleRot  * matScl * matScaleRot;
+		matScl = matInvScaleRot * matScl * matScaleRot;
 	}
 
-	// 최종 행렬
+	// 최종 행렬 계산
 	D3DXMatrixMultiply(&matAnim, &matScl, &matRot);
 	matAnim._41 = matPos._41;
 	matAnim._42 = matPos._42;
 	matAnim._43 = matPos._43;
-	D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, matParent);
+	//D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, matWorld);
+	//if (pNodeObject->pNodeParent != NULL)
+	//	D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, &pNodeObject->pNodeParent->matCalculation);
+	if (pNodeObject->pNodeParent != NULL)
+		D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, &pNodeObject->pNodeParent->matCalculation);
+	else
+		D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, matWorld);
 
 	// 인버스 매트릭스 확인 코드
 	D3DXVECTOR3 v0, v1, v2, v3;

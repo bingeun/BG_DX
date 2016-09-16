@@ -1036,21 +1036,25 @@ void bgParserASE::LinkNode()
 	// 전체 노드의 관계 연결
 	for (iNode = 0; iNode < m_pModel->m_ObjectList.size(); iNode++)
 	{
-		for (iFindParent = 0; iFindParent < m_pModel->m_ObjectList.size(); iFindParent++)
+		// 부모노드의 이름이 있을때만 탐색
+		if (_tcsicmp(m_pModel->m_ObjectList[iNode].szNodeParent, _T("")))
 		{
-			// 부모노드를 찾으면 부모노드와 자식노드 서로간의 포인터 연결
-			if (!_tcsicmp(m_pModel->m_ObjectList[iNode].szNodeName, m_pModel->m_ObjectList[iFindParent].szNodeName))
+			for (iFindParent = 0; iFindParent < m_pModel->m_ObjectList.size(); iFindParent++)
 			{
-				m_pModel->m_ObjectList[iNode].pNodeParent = &m_pModel->m_ObjectList[iFindParent];
-				m_pModel->m_ObjectList[iFindParent].pNodeChildList.push_back(&m_pModel->m_ObjectList[iNode]);
-				break;
+				// 부모노드를 찾으면 부모노드와 자식노드 서로간의 포인터 연결
+				if (!_tcsicmp(m_pModel->m_ObjectList[iNode].szNodeParent, m_pModel->m_ObjectList[iFindParent].szNodeName))
+				{
+					m_pModel->m_ObjectList[iNode].pNodeParent = &m_pModel->m_ObjectList[iFindParent];
+					m_pModel->m_ObjectList[iFindParent].pNodeChildList.push_back(&m_pModel->m_ObjectList[iNode]);
+					break;
+				}
 			}
-		}
 
-		// 찾는 부모노드가 없으면
-		if (iFindParent >= m_pModel->m_ObjectList.size())
-		{
-			m_pModel->m_ObjectList[iNode].pNodeParent = NULL;
+			// 찾는 부모노드가 없으면 (정상적인 ASE 데이터이면 항상 거짓이어야 함)
+			if (iFindParent >= m_pModel->m_ObjectList.size())
+			{
+				m_pModel->m_ObjectList[iNode].pNodeParent = NULL;
+			}
 		}
 	}
 
