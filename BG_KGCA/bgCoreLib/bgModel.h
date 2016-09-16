@@ -123,6 +123,7 @@ struct ObjectNode
 	TCHAR				szNodeName[MAX_PATH];	// *NODE_NAME
 	TCHAR				szNodeParent[MAX_PATH];	// *NODE_PARENT
 	ObjectNode*			pNodeParent;			// 부모 Node 에 대한 포인터
+	vector<ObjectNode*>	pNodeChildList;			// 자식 Node들에 대한 포인터
 
 	NodeTM				nodeTM;					// 월드 행렬 정보
 	void*				vpObj;					// Node 종류에 해당하는 데이터 포인터

@@ -27,5 +27,6 @@ public:
 
 	bool	ReadTMAnimation(int iNumObject);
 
-	bool	ConvertToModel();
+	void	ConvertToModel();
+	void	LinkNode();
 };

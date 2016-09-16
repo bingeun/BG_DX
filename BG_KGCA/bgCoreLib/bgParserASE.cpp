@@ -42,8 +42,8 @@ bool bgParserASE::Read()
 		case 1:	IF_FALSE_RETURN(ReadHelperObject());	break;
 		case -1:	// 찾는 단어 없음 (파일의 끝)
 		{
-			// 읽은 데이터를 모델용 데이터로 컨버팅
-			IF_FALSE_RETURN(ConvertToModel());
+			ConvertToModel();	// 읽은 데이터를 모델용 데이터로 컨버팅
+			LinkNode();			// 노드 관계 연결
 		}
 		break;
 		default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
@@ -255,7 +255,8 @@ bool bgParserASE::ReadGeomObject()
 	break;
 	case 1:		// *NODE_TM			부모 노드가 없다면 ============================
 	{
-		// 처리 할 내용 없음
+		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH);
+		m_pModel->m_ObjectList[iNumObj].pNodeParent = NULL;
 	}
 	break;
 	case -1:	// 찾는 단어 없음 =================================================
@@ -620,7 +621,8 @@ bool bgParserASE::ReadHelperObject()
 	break;
 	case 1:		// *NODE_TM			부모 노드가 없다면 ============================
 	{
-		// 처리 할 내용 없음
+		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH);
+		m_pModel->m_ObjectList[iNumObj].pNodeParent = NULL;
 	}
 	break;
 	case -1:	// 찾는 단어 없음 =================================================
@@ -936,7 +938,7 @@ ship.ase
 */
 
 // ASE 파일에서 읽은 데이터를 모델(출력용) 데이터로 변환
-bool bgParserASE::ConvertToModel()
+void bgParserASE::ConvertToModel()
 {
 	int iLoop, iLoopSub;
 	int iObj, iFace, iTri;
@@ -968,7 +970,7 @@ bool bgParserASE::ConvertToModel()
 		}
 	}
 
-	// 종류별로 분류하여 데이터 추가
+	// 종류별로 분류하여 정점배열에 데이터 추가
 	VertexPNCT vertexTemp;
 	int iSubTexID, iTriIndex;
 	m_pModel->m_VertexList.resize(iNumMaterial);
@@ -1025,6 +1027,42 @@ bool bgParserASE::ConvertToModel()
 			m_pModel->m_IndexList[iLoop].push_back(iLoopSub);
 		}
 	}
+}
 
-	return true;
+void bgParserASE::LinkNode()
+{
+	int iNode, iFindParent;
+
+	// 전체 노드의 관계 연결
+	for (iNode = 0; iNode < m_pModel->m_ObjectList.size(); iNode++)
+	{
+		for (iFindParent = 0; iFindParent < m_pModel->m_ObjectList.size(); iFindParent++)
+		{
+			// 부모노드를 찾으면 부모노드와 자식노드 서로간의 포인터 연결
+			if (!_tcsicmp(m_pModel->m_ObjectList[iNode].szNodeName, m_pModel->m_ObjectList[iFindParent].szNodeName))
+			{
+				m_pModel->m_ObjectList[iNode].pNodeParent = &m_pModel->m_ObjectList[iFindParent];
+				m_pModel->m_ObjectList[iFindParent].pNodeChildList.push_back(&m_pModel->m_ObjectList[iNode]);
+				break;
+			}
+		}
+
+		// 찾는 부모노드가 없으면
+		if (iFindParent >= m_pModel->m_ObjectList.size())
+		{
+			m_pModel->m_ObjectList[iNode].pNodeParent = NULL;
+		}
+	}
+
+	// 헬퍼오브젝트이고 자식노드가 없으면 제거 (사용되지 않는 오브젝트)
+	for (iNode = 0; iNode < m_pModel->m_ObjectList.size(); iNode++)
+	{
+		if (m_pModel->m_ObjectList[iNode].eNodeType == OBJECT_NODE_TYPE_HELPEROBJECT &&
+			m_pModel->m_ObjectList[iNode].pNodeChildList.size() == 0)
+		{
+			// 제거 처리
+		}
+	}
+
+	iNode = 0;
 }
