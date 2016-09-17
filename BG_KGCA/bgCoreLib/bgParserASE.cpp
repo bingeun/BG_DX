@@ -1032,12 +1032,25 @@ void bgParserASE::ConvertToModel()
 			iMaterialRef = GeomObj->iMaterialRef;
 			iNumSubMaterial = m_pModel->m_MaterialList[iMaterialRef].SubMaterialList.size();
 
-			m_pModel->m_ObjectList[iObj].m_IndexList.resize(iNumSubMaterial);
-			for (iLoop = 0; iLoop < iNumMaterial; iLoop++)
+			if (iNumSubMaterial > 0)
 			{
-				for (iLoopSub = 0; iLoopSub < m_pModel->m_ObjectList[iObj].m_VertexList[iLoop].size(); iLoopSub++)
+				m_pModel->m_ObjectList[iObj].m_IndexList.resize(iNumSubMaterial);
+
+				for (iLoopSub = 0; iLoopSub < iNumSubMaterial; iLoopSub++)
 				{
-					m_pModel->m_ObjectList[iObj].m_IndexList[iLoop].push_back(iLoopSub);
+					for (iLoop = 0; iLoop < m_pModel->m_ObjectList[iObj].m_VertexList[iLoopSub].size(); iLoop++)
+					{
+						m_pModel->m_ObjectList[iObj].m_IndexList[iLoopSub].push_back(iLoop);
+					}
+				}
+			}
+			else
+			{
+				m_pModel->m_ObjectList[iObj].m_IndexList.resize(1);
+
+				for (iLoop = 0; iLoop < m_pModel->m_ObjectList[iObj].m_VertexList[0].size(); iLoop++)
+				{
+					m_pModel->m_ObjectList[iObj].m_IndexList[0].push_back(iLoop);
 				}
 			}
 		}
@@ -1084,4 +1097,8 @@ void bgParserASE::LinkNode()
 	}
 
 	iNode = 0;
+}
+
+void bgParserASE::OperationTM()
+{
 }

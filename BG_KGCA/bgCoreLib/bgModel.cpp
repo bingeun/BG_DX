@@ -63,33 +63,39 @@ bool bgModel::Render()
 	{
 		SetMatrix(&m_ObjectList[iObj].matCalculation, &m_MatrixBuffer.matView, &m_MatrixBuffer.matProj);
 
-		if (!m_ObjectList[iObj].bAnim)
-			m_MatrixBuffer.matWorld = g_MatrixBuffer.matWorld;
+		D3D11_MAPPED_SUBRESOURCE MappedResource;
+		m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+		MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
+		pCBData->matWorld = m_MatrixBuffer.matWorld;
+		pCBData->matView = g_MatrixBuffer.matView;
+		pCBData->matProj = g_MatrixBuffer.matProj;
+		m_pDContext->Unmap(m_pCB, 0);
 
-		if (m_ObjectList[iObj].eNodeType == OBJECT_NODE_TYPE_GEOMOBJECT)
+		switch (m_ObjectList[iObj].eNodeType)
 		{
-			D3D11_MAPPED_SUBRESOURCE MappedResource;
-			m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-			MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
-			pCBData->matWorld = m_MatrixBuffer.matWorld;
-			pCBData->matView = g_MatrixBuffer.matView;
-			pCBData->matProj = g_MatrixBuffer.matProj;
-			m_pDContext->Unmap(m_pCB, 0);
-
+		case OBJECT_NODE_TYPE_GEOMOBJECT:
+		{
+			int iMaterialRef = static_cast<GeomObject*>(m_ObjectList[iObj].vpObj)->iMaterialRef;
 			for (int iMaterial = 0; iMaterial < m_ObjectList[iObj].m_IndexList.size(); iMaterial++)
 			{
 				if (m_ObjectList[iObj].m_IndexList[iMaterial].size() > 0)
 				{
 					m_pDContext->IASetVertexBuffers(0, 1, &m_ObjectList[iObj].m_pVBList[iMaterial], &iStride, &iOffset);
 					m_pDContext->IASetIndexBuffer(m_ObjectList[iObj].m_pIBList[iMaterial], DXGI_FORMAT_R32_UINT, 0);
-					if (m_TexIDList[iObj].SubIDList.size() == 0)
-						I_TextureMgr.GetPtr(m_TexIDList[iObj].iID)->Apply();
+					if (m_TexIDList[iMaterialRef].SubIDList.size() == 0)
+						I_TextureMgr.GetPtr(m_TexIDList[iMaterialRef].iID)->Apply();
 					else
-						I_TextureMgr.GetPtr(m_TexIDList[iObj].SubIDList[iMaterial].iID)->Apply();
+						I_TextureMgr.GetPtr(m_TexIDList[iMaterialRef].SubIDList[iMaterial].iID)->Apply();
 
 					m_pDContext->DrawIndexed(m_ObjectList[iObj].m_IndexList[iMaterial].size(), 0, 0);
 				}
 			}
+		}
+		break;
+		case OBJECT_NODE_TYPE_HELPEROBJECT:
+		{
+		}
+		break;
 		}
 	}
 
@@ -330,9 +336,6 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 	matAnim._41 = matPos._41;
 	matAnim._42 = matPos._42;
 	matAnim._43 = matPos._43;
-	//D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, matWorld);
-	//if (pNodeObject->pNodeParent != NULL)
-	//	D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, &pNodeObject->pNodeParent->matCalculation);
 	if (pNodeObject->pNodeParent != NULL)
 		D3DXMatrixMultiply(&pNodeObject->matCalculation, &matAnim, &pNodeObject->pNodeParent->matCalculation);
 	else
