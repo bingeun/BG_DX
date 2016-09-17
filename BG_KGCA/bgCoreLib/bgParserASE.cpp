@@ -44,6 +44,7 @@ bool bgParserASE::Read()
 		{
 			ConvertToModel();	// 읽은 데이터를 모델용 데이터로 컨버팅
 			LinkNode();			// 노드 관계 연결
+			OperationTM();		// 노드 관계에 따른 행렬 연산
 		}
 		break;
 		default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
@@ -1101,4 +1102,25 @@ void bgParserASE::LinkNode()
 
 void bgParserASE::OperationTM()
 {
+	D3DXMATRIX* matParentWorld;
+	D3DXMATRIX matChildWorld;
+	D3DXMATRIX matInvParentWorld;
+	D3DXMATRIX matPos, matRot, matScl;
+	D3DXVECTOR3 vPos, vScl;
+	D3DXQUATERNION qRot;
+	// 터렛 애니메이션 됨! (0프레임 행렬 디버그 필요)
+	for (int iNode = 0; iNode < m_pModel->m_ObjectList.size(); iNode++)
+	{
+		if (m_pModel->m_ObjectList[iNode].pNodeParent)
+		{
+			matParentWorld = &m_pModel->m_ObjectList[iNode].pNodeParent->nodeTM.matWorld;
+
+			D3DXMatrixInverse(&matInvParentWorld, NULL, matParentWorld);
+			matChildWorld = m_pModel->m_ObjectList[iNode].nodeTM.matWorld * matInvParentWorld;
+			D3DXMatrixDecompose(&vScl, &qRot, &vPos, &matChildWorld);
+			D3DXMatrixScaling(&m_pModel->m_ObjectList[iNode].matWorldScl, vScl.x, vScl.y, vScl.z);
+			D3DXMatrixTranslation(&m_pModel->m_ObjectList[iNode].matWorldPos, vPos.x, vPos.y, vPos.z);
+			D3DXMatrixRotationQuaternion(&m_pModel->m_ObjectList[iNode].matWorldRot, &qRot);
+		}
+	}
 }

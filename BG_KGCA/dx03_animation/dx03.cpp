@@ -137,7 +137,7 @@ bool dx03::Frame()
 bool dx03::Render()
 {
 	m_objWorldAxis.Render();
-	//m_Model.Render();
+	m_Model.Render();
 	m_Model2.Render();
 
 	return true;
