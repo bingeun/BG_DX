@@ -1,0 +1,11 @@
+################################################################################
+# 이 .gitignore 파일은 Microsoft(R) Visual Studio에서 자동으로 만들어졌습니다.
+################################################################################
+/output
+/BG_KGCA/Max02_Util100/obj/x64/Debug
+/BG_KGCA/Max01_Exporter100/obj/x64/Debug
+/BG_KGCA/.vs/BG_KGCA/v14/.suo
+/BGCore/lib/bgCoreLib.lib
+/BG_KGCA/BG_KGCA.VC.db
+/BG_KGCA/BG_KGCA.sdf
+/BG_KGCA/dx01_resize/DX01_Resize.aps
