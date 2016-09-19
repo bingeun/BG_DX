@@ -243,8 +243,6 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 		iTrackSize = pNodeObject->Anim.RotTrack.size();
 		if (iTrackIndex >= iTrackSize)
 			iTrackIndex = iTrackSize - 1;
-		else if (iTrackIndex < 0)
-			iTrackIndex = 0;
 
 		// 제일 첫번째 트랙 이후이면
 		if (iTrackIndex >= 0)
@@ -273,8 +271,6 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 		iTrackSize = pNodeObject->Anim.PosTrack.size();
 		if (iTrackIndex >= iTrackSize)
 			iTrackIndex = iTrackSize - 1;
-		else if (iTrackIndex < 0)
-			iTrackIndex = 0;
 
 		// 제일 첫번째 트랙 이후이면
 		if (iTrackIndex >= 0)
@@ -304,8 +300,6 @@ void bgModel::Interpolate(ObjectNode* pNodeObject, float fFrameTick, D3DXMATRIX*
 		iTrackSize = pNodeObject->Anim.SclTrack.size();
 		if (iTrackIndex >= iTrackSize)
 			iTrackIndex = iTrackSize - 1;
-		else if (iTrackIndex < 0)
-			iTrackIndex = 0;
 
 		// 제일 첫번째 트랙 이후이면
 		if (iTrackIndex >= 0)

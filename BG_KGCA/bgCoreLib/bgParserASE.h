@@ -24,7 +24,9 @@ public:
 	bool	ReadShapeObject();
 	bool	ReadCameraObject();
 	bool	ReadLightObject();
-	bool	ReadTMAnimation(int iNumObject);
+
+	bool	ReadNodeInfo(int iNumObj);
+	bool	ReadTMAnimation(int iNumObj);
 
 	void	ConvertToModel();
 	void	LinkNode();

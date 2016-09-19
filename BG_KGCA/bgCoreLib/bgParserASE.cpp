@@ -233,124 +233,7 @@ bool bgParserASE::ReadGeomObject()
 	m_pModel->m_ObjectList[iNumObj].vpObj = new GeomObject;
 	m_pModel->m_ObjectList[iNumObj].eNodeType = OBJECT_NODE_TYPE_GEOMOBJECT;
 
-	// 월드행렬 정보 저장
-	IF_FALSE_RETURN(FindWord(_T("*NODE_NAME")));
-	ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeName, MAX_PATH);
-	m_pszToken = _tcstok(m_szLine, _T("\""));
-	m_pszToken = _tcstok(NULL, _T("\""));
-	_tcscpy(m_pModel->m_ObjectList[iNumObj].szNodeName, m_pszToken);
-
-	_tcscpy(szWordArray[0], _T("*NODE_PARENT"));
-	_tcscpy(szWordArray[1], _T("*NODE_TM"));
-	switch (FindWordArray(szWordArray, 2))
-	{
-	case 0:		// *NODE_PARENT		부모 노드가 있다면 ============================
-	{
-		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH);
-		m_pszToken = _tcstok(m_szLine, _T("\""));
-		m_pszToken = _tcstok(NULL, _T("\""));
-		_tcscpy(m_pModel->m_ObjectList[iNumObj].szNodeParent, m_pszToken);
-
-		IF_FALSE_RETURN(FindWord(_T("*NODE_TM")));
-	}
-	break;
-	case 1:		// *NODE_TM			부모 노드가 없다면 ============================
-	{
-		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH);
-		m_pModel->m_ObjectList[iNumObj].pNodeParent = NULL;
-	}
-	break;
-	case -1:	// 찾는 단어 없음 =================================================
-	default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
-		return false;
-		break;
-	}
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_ROW0")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._11,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._13,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._12);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._14 = 0.0f;
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_ROW1")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._31,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._33,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._32);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._34 = 0.0f;
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_ROW2")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._21,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._23,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._22);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._24 = 0.0f;
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_ROW3")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._41,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._43,
-		&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._42);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld._44 = 1.0f;
-
-	// 인버스 매트릭스 확인 코드
-	D3DXVECTOR3 v0, v1, v2, v3;
-	v0 = m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld.m[0];
-	v1 = m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld.m[1];
-	v2 = m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld.m[2];
-	D3DXVec3Cross(&v3, &v1, &v2);
-	if (D3DXVec3Dot(&v3, &v0) < 0.0f)
-	{
-		D3DXMATRIX matW;
-		D3DXMatrixScaling(&matW, -1.0f, -1.0f, -1.0f);
-		D3DXMatrixMultiply(&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld,
-			&m_pModel->m_ObjectList[iNumObj].nodeTM.matWorld,
-			&matW);
-	}
-
-	// 분해된 월드행렬 정보 저장
-	float			fAngle;
-	D3DXQUATERNION	qRotate;
-	D3DXVECTOR3		vVector, vAxis;
-	D3DXMATRIX		matRotation, matRotationInv;
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_POS")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.vPos = vVector;
-
-	D3DXMatrixTranslation(&m_pModel->m_ObjectList[iNumObj].matWorldPos, vVector.x, vVector.y, vVector.z);
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_ROTAXIS")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.vRotAxis = vVector;
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_ROTANGLE")));
-	_stscanf(m_szLine, _T("%s %f"), m_szWord, &fAngle);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.fRotAngle = fAngle;
-
-	D3DXQuaternionRotationAxis(&qRotate, &vVector, fAngle);
-	D3DXMatrixRotationQuaternion(&m_pModel->m_ObjectList[iNumObj].matWorldRot, &qRotate);
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_SCALE")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.vScale = vVector;
-	
-	D3DXMatrixScaling(&m_pModel->m_ObjectList[iNumObj].matWorldScl, vVector.x, vVector.y, vVector.z);
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_SCALEAXIS")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vAxis.x, &vAxis.z, &vAxis.y);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.vScaleAxis = vAxis;
-
-	IF_FALSE_RETURN(FindWord(_T("*TM_SCALEAXISANG")));
-	_stscanf(m_szLine, _T("%s %f"), m_szWord, &fAngle);
-	m_pModel->m_ObjectList[iNumObj].nodeTM.fScaleAxisAngle = fAngle;
-
-	D3DXMatrixRotationAxis(&matRotation, &vAxis, fAngle);
-	D3DXMatrixInverse(&matRotationInv, NULL, &matRotation);
-	m_pModel->m_ObjectList[iNumObj].matWorldScl = matRotationInv * m_pModel->m_ObjectList[iNumObj].matWorldScl  * matRotation;
-
-	IF_FALSE_RETURN(FindWord(_T("}"))); // NODE_TM 탈출
+	IF_FALSE_RETURN(ReadNodeInfo(iNumObj));
 
 	///// MESH - 메쉬 데이터
 	IF_FALSE_RETURN(FindWord(_T("*MESH")));
@@ -599,6 +482,65 @@ bool bgParserASE::ReadHelperObject()
 	m_pModel->m_ObjectList[iNumObj].vpObj = new HelperObject;
 	m_pModel->m_ObjectList[iNumObj].eNodeType = OBJECT_NODE_TYPE_HELPEROBJECT;
 
+	IF_FALSE_RETURN(ReadNodeInfo(iNumObj));
+
+	IF_FALSE_RETURN(FindWord(_T("*BOUNDINGBOX_MIN")));
+	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &v3Data.x, &v3Data.z, &v3Data.y);
+	static_cast<HelperObject*>(m_pModel->m_ObjectList[iNumObj].vpObj)->vBBoxMin = v3Data;
+
+	IF_FALSE_RETURN(FindWord(_T("*BOUNDINGBOX_MAX")));
+	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &v3Data.x, &v3Data.z, &v3Data.y);
+	static_cast<HelperObject*>(m_pModel->m_ObjectList[iNumObj].vpObj)->vBBoxMax = v3Data;
+
+	///// TM_ANIMATION - 애니메이션
+	_tcscpy(szWordArray[0], _T("*TM_ANIMATION"));
+	_tcscpy(szWordArray[1], _T("}"));
+	switch (FindWordArray(szWordArray, 2))
+	{
+	case 0:		// *TM_ANIMATION	애니메이션이 있다면 ====================================
+	{
+		m_pModel->m_ObjectList[iNumObj].bAnim = true;
+		IF_FALSE_RETURN(ReadTMAnimation(iNumObj));
+	}
+	break;
+	case 1:		// }				애니메이션 없이 끝난다면 ===============================
+	{
+		m_pModel->m_ObjectList[iNumObj].bAnim = false;
+	}
+	break;
+	case -1:	// 찾는 단어 없음 =========================================================
+	default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
+		return false;
+		break;
+	}
+
+	return hr;
+}
+
+bool bgParserASE::ReadShapeObject()
+{
+	bool hr = true;
+	return hr;
+}
+
+bool bgParserASE::ReadCameraObject()
+{
+	bool hr = true;
+	return hr;
+}
+
+bool bgParserASE::ReadLightObject()
+{
+	bool hr = true;
+	return hr;
+}
+
+bool bgParserASE::ReadNodeInfo(int iNumObj)
+{
+	bool hr = true;
+
+	TCHAR szWordArray[2][MAX_PATH];
+
 	// 월드행렬 정보 저장
 	IF_FALSE_RETURN(FindWord(_T("*NODE_NAME")));
 	ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeName, MAX_PATH);
@@ -718,54 +660,6 @@ bool bgParserASE::ReadHelperObject()
 
 	IF_FALSE_RETURN(FindWord(_T("}"))); // NODE_TM 탈출
 
-	IF_FALSE_RETURN(FindWord(_T("*BOUNDINGBOX_MIN")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
-	static_cast<HelperObject*>(m_pModel->m_ObjectList[iNumObj].vpObj)->vBBoxMin = vVector;
-
-	IF_FALSE_RETURN(FindWord(_T("*BOUNDINGBOX_MAX")));
-	_stscanf(m_szLine, _T("%s %f%f%f"), m_szWord, &vVector.x, &vVector.z, &vVector.y);
-	static_cast<HelperObject*>(m_pModel->m_ObjectList[iNumObj].vpObj)->vBBoxMax = vVector;
-
-	///// TM_ANIMATION - 애니메이션
-	_tcscpy(szWordArray[0], _T("*TM_ANIMATION"));
-	_tcscpy(szWordArray[1], _T("}"));
-	switch (FindWordArray(szWordArray, 2))
-	{
-	case 0:		// *TM_ANIMATION	애니메이션이 있다면 ====================================
-	{
-		m_pModel->m_ObjectList[iNumObj].bAnim = true;
-		IF_FALSE_RETURN(ReadTMAnimation(iNumObj));
-	}
-	break;
-	case 1:		// }				애니메이션 없이 끝난다면 ===============================
-	{
-		m_pModel->m_ObjectList[iNumObj].bAnim = false;
-	}
-	break;
-	case -1:	// 찾는 단어 없음 =========================================================
-	default:	// 나머지 (배열 요소가 2개이므로 나올 수 없음)
-		return false;
-		break;
-	}
-
-	return hr;
-}
-
-bool bgParserASE::ReadShapeObject()
-{
-	bool hr = true;
-	return hr;
-}
-
-bool bgParserASE::ReadCameraObject()
-{
-	bool hr = true;
-	return hr;
-}
-
-bool bgParserASE::ReadLightObject()
-{
-	bool hr = true;
 	return hr;
 }
 
