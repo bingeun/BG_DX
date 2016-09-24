@@ -127,13 +127,44 @@ INT_PTR CALLBACK Max02_Util100::DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 			break;
 
 		case WM_COMMAND:
-			#pragma message(TODO("React to the user interface commands.  A utility plug-in is controlled by the user from here."))
+		{
+			switch (LOWORD(wParam))
+			{
+			case IDC_BG3DEXPORT:
+			{
+				I_Writer.Export();
+			}
 			break;
+
+			case IDC_SKINEXPORT:
+			{
+				I_Writer.SetBindPose(IsDlgButtonChecked(hWnd, IDC_BINDPOSE));
+				I_SkinExp.m_Scene = I_Writer.m_Scene;
+				I_SkinExp.Run();
+			}
+			break;
+
+			case IDC_MATEXPORT:
+			{
+				I_Writer.SetBindPose(IsDlgButtonChecked(hWnd, IDC_BINDPOSE));
+				I_Writer.Run();
+			}
+			break;
+
+			case IDC_UPDATE:
+			{
+				I_Writer.Release();
+				I_Writer.Initialize(GetCOREInterface());
+			}
+			break;
+			}
+		}
+		break;
 
 		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
 		case WM_MOUSEMOVE:
-			GetCOREInterface()->RollupMouseMessage(hWnd,msg,wParam,lParam);
+			GetCOREInterface()->RollupMouseMessage(hWnd, msg, wParam, lParam);
 			break;
 
 		default:

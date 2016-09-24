@@ -24,7 +24,13 @@
 
 
 #include <utilapi.h>
+#include "stdmat.h"
+#include "decomp.h"
+#include "BIPEXP.H"
+#include "Phyexp.h"
+#include "iskin.h"
 
+#include "bgMaxWriter.h"
 
 extern TCHAR *GetString(int id);
 

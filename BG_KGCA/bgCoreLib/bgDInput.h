@@ -17,6 +17,7 @@ private:
 	friend class bgSingleton<bgDInput>;
 
 public:
+	HWND					m_hWnd;
 	LPDIRECTINPUT8			m_pDInput;
 	LPDIRECTINPUTDEVICE8	m_pDInputKey;
 	LPDIRECTINPUTDEVICE8	m_pDInputMouse;

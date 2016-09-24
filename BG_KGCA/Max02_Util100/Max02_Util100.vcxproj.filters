@@ -24,6 +24,9 @@
     <ClCompile Include="Max02_Util100.cpp">
       <Filter>3DSMax</Filter>
     </ClCompile>
+    <ClCompile Include="bgMaxWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -34,6 +37,12 @@
     </ClInclude>
     <ClInclude Include="Max02_Util100.h">
       <Filter>3DSMax</Filter>
+    </ClInclude>
+    <ClInclude Include="bgMaxWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bgStd.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

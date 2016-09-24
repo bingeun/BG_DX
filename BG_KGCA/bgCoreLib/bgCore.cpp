@@ -53,6 +53,29 @@ bool bgCore::GameRelease()
 	return true;
 }
 
+HRESULT bgCore::ResizeClient(UINT iWidth, UINT iHeight)
+{
+	if (m_pDevice == NULL)
+		return true;
+
+	HRESULT hr = S_OK;
+
+	m_pDContext->OMSetRenderTargets(0, NULL, NULL);
+	SAFE_RELEASE(m_pRenderTargetView);
+	m_DWrite.DiscardDeviceResources();
+
+	DXGI_SWAP_CHAIN_DESC CurrentSD;
+	m_pSwapChain->GetDesc(&CurrentSD);
+	HR_RETURN(m_pSwapChain->ResizeBuffers(CurrentSD.BufferCount, iWidth, iHeight, CurrentSD.BufferDesc.Format, CurrentSD.Flags));
+
+	
+
+	m_DWrite.CreateDeviceResources(m_pBackScreen);
+	m_DWrite.SetText(D2D1::Point2F((FLOAT)iWidth, (FLOAT)iHeight), L"bgCore::ResizeClient()...!", D2D1::ColorF(1, 1, 1, 1));
+
+	return hr;
+}
+
 bool bgCore::PreInit()
 {
 	InitDevice(m_hWnd, m_iClientW, m_iClientH);

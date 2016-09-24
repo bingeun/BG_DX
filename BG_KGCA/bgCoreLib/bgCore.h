@@ -30,6 +30,8 @@ public:
 	bool	GameRender();
 	bool	GameRelease();
 
+	HRESULT	ResizeClient(UINT iWidth, UINT iHeight);
+
 public:
 	virtual bool	Init() { return true; }
 	virtual bool	Frame() { return true; }

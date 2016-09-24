@@ -21,6 +21,7 @@ bgDInput::~bgDInput()
 
 bool bgDInput::Init()
 {
+	m_hWnd = g_hWnd;
 	memset(&m_KeyStateBefore, 0, sizeof(BYTE) * SIZE_KEYSTATE);
 	memset(&m_MouseStateBefore, 0, sizeof(DIMOUSESTATE));
 	m_dwElements = 0;
@@ -84,11 +85,11 @@ bool bgDInput::Create(bool bKey, bool bMouse)
 	{
 		BOOL_RETURN(m_pDInput->CreateDevice(GUID_SysKeyboard, &m_pDInputKey, NULL));
 		BOOL_RETURN(m_pDInputKey->SetDataFormat(&c_dfDIKeyboard));
-		if (FAILED(hr = m_pDInputKey->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
+		if (FAILED(hr = m_pDInputKey->SetCooperativeLevel(m_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
 		{
 			while (m_pDInputKey->Acquire() == DIERR_INPUTLOST)
 				; // none
-			BOOL_RETURN(m_pDInputKey->SetCooperativeLevel(g_hWnd, DISCL_EXCLUSIVE | DISCL_BACKGROUND));
+			BOOL_RETURN(m_pDInputKey->SetCooperativeLevel(m_hWnd, DISCL_EXCLUSIVE | DISCL_BACKGROUND));
 		}
 		if (!m_dwImmediate)
 		{
@@ -110,11 +111,11 @@ bool bgDInput::Create(bool bKey, bool bMouse)
 	{
 		BOOL_RETURN(m_pDInput->CreateDevice(GUID_SysMouse, &m_pDInputMouse, NULL));
 		BOOL_RETURN(m_pDInputMouse->SetDataFormat(&c_dfDIMouse));
-		if (FAILED(hr = m_pDInputMouse->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+		if (FAILED(hr = m_pDInputMouse->SetCooperativeLevel(m_hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
 		{
 			while (m_pDInputMouse->Acquire() == DIERR_INPUTLOST)
 				; // none
-			BOOL_RETURN(m_pDInputMouse->SetCooperativeLevel(g_hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND));
+			BOOL_RETURN(m_pDInputMouse->SetCooperativeLevel(m_hWnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND));
 		}
 		while (m_pDInputMouse->Acquire() == DIERR_INPUTLOST)
 			; // none
