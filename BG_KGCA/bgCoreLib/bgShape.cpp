@@ -1,7 +1,5 @@
 #include "bgShape.h"
 
-MATRIX_BUFFER	g_MatrixBuffer;
-
 bgShape::bgShape()
 {
 	m_pDevice = NULL;

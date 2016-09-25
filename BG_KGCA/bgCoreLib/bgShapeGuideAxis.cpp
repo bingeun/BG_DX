@@ -42,6 +42,14 @@ bool bgShapeGuideAxis::Render()
 	//m_pDContext->OMSetBlendState(1, &, &);
 	//m_pDContext->OMSetDepthStencilState(&, 0);
 
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
+	pCBData->matWorld = g_pCameraMatrix->matWorld;
+	pCBData->matView = g_pCameraMatrix->matView;
+	pCBData->matProj = g_pCameraMatrix->matProj;
+	m_pDContext->Unmap(m_pCB, 0);
+
 	m_pDContext->DrawIndexed(m_iNumIndex, 0, 0);
 	return true;
 }

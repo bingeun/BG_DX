@@ -1,13 +1,6 @@
 #pragma once
 #include "bgStd.h"
 
-struct MATRIX_BUFFER
-{
-	D3DXMATRIX matWorld;
-	D3DXMATRIX matView;
-	D3DXMATRIX matProj;
-};
-
 struct VertexPC
 {
 	D3DXVECTOR3 pos;

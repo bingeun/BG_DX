@@ -81,3 +81,10 @@ public:
 #ifndef SAFE_NEW_ARRAY_CLEAR
 #define SAFE_NEW_ARRAY_CLEAR(A, B, C)	{ if (!(A) && (C)) (A) = new (B)[(C)]; if (A) memset((A), 0, sizeof(B) * (C)); }
 #endif
+
+struct MATRIX_BUFFER
+{
+	D3DXMATRIX matWorld;
+	D3DXMATRIX matView;
+	D3DXMATRIX matProj;
+};

@@ -17,4 +17,4 @@ extern float		g_fCurrent;
 extern bgDevice*	g_pDevice;
 
 // bgShape
-extern MATRIX_BUFFER	g_MatrixBuffer;
+extern MATRIX_BUFFER*	g_pCameraMatrix;

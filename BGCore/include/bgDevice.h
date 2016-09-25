@@ -8,41 +8,32 @@
 class bgDevice
 {
 public:
-	ID3D11Device*			m_pDevice;
-	ID3D11DeviceContext*	m_pDContext;
-	ID3D11RenderTargetView*	m_pRenderTargetView;
-	IDXGISwapChain*			m_pSwapChain;
+	ID3D11Device*				m_pDevice;
+	ID3D11DeviceContext*		m_pDContext;
+	IDXGISwapChain*				m_pSwapChain;
+	IDXGIFactory*				m_pGIFactory;
+	ID3D11RenderTargetView*		m_pRenderTargetView;
+	ID3D11DepthStencilView*		m_pDepthStencilView;
 
-	ID3D11Texture2D*		m_pBackBuffer;
-	D3D11_TEXTURE2D_DESC	m_descBackBuffer;
-	ID3D11Texture2D*		m_pDepthStencilBuffer;
-	ID3D11DepthStencilState*m_pDepthStencilState;
-	ID3D11DepthStencilView*	m_pDepthStencilView;
-
-	ID3D11BlendState*		m_pAlphaBlend;
-	ID3D11SamplerState*		m_pSamplerState;
-	D3D11_FILTER			m_TexFilter;
-	UINT					m_iTexAddressMode;
-
-	ID3D11RasterizerState*	m_pRSWireNone;
-	ID3D11RasterizerState*	m_pRSWireFront;
-	ID3D11RasterizerState*	m_pRSSolidNone;
-	ID3D11RasterizerState*	m_pRSSolidFront;
-
-	D3D11_VIEWPORT			m_Viewport[SIZE_VIEWPORT];
-	D3D_DRIVER_TYPE			m_DriverType;
-	BOOL					m_bVsync;
+	D3D11_VIEWPORT				m_Viewport;
+	bgCamera					m_Camera;
 
 public:
-	ID3D11Buffer*	m_pMatrixBuffer;
-	bgCamera		m_CameraViewport[SIZE_VIEWPORT];
+	ID3D11DepthStencilState*	m_pDSSDepth;
+	ID3D11SamplerState*			m_pSSTexture;
+	ID3D11BlendState*			m_pBSAlpha;
 
-	float	m_fFieldOfView;
-	float	m_fAspect;
-	float	m_fScreenNear;
-	float	m_fScreenFar;
+	ID3D11RasterizerState*		m_pRSWireNone;
+	ID3D11RasterizerState*		m_pRSWireFront;
+	ID3D11RasterizerState*		m_pRSSolidNone;
+	ID3D11RasterizerState*		m_pRSSolidFront;
 
-	float	m_fSpeedCamera;
+public:
+	D3D_DRIVER_TYPE				m_iDriverType;
+	D3D_FEATURE_LEVEL			m_iFeatureLevel;
+	BOOL						m_bVsync;
+	UINT						m_iNumerator;
+	UINT						m_iDenominator;
 
 public:
 	bgDevice();
@@ -52,5 +43,13 @@ public:
 	HRESULT	InitDevice(HWND hWnd, UINT iWidth = 800, UINT iHeight = 600, BOOL bFullScreen = FALSE, BOOL bVsync = FALSE);
 	void	ReleaseDevice();
 	
-	void	TransMatrixBuffer(MATRIX_BUFFER* pMatrixBuffer, bgCamera* pCamera);
+	HRESULT	CreateDXGI(UINT iWidth, UINT iHeight);
+	HRESULT	CreateDevice();
+	HRESULT	CreateSwapChain(HWND hWnd, UINT iWidth, UINT iHeight, BOOL bFullScreen = FALSE);
+	HRESULT	CreateRenderTargetView();
+	HRESULT	CreateDepthStencilView();
+	HRESULT	CreateState();
+
+	void	SetViewport(UINT iWidth, UINT iHeight);
+	void	SetRenderTarget();
 };

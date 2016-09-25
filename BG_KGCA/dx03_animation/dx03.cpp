@@ -10,7 +10,7 @@ TCHAR* szASEFileName[] =
 	_T("../../data/model/Turret_Deploy.ASE"),		// 5	터렛 애니메이션
 	_T("../../data/model/mob.ASE"),					// 6	몹 - 인간형 몬스터
 };
-int g_iASEFileIndex = 6;	// <<=== ASE 인덱스 넣기
+int g_iASEFileIndex = 3;	// <<=== ASE 인덱스 넣기
 int g_iASEFileIndex2 = 5;	// <<=== ASE 인덱스 넣기
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInsteance, LPWSTR lpCmdLine, int nCmdShow)
@@ -34,7 +34,7 @@ dx03::~dx03()
 bool dx03::Init()
 {
 	m_objWorldAxis.Init();
-	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
+	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
 
@@ -42,13 +42,13 @@ bool dx03::Init()
 	// m_pRSWireFront 선 앞 m_pRSWireNone 선 앞뒤 m_pRSSolidFront 면 앞 m_pRSSolidNone 면 앞뒤 
 	m_ParserASE.Init(&m_Model);
 	m_ParserASE.Open(szASEFileName[g_iASEFileIndex]);
-	m_Model.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
+	m_Model.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
 	m_Model.CreateBuffer();
 	m_Model.LoadShader("VS", "PS_Tex");
 
 	m_ParserASE.Init(&m_Model2);
 	m_ParserASE.Open(szASEFileName[g_iASEFileIndex2]);
-	m_Model2.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
+	m_Model2.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
 	m_Model2.CreateBuffer();
 	m_Model2.LoadShader("VS", "PS_Tex");
 
@@ -59,73 +59,73 @@ bool dx03::Frame()
 {
 	if (I_DInput.IsKeyDown(DIK_HOME))
 	{
-		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+		m_Camera.MoveForward(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f);
+		m_Camera.m_vEye.z += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_END))
 	{
-		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+		m_Camera.MoveBackward(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f);
+		m_Camera.m_vEye.z -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_DELETE))
 	{
-		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+		m_Camera.MoveLeft(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f);
+		m_Camera.m_vEye.x -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_PGDN))
 	{
-		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+		m_Camera.MoveRight(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f);
+		m_Camera.m_vEye.x += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_PGUP))
 	{
-		m_CameraViewport[0].RotateLeft(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+		m_Camera.RotateLeft(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 200.0f);
+		m_Camera.m_vEye.y -= m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_INSERT))
 	{
-		m_CameraViewport[0].RotateRight(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
+		m_Camera.RotateRight(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 200.0f);
+		m_Camera.m_vEye.y += m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 200.0f; // 임시
 	}
 	// 카메라 이동
 	if (I_DInput.IsKeyDown(DIK_W))
 	{
-		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveForward(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f);
+		m_Camera.m_vEye.z += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_S))
 	{
-		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveBackward(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f);
+		m_Camera.m_vEye.z -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_A))
 	{
-		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveLeft(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f);
+		m_Camera.m_vEye.x -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_D))
 	{
-		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveRight(m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f);
+		m_Camera.m_vEye.x += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
 	}
 	// 카메라 회전
 	if (I_DInput.IsKeyDown(DIK_Q))
 	{
-		m_CameraViewport[0].RotateLeft(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.RotateLeft(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f);
+		m_Camera.m_vEye.y -= m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_E))
 	{
-		m_CameraViewport[0].RotateRight(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.RotateRight(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f);
+		m_Camera.m_vEye.y += m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_R))
 	{
-		m_CameraViewport[0].RotateUp(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_Camera.RotateUp(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f);
 	}
 	if (I_DInput.IsKeyDown(DIK_F))
 	{
-		m_CameraViewport[0].RotateDown(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_Camera.RotateDown(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f);
 	}
 
 	m_objWorldAxis.Frame();

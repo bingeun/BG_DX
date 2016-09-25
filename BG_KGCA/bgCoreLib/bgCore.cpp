@@ -50,6 +50,9 @@ bool bgCore::GameRelease()
 	m_Timer.Release();
 	m_DWrite.Release();
 	I_DInput.Release();
+
+	SAFE_RELEASE(m_pBackScreen);
+
 	return true;
 }
 
@@ -61,15 +64,27 @@ HRESULT bgCore::ResizeClient(UINT iWidth, UINT iHeight)
 	HRESULT hr = S_OK;
 
 	m_pDContext->OMSetRenderTargets(0, NULL, NULL);
+	SAFE_RELEASE(m_pBackScreen);
 	SAFE_RELEASE(m_pRenderTargetView);
+	SAFE_RELEASE(m_pDepthStencilView);
 	m_DWrite.DiscardDeviceResources();
 
 	DXGI_SWAP_CHAIN_DESC CurrentSD;
 	m_pSwapChain->GetDesc(&CurrentSD);
 	HR_RETURN(m_pSwapChain->ResizeBuffers(CurrentSD.BufferCount, iWidth, iHeight, CurrentSD.BufferDesc.Format, CurrentSD.Flags));
+	m_pSwapChain->GetDesc(&CurrentSD);
+	iWidth = m_iClientW = CurrentSD.BufferDesc.Width;
+	iHeight = m_iClientH = CurrentSD.BufferDesc.Height;
 
-	
+	m_Camera.SetProjection(iWidth, iHeight);
 
+	HR_RETURN(CreateRenderTargetView());
+	HR_RETURN(CreateDepthStencilView());
+
+	SetViewport(iWidth, iHeight);
+	SetRenderTarget();
+
+	m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), (LPVOID*)&m_pBackScreen);
 	m_DWrite.CreateDeviceResources(m_pBackScreen);
 	m_DWrite.SetText(D2D1::Point2F((FLOAT)iWidth, (FLOAT)iHeight), L"bgCore::ResizeClient()...!", D2D1::ColorF(1, 1, 1, 1));
 
@@ -100,6 +115,7 @@ bool bgCore::PreFrame()
 	m_Timer.Frame();
 	I_DInput.Frame();
 	m_DWrite.Frame();
+	m_Camera.Frame();
 	return true;
 }
 
@@ -113,16 +129,6 @@ bool bgCore::PreRender()
 	float ClearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	m_pDContext->ClearRenderTargetView(m_pRenderTargetView, ClearColor);
 	m_pDContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	TransMatrixBuffer(&g_MatrixBuffer, &m_CameraViewport[0]);
-	
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	m_pDContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
-	pCBData->matWorld = g_MatrixBuffer.matWorld;
-	pCBData->matView = g_MatrixBuffer.matView;
-	pCBData->matProj = g_MatrixBuffer.matProj;
-	m_pDContext->Unmap(m_pMatrixBuffer, 0);
-
 	return true;
 }
 
@@ -157,8 +163,10 @@ bool bgCore::PrintInfo(TCHAR* pszString)
 	TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
 	if (m_bPrintKeyState)
 	{
-		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Pos[%d,%d,%d]\n%s%s%s%s %s%s%s %s%s%s\n%s%s%s%s %s%s%s %s%s%s\n%s"),
-			g_iFPS, g_fSPF*1000.0f, g_fCurrent, I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,
+		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Pos[%d,%d,%d]\n%s%s%s%s %s%s%s %s%s%s\n%s%s%s%s %s%s%s %s%s%s\n%s"),
+			g_iFPS, g_fSPF*1000.0f, g_fCurrent,							// FPS[x] SPF[x] Sec[x]
+			m_iClientW, m_iClientH,										// Client[w,h]
+			I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,	// Pos[x,y,z]
 			(I_DInput.IsKeyDown(DIK_Q)) ? _T("[Q]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_W)) ? _T("[W]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_E)) ? _T("[E]") : _T(" - "),
@@ -183,8 +191,10 @@ bool bgCore::PrintInfo(TCHAR* pszString)
 	}
 	else
 	{
-		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Pos[%d,%d,%d]\n%s"),
-			g_iFPS, g_fSPF*1000.0f, g_fCurrent, I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,
+		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Pos[%d,%d,%d]\n%s"),
+			g_iFPS, g_fSPF*1000.0f, g_fCurrent,							// FPS[x] SPF[x] Sec[x]
+			m_iClientW, m_iClientH,										// Client[w,h]
+			I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,	// Pos[x,y,z]
 			pszString);
 	}
 	PrintLog(pBuffer, 5, 5);

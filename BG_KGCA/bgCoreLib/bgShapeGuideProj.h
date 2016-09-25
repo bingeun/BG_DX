@@ -1,5 +1,6 @@
 #pragma once
 #include "bgShape.h"
+#include "bgSys.h"
 
 class bgShapeGuideProj : public bgShape
 {

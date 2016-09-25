@@ -56,8 +56,8 @@ bool bgModel::Render()
 	m_pDContext->PSSetShader(m_pPS, NULL, 0);
 
 	m_pDContext->RSSetState(m_pRasterizerState);
-	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
-	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSamplerState);
+	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSSTexture);
+	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSSTexture);
 
 	for (int iObj = 0; iObj < m_ObjectList.size(); iObj++)
 	{
@@ -67,8 +67,8 @@ bool bgModel::Render()
 		m_pDContext->Map(m_pCB, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 		MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
 		pCBData->matWorld = m_MatrixBuffer.matWorld;
-		pCBData->matView = g_MatrixBuffer.matView;
-		pCBData->matProj = g_MatrixBuffer.matProj;
+		pCBData->matView = g_pCameraMatrix->matView;
+		pCBData->matProj = g_pCameraMatrix->matProj;
 		m_pDContext->Unmap(m_pCB, 0);
 
 		switch (m_ObjectList[iObj].eNodeType)
