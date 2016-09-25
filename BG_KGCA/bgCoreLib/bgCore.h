@@ -17,7 +17,6 @@ public:
 	IDXGISurface1*	m_pBackScreen;
 
 	bool	m_bPrintKeyState;	// 키눌림 상태 출력여부
-	int		m_iModeViewport;	// 뷰포트 모드 (0=단일화면, 1=2x2화면, 2=4+1화면)
 
 public:
 	bgCore();

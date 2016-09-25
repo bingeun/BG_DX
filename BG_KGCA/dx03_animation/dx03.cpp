@@ -189,30 +189,7 @@ LRESULT CALLBACK dx03::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		}
 		break;
 
-		case '3': // 뷰포트 모드 변경 (0=단일모드, 1=2x2모드, 2=4+1모드)
-		{
-			m_iModeViewport = (m_iModeViewport + 1) % 3;
-			switch (m_iModeViewport)
-			{
-			case 0: // 단일화면 모드
-			{
-			}
-			break;
-
-			case 1: // 2x2화면 모드
-			{
-			}
-			break;
-
-			case 2: // 4+1화면 모드
-			{
-			}
-			break;
-			}
-		}
-		break;
-
-		case '4': // 와이어프레임 <=> 솔리드 모드변경
+		case '3': // 와이어프레임 <=> 솔리드 모드변경
 		{
 
 		}

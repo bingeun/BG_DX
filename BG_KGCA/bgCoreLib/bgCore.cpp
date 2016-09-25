@@ -3,7 +3,6 @@
 bgCore::bgCore()
 {
 	m_bPrintKeyState = false;
-	m_iModeViewport = 0; // 단일화면(뷰포트) 모드
 }
 
 bgCore::~bgCore()
@@ -148,7 +147,7 @@ bool bgCore::PostRender()
 #ifdef _DEBUG
 		TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
 		///////////////////////// 로그 정보 출력 //////////////////////////////////////////////////////////////////////////////////
-		_stprintf_s(pBuffer, _T("m_iModeViewport : %d"), m_iModeViewport);
+		_stprintf_s(pBuffer, _T("Log : %s"), _T("text..."));
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		PrintInfo(pBuffer); // FPS 및 로그 출력
 #endif //_DEBUG
@@ -163,10 +162,10 @@ bool bgCore::PrintInfo(TCHAR* pszString)
 	TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
 	if (m_bPrintKeyState)
 	{
-		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Pos[%d,%d,%d]\n%s%s%s%s %s%s%s %s%s%s\n%s%s%s%s %s%s%s %s%s%s\n%s"),
+		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Mouse[%d,%d,%d]\n%s%s%s%s %s%s%s %s%s%s\n%s%s%s%s %s%s%s %s%s%s\n%s"),
 			g_iFPS, g_fSPF*1000.0f, g_fCurrent,							// FPS[x] SPF[x] Sec[x]
 			m_iClientW, m_iClientH,										// Client[w,h]
-			I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,	// Pos[x,y,z]
+			I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,	// Mouse[x,y,z]
 			(I_DInput.IsKeyDown(DIK_Q)) ? _T("[Q]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_W)) ? _T("[W]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_E)) ? _T("[E]") : _T(" - "),
@@ -191,10 +190,10 @@ bool bgCore::PrintInfo(TCHAR* pszString)
 	}
 	else
 	{
-		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Pos[%d,%d,%d]\n%s"),
+		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Mouse[%d,%d,%d]\n%s"),
 			g_iFPS, g_fSPF*1000.0f, g_fCurrent,							// FPS[x] SPF[x] Sec[x]
 			m_iClientW, m_iClientH,										// Client[w,h]
-			I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,	// Pos[x,y,z]
+			I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,	// Mouse[x,y,z]
 			pszString);
 	}
 	PrintLog(pBuffer, 5, 5);
