@@ -1,5 +1,5 @@
 #pragma once
-#include "bgStd.h"
+#include "bgArcBall.h"
 
 const float DEFAULT_FOV = (float)D3DX_PI / 4.0f;
 const float MOVE_VALUE = 10.0f;
@@ -13,6 +13,8 @@ public:
 
 	ID3D11Buffer*			m_pMatrixBuffer;
 	MATRIX_BUFFER			m_Matrix;
+	bgArcBall				m_ArcBall;
+	D3DXQUATERNION			m_qRotate;
 
 public:
 	D3DXVECTOR3		m_vEye;

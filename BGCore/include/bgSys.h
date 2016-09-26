@@ -1,4 +1,5 @@
 #pragma once
+#include "bgTimer.h"
 #include "bgWindow.h"
 #include "bgDevice.h"
 #include "bgShape.h"

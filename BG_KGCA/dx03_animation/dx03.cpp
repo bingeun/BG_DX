@@ -112,12 +112,12 @@ bool dx03::Frame()
 	if (I_DInput.IsKeyDown(DIK_Q))
 	{
 		m_Camera.RotateLeft(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f);
-		m_Camera.m_vEye.y -= m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
+		//m_Camera.m_vEye.y -= m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_E))
 	{
 		m_Camera.RotateRight(m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f);
-		m_Camera.m_vEye.y += m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
+		//m_Camera.m_vEye.y += m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_R))
 	{

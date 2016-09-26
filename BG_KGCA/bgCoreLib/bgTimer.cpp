@@ -1,5 +1,4 @@
 #include "bgTimer.h"
-#include "bgSys.h"
 
 // 타이머 관련 전역변수
 int		g_iFPS;

@@ -1,4 +1,5 @@
 #include "bgCamera.h"
+#include "bgDInput.h"
 
 MATRIX_BUFFER* g_pCameraMatrix;
 
@@ -15,9 +16,9 @@ void bgCamera::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pDContext)
 	m_pDevice = pDevice;
 	m_pDContext = pDContext;
 
-	m_vEye = { 0.0f, 20.0f, -50.0f };
-	m_vAt = { 0.0f, 0.0f, 0.0f };
-	m_vUp = { 0.0f, 1.0f, 0.0f };
+	m_vEye = D3DXVECTOR3(0.0f, 20.0f, -50.0f);
+	m_vAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 	m_fFieldOfView = DEFAULT_FOV;
 	m_fAspect = 800.0f / 600.0f;
@@ -29,11 +30,25 @@ void bgCamera::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pDContext)
 
 	g_pCameraMatrix = &m_Matrix;
 
+	D3DXQuaternionRotationYawPitchRoll(&m_qRotate, 0.0f, 0.0f, 0.0f);
+
 	CreateMatrixBuffer();
 }
 
 void bgCamera::Frame()
 {
+	D3DXVECTOR3 vAxis;
+	FLOAT fAngle;
+
+	if (I_DInput.IsKeyDown(DIK_Q))
+	{
+		D3DXQuaternionRotationAxis(&m_qRotate, &m_vUp, 1.0f / 16.0f);
+		
+		D3DXMatrixRotationQuaternion(&m_Matrix.matView, &m_qRotate);
+//		D3DXQuaternionToAxisAngle(&m_ArcBall.m_qDown, &vAxis, &fAngle);
+
+	}
+
 	TransMatrix();
 }
 
