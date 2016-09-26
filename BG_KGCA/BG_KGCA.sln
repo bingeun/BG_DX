@@ -33,6 +33,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Max02_Util100", "Max02_Util100\Max02_Util100.vcxproj", "{D4AB33DC-7B14-469E-82BF-E0212C59CEAA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX04_Tree", "dx04_tree\dx04_tree.vcxproj", "{A84716F5-721C-4986-B8C7-DAFF76D3F29F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7EEE75F1-7951-4110-A4AD-43E41443A675} = {7EEE75F1-7951-4110-A4AD-43E41443A675}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MFC05_AI", "mfc05_ai\mfc05_ai.vcxproj", "{C7A7A2D6-7BF4-41FA-8294-8FF0120B04FD}"
 	ProjectSection(ProjectDependencies) = postProject
