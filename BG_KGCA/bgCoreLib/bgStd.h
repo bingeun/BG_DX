@@ -6,6 +6,7 @@
 #include <map>
 #include <list>
 #include <vector>
+#include <bitset>
 #include <string>
 #include <algorithm>
 #include <functional>

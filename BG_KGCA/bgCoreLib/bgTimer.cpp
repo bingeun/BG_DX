@@ -54,6 +54,11 @@ bool bgTimer::Init()
 	m_PrevFrame = m_Current;
 	m_AppStartTime = m_Current;
 
+	// 고해상도 FPS 계산
+	m_FrameBitset.reset();
+	m_fUpdateDelay = FPS_UPDATE_DELAY;
+	m_PrevUpdate = m_Current;
+
 	Start();
 	return true;
 }
@@ -76,6 +81,33 @@ bool bgTimer::Frame()
 	}
 	m_iCountFrame++;
 	m_PrevFrame = m_Current;
+
+	// 고해상도 FPS 계산
+	float fTimePrev = static_cast<float>(m_PrevUpdate.QuadPart) / static_cast<float>(m_Frequency.QuadPart) * (float)FRAME_BITSET_SIZE;	// 10020.00f 밀리초 = 1.002f 초
+	float fTimeNow = static_cast<float>(m_Current.QuadPart) / static_cast<float>(m_Frequency.QuadPart) * (float)FRAME_BITSET_SIZE;		// 10120.00f 밀리초 = 1.012f 초
+	int iIndexPrev = (int)fTimePrev % FRAME_BITSET_SIZE;	// 20 밀리초 (초단위 이하만 남김)
+	int iIndexNow = (int)fTimeNow % FRAME_BITSET_SIZE;		// 120 밀리초 (초단위 이하만 남김)
+	m_FrameBitset.set(iIndexNow);
+
+	// 초단위가 넘어가면...
+	int iIndex;
+	if (((int)fTimeNow / 1000) > ((int)fTimePrev / 1000))
+	{
+		for (iIndex = 0; iIndex < iIndexNow; iIndex++)
+			m_FrameBitset.reset(iIndex);
+		for (iIndex = iIndexPrev + 1; iIndex < FRAME_BITSET_SIZE; iIndex++)
+			m_FrameBitset.reset(iIndex);
+	}
+	// 초단위 범위내이면
+	else
+	{
+		for (iIndex = iIndexPrev + 1; iIndex < iIndexNow; iIndex++)
+			m_FrameBitset.reset(iIndex);
+	}
+
+	g_iFPS = m_FrameBitset.count();
+	m_PrevUpdate = m_Current;
+
 	return true;
 }
 
