@@ -31,6 +31,8 @@ bool bgDInput::Init()
 
 bool bgDInput::Frame()
 {
+	PreProcess();
+
 	KeyProcess();
 	MouseProcess();
 
@@ -191,7 +193,7 @@ bool bgDInput::MouseProcess()
 	return true;
 }
 
-bool bgDInput::PostProcess()
+bool bgDInput::PreProcess()
 {
 	memcpy(&m_KeyStateBefore, &m_KeyState, sizeof(BYTE) * SIZE_KEYSTATE);
 	memcpy(&m_MouseStateBefore, &m_MouseState, sizeof(DIMOUSESTATE));

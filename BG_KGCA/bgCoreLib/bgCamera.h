@@ -13,13 +13,24 @@ public:
 
 	ID3D11Buffer*			m_pMatrixBuffer;
 	MATRIX_BUFFER			m_Matrix;
-	bgArcBall				m_ArcBall;
+	//bgArcBall				m_ArcBall;
 	D3DXQUATERNION			m_qRotate;
+	D3DXQUATERNION			m_qDrag;
 
 public:
 	D3DXVECTOR3		m_vEye;
 	D3DXVECTOR3		m_vAt;
 	D3DXVECTOR3		m_vUp;
+
+	float	m_fMouseX;
+	float	m_fMouseY;
+	float	m_fMouseZ;
+	float	m_fMouseDragX;
+	float	m_fMouseDragY;
+	float	m_fMouseDragZ;
+	float	m_fMouseDownX;
+	float	m_fMouseDownY;
+	float	m_fMouseDownZ;
 
 	float	m_fFieldOfView;
 	float	m_fAspect;

@@ -162,10 +162,11 @@ bool bgCore::PrintInfo(TCHAR* pszString)
 	TCHAR pBuffer[DEBUG_BUFFER_SIZE] = { 0, };
 	if (m_bPrintKeyState)
 	{
-		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Mouse[%d,%d,%d]\n%s%s%s%s %s%s%s %s%s%s\n%s%s%s%s %s%s%s %s%s%s\n%s"),
+		_stprintf_s(pBuffer, _T("FPS[%d] SPF[%.3fms] Sec[%.2f] Client[%d,%d] Mouse[%d,%d,%d]\n%s%s%s%s %s%s%s %s%s%s %s%s%s\n%s%s%s%s %s%s%s %s%s%s\n%s"),
 			g_iFPS, g_fSPF*1000.0f, g_fCurrent,							// FPS[x] SPF[x] Sec[x]
 			m_iClientW, m_iClientH,										// Client[w,h]
 			I_DInput.m_iMouseX, I_DInput.m_iMouseY, I_DInput.m_iMouseZ,	// Mouse[x,y,z]
+			// 입력키 윗줄
 			(I_DInput.IsKeyDown(DIK_Q)) ? _T("[Q]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_W)) ? _T("[W]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_E)) ? _T("[E]") : _T(" - "),
@@ -176,6 +177,10 @@ bool bgCore::PrintInfo(TCHAR* pszString)
 			(I_DInput.IsKeyDown(DIK_INSERT)) ? _T("Ins") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_HOME)) ? _T("Hom") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_PGUP)) ? _T("PgU") : _T(" - "),		// InsHomPgUp
+			(I_DInput.IsMouseDown(0)) ? _T("Lft") : _T(" - "),
+			(I_DInput.IsMouseDown(2)) ? _T("Mid") : _T(" - "),
+			(I_DInput.IsMouseDown(1)) ? _T("Rgh") : _T(" - "),		// MouseLMR
+			// 입력키 아랫줄
 			(I_DInput.IsKeyDown(DIK_A)) ? _T("[A]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_S)) ? _T("[S]") : _T(" - "),
 			(I_DInput.IsKeyDown(DIK_D)) ? _T("[D]") : _T(" - "),

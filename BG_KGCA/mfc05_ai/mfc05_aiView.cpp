@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP(Cmfc05_aiView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
 	ON_WM_SIZE()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // Cmfc05_aiView 생성/소멸
@@ -139,4 +140,30 @@ void Cmfc05_aiView::OnSize(UINT nType, int cx, int cy)
 	{
 		pApp->ResizeClient(cx, cy);
 	}
+}
+
+
+void Cmfc05_aiView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// ==============================================================================================================
+	
+	Cmfc05_aiApp* pApp = (Cmfc05_aiApp*)AfxGetApp();
+	switch (nChar)
+	{
+	case '2': // 키눌림 상태 출력여부 변경
+	{
+		if (pApp->m_DWrite.m_bFontBorder)
+			pApp->m_bPrintKeyState = !pApp->m_bPrintKeyState;
+		pApp->m_DWrite.m_bFontBorder = !pApp->m_DWrite.m_bFontBorder;
+	}
+	break;
+
+	case '3': // 와이어프레임 <=> 솔리드 모드변경
+	{
+
+	}
+	break;
+	}
+
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }

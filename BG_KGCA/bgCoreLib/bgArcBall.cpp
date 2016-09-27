@@ -24,7 +24,7 @@ void bgArcBall::OnMouseMove(int iX, int iY)
 	if (m_bDrag)
 	{
 		m_vDrag = ScreenToVector((float)iX, (float)iY);
-		m_qDrag = m_qDown*QuatFromBallPoints(m_vDown, m_vDrag);
+		m_qDrag = m_qDown * QuatFromBallPoints(m_vDown, m_vDrag);
 	}
 }
 
