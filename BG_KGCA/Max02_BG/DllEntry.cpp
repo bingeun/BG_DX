@@ -12,9 +12,9 @@
 // AUTHOR: 
 //***************************************************************************/
 
-#include "Max02_Util100.h"
+#include "Max02_BG.h"
 
-extern ClassDesc2* GetMax02_Util100Desc();
+extern ClassDesc2* GetMax02_BGDesc();
 
 HINSTANCE hInstance;
 int controlsInit = FALSE;
@@ -55,7 +55,7 @@ __declspec( dllexport ) int LibNumberClasses()
 __declspec( dllexport ) ClassDesc* LibClassDesc(int i)
 {
 	switch(i) {
-		case 0: return GetMax02_Util100Desc();
+		case 0: return GetMax02_BGDesc();
 		default: return 0;
 	}
 }

@@ -15,8 +15,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>Max02_Util100</ProjectName>
-    <ProjectGuid>{D4AB33DC-7B14-469E-82BF-E0212C59CEAA}</ProjectGuid>
+    <ProjectName>Max02_BG</ProjectName>
+    <ProjectGuid>{3138C6CC-0C6C-4DE7-A27D-EE638E6D7F6F}</ProjectGuid>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <MaxSDK>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk</MaxSDK>
   </PropertyGroup>
@@ -30,7 +30,7 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Platform)'=='x64'">C:\Program Files\Autodesk\3ds Max 2016\plugins\</OutDir>
     <IntDir>$(ProjectDir)\obj\$(MaxPlatform)\$(MaxConfiguration)\</IntDir>
-    <TargetName>Max02_Util100</TargetName>
+    <TargetName>Max02_BG</TargetName>
     <TargetExt>.dlu</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -43,30 +43,23 @@
     <Link>
       <AdditionalLibraryDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\lib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>bmm.lib; core.lib; geom.lib; gfx.lib; mesh.lib; maxutil.lib; maxscrpt.lib; gup.lib; paramblk2.lib;;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>Max02_Util100.def</ModuleDefinitionFile>
-      <OutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BG3DExporter.dlu</OutputFile>
+      <ModuleDefinitionFile>Max02_BG.def</ModuleDefinitionFile>
     </Link>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "BG3DExporter.dlu" "C:\Program Files\Autodesk\3ds Max 2016\plugins\BG3DExporter.dlu"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bgMaxWriter.cpp" />
-    <ClCompile Include="Max02_Util100.cpp" />
+    <ClCompile Include="Max02_BG.cpp" />
     <ClCompile Include="DllEntry.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Max02_Util100.def" />
+    <None Include="Max02_BG.def" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3dsmaxsdk_preinclude.h" />
-    <ClInclude Include="bgMaxWriter.h" />
-    <ClInclude Include="bgStd.h" />
-    <ClInclude Include="Max02_Util100.h" />
+    <ClInclude Include="Max02_BG.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Max02_Util100.rc" />
+    <ResourceCompile Include="Max02_BG.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -1,4 +1,4 @@
-LIBRARY Max02_Util100.dlu
+LIBRARY Max02_BG.dlu
 EXPORTS
    LibDescription       @1       PRIVATE
    LibNumberClasses     @2       PRIVATE

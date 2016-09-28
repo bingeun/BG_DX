@@ -13,46 +13,34 @@
       <UniqueIdentifier>{ad6e765e-4300-41dc-b185-05b019286785}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
-    <Filter Include="3DSMax">
-      <UniqueIdentifier>{962a695d-df29-4be5-a64d-044cc10cdefe}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Max02_BG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="DllEntry.cpp">
-      <Filter>3DSMax</Filter>
-    </ClCompile>
-    <ClCompile Include="Max02_Util100.cpp">
-      <Filter>3DSMax</Filter>
-    </ClCompile>
-    <ClCompile Include="bgMaxWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h">
-      <Filter>3DSMax</Filter>
-    </ClInclude>
-    <ClInclude Include="3dsmaxsdk_preinclude.h">
-      <Filter>3DSMax</Filter>
-    </ClInclude>
-    <ClInclude Include="Max02_Util100.h">
-      <Filter>3DSMax</Filter>
-    </ClInclude>
-    <ClInclude Include="bgMaxWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="bgStd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Max02_Util100.def">
-      <Filter>3DSMax</Filter>
+    <None Include="Max02_BG.def">
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Max02_Util100.rc">
-      <Filter>3DSMax</Filter>
+    <ClInclude Include="3dsmaxsdk_preinclude.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Max02_BG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Max02_BG.rc">
+      <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>

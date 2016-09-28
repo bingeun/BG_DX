@@ -12,18 +12,18 @@
 // AUTHOR: 
 //***************************************************************************/
 
-#include "Max02_Util100.h"
+#include "Max02_BG.h"
 
-#define Max02_Util100_CLASS_ID	Class_ID(0xa3c5bbf3, 0xaaecefda)
+#define Max02_BG_CLASS_ID	Class_ID(0x820560c3, 0x8f621d1d)
 
 
-class Max02_Util100 : public UtilityObj 
+class Max02_BG : public UtilityObj 
 {
 public:
 		
 	//Constructor/Destructor
-	Max02_Util100();
-	virtual ~Max02_Util100();
+	Max02_BG();
+	virtual ~Max02_BG();
 
 	virtual void DeleteThis() { }
 	
@@ -34,9 +34,9 @@ public:
 	virtual void Destroy(HWND hWnd);
 	
 	// Singleton access
-	static Max02_Util100* GetInstance() { 
-		static Max02_Util100 theMax02_Util100;
-		return &theMax02_Util100; 
+	static Max02_BG* GetInstance() { 
+		static Max02_BG theMax02_BG;
+		return &theMax02_BG; 
 	}
 
 private:
@@ -48,45 +48,45 @@ private:
 };
 
 
-class Max02_Util100ClassDesc : public ClassDesc2 
+class Max02_BGClassDesc : public ClassDesc2 
 {
 public:
 	virtual int IsPublic() 							{ return TRUE; }
-	virtual void* Create(BOOL /*loading = FALSE*/) 	{ return Max02_Util100::GetInstance(); }
+	virtual void* Create(BOOL /*loading = FALSE*/) 	{ return Max02_BG::GetInstance(); }
 	virtual const TCHAR *	ClassName() 			{ return GetString(IDS_CLASS_NAME); }
 	virtual SClass_ID SuperClassID() 				{ return UTILITY_CLASS_ID; }
-	virtual Class_ID ClassID() 						{ return Max02_Util100_CLASS_ID; }
+	virtual Class_ID ClassID() 						{ return Max02_BG_CLASS_ID; }
 	virtual const TCHAR* Category() 				{ return GetString(IDS_CATEGORY); }
 
-	virtual const TCHAR* InternalName() 			{ return _T("Max02_Util100"); }	// returns fixed parsable name (scripter-visible name)
+	virtual const TCHAR* InternalName() 			{ return _T("Max02_BG"); }	// returns fixed parsable name (scripter-visible name)
 	virtual HINSTANCE HInstance() 					{ return hInstance; }					// returns owning module handle
 	
 
 };
 
 
-ClassDesc2* GetMax02_Util100Desc() { 
-	static Max02_Util100ClassDesc Max02_Util100Desc;
-	return &Max02_Util100Desc; 
+ClassDesc2* GetMax02_BGDesc() { 
+	static Max02_BGClassDesc Max02_BGDesc;
+	return &Max02_BGDesc; 
 }
 
 
 
 
-//--- Max02_Util100 -------------------------------------------------------
-Max02_Util100::Max02_Util100()
+//--- Max02_BG -------------------------------------------------------
+Max02_BG::Max02_BG()
 	: hPanel(nullptr)
 	, iu(nullptr)
 {
 	
 }
 
-Max02_Util100::~Max02_Util100()
+Max02_BG::~Max02_BG()
 {
 
 }
 
-void Max02_Util100::BeginEditParams(Interface* ip,IUtil* iu) 
+void Max02_BG::BeginEditParams(Interface* ip,IUtil* iu) 
 {
 	this->iu = iu;
 	hPanel = ip->AddRollupPage(
@@ -97,64 +97,98 @@ void Max02_Util100::BeginEditParams(Interface* ip,IUtil* iu)
 		0);
 }
 	
-void Max02_Util100::EndEditParams(Interface* ip,IUtil*)
+void Max02_BG::EndEditParams(Interface* ip,IUtil*)
 {
 	this->iu = nullptr;
 	ip->DeleteRollupPage(hPanel);
 	hPanel = nullptr;
 }
 
-void Max02_Util100::Init(HWND /*handle*/)
+void Max02_BG::Init(HWND /*handle*/)
 {
 
 }
 
-void Max02_Util100::Destroy(HWND /*handle*/)
+void Max02_BG::Destroy(HWND /*handle*/)
 {
 
 }
 
-INT_PTR CALLBACK Max02_Util100::DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK Max02_BG::DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg) 
 	{
 		case WM_INITDIALOG:
-			Max02_Util100::GetInstance()->Init(hWnd);
+			Max02_BG::GetInstance()->Init(hWnd);
 			break;
 
 		case WM_DESTROY:
-			Max02_Util100::GetInstance()->Destroy(hWnd);
+			Max02_BG::GetInstance()->Destroy(hWnd);
 			break;
 
 		case WM_COMMAND:
 		{
 			switch (LOWORD(wParam))
 			{
-			case IDC_BG3DEXPORT:
+			case IDC_BUTTON_UPDATE:
 			{
-				I_Writer.Export();
+
 			}
 			break;
 
-			case IDC_SKINEXPORT:
+			case IDC_CHECK_BINDPOSE:
 			{
-				I_Writer.SetBindPose(IsDlgButtonChecked(hWnd, IDC_BINDPOSE));
-				I_SkinExp.m_Scene = I_Writer.m_Scene;
-				I_SkinExp.Run();
+
 			}
 			break;
 
-			case IDC_MATEXPORT:
+			// 포맷별 파일 생성 버튼들 =================================================
+			case IDC_BUTTON_MODEL:		// Object Anim (*.BG3D)
 			{
-				I_Writer.SetBindPose(IsDlgButtonChecked(hWnd, IDC_BINDPOSE));
-				I_Writer.Run();
+
 			}
 			break;
 
-			case IDC_UPDATE:
+			case IDC_BUTTON_SKIN:		// Skin (*.BGSKN)
 			{
-				I_Writer.Release();
-				I_Writer.Initialize(GetCOREInterface());
+
+			}
+			break;
+
+			case IDC_BUTTON_MATRIX:		// Matrix (*.BGMTX)
+			{
+
+			}
+			break;
+
+			case IDC_BUTTON_ACTION:		// Action (*.BGACT)
+			{
+
+			}
+			break;
+
+			// 액션 리스트 관리 =======================================================
+			case IDC_LIST_ACTION:
+			{
+
+			}
+			break;
+
+			case IDC_EDIT_ACT_NAME:
+			{
+
+			}
+			break;
+
+			case IDC_BUTTON_ACT_ADD:
+			{
+
+			}
+			break;
+
+			case IDC_BUTTON_ACT_DEL:
+			{
+
 			}
 			break;
 			}
@@ -164,7 +198,7 @@ INT_PTR CALLBACK Max02_Util100::DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
 		case WM_MOUSEMOVE:
-			GetCOREInterface()->RollupMouseMessage(hWnd, msg, wParam, lParam);
+			GetCOREInterface()->RollupMouseMessage(hWnd,msg,wParam,lParam);
 			break;
 
 		default:
