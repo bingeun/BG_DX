@@ -22,8 +22,14 @@
 #include <maxtypes.h>
 //SIMPLE TYPE
 
-
 #include <utilapi.h>
+
+#include "stdmat.h"
+#include "decomp.h"
+#include "bipexp.h"
+#include "Phyexp.h"
+#include "iskin.h"
+#include "bgExporterMax.h"
 
 
 extern TCHAR *GetString(int id);

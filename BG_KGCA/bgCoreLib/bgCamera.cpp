@@ -20,9 +20,12 @@ void bgCamera::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pDContext)
 	m_vAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
-	m_fMouseX = (float)I_DInput.m_iMouseX;
-	m_fMouseY = (float)I_DInput.m_iMouseY;
-	m_fMouseZ = (float)I_DInput.m_iMouseZ;
+	m_fMouseDownX = m_fMouseX = (float)I_DInput.m_iMouseX;
+	m_fMouseDownY = m_fMouseY = (float)I_DInput.m_iMouseY;
+	m_fMouseDownZ = m_fMouseZ = (float)I_DInput.m_iMouseZ;
+	m_fMouseDragX = 0.0f;
+	m_fMouseDragY = 0.0f;
+	m_fMouseDragZ = 0.0f;
 
 	m_fFieldOfView = DEFAULT_FOV;
 	m_fAspect = 800.0f / 600.0f;
@@ -59,9 +62,9 @@ void bgCamera::Frame()
 		// 눌림 지속 (드래그)
 		if (I_DInput.m_MouseStateBefore.rgbButtons[0])
 		{
-			m_fMouseDragX = m_fMouseX + (float)I_DInput.m_iMouseX - m_fMouseDownX;
-			m_fMouseDragY = m_fMouseY + (float)I_DInput.m_iMouseY - m_fMouseDownY;
-			m_fMouseDragZ = m_fMouseZ + (float)I_DInput.m_iMouseZ - m_fMouseDownZ;
+			m_fMouseDragX = m_fMouseX + m_fMouseDownX - (float)I_DInput.m_iMouseX;
+			m_fMouseDragY = m_fMouseY + m_fMouseDownY - (float)I_DInput.m_iMouseY;
+			m_fMouseDragZ = m_fMouseZ + m_fMouseDownZ - (float)I_DInput.m_iMouseZ;
 
 			D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * 0.125f, m_fMouseDragY * D3DX_PI / 180.0f * 0.125f, 0.0f);
 
@@ -88,9 +91,9 @@ void bgCamera::Frame()
 		if (I_DInput.m_MouseStateBefore.rgbButtons[0])
 		{
 			m_qRotate = m_qDrag;
-			m_fMouseX += (float)I_DInput.m_iMouseX - m_fMouseDownX;
-			m_fMouseY += (float)I_DInput.m_iMouseY - m_fMouseDownY;
-			m_fMouseZ += (float)I_DInput.m_iMouseZ - m_fMouseDownZ;
+			m_fMouseX += m_fMouseDownX - (float)I_DInput.m_iMouseX;
+			m_fMouseY += m_fMouseDownY - (float)I_DInput.m_iMouseY;
+			m_fMouseZ += m_fMouseDownZ - (float)I_DInput.m_iMouseZ;
 		}
 		// 안눌림 지속
 		else

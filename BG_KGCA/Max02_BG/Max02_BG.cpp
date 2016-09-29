@@ -145,25 +145,25 @@ INT_PTR CALLBACK Max02_BG::DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			// 포맷별 파일 생성 버튼들 =================================================
 			case IDC_BUTTON_MODEL:		// Object Anim (*.BG3D)
 			{
-
+				I_Exporter.ExportBG3D();
 			}
 			break;
 
 			case IDC_BUTTON_SKIN:		// Skin (*.BGSKN)
 			{
-
+				I_Exporter.ExportBGSKN();
 			}
 			break;
 
 			case IDC_BUTTON_MATRIX:		// Matrix (*.BGMTX)
 			{
-
+				I_Exporter.ExportBGMTX();
 			}
 			break;
 
 			case IDC_BUTTON_ACTION:		// Action (*.BGACT)
 			{
-
+				I_Exporter.ExportBGACT();
 			}
 			break;
 
