@@ -24,12 +24,12 @@
 
 #include <utilapi.h>
 
+#include <max.h>
 #include "stdmat.h"
 #include "decomp.h"
 #include "bipexp.h"
 #include "Phyexp.h"
 #include "iskin.h"
-#include "bgExporterMax.h"
 
 
 extern TCHAR *GetString(int id);

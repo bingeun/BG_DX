@@ -13,6 +13,7 @@
 //***************************************************************************/
 
 #include "Max02_BG.h"
+#include "bgExporterMax.h"
 
 #define Max02_BG_CLASS_ID	Class_ID(0x820560c3, 0x8f621d1d)
 

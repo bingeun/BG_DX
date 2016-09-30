@@ -1,6 +1,8 @@
 #pragma once
 #include "bgStdMax.h"
 
+using namespace std;
+
 template<class Child>
 class bgTemplateMap
 {
@@ -91,7 +93,6 @@ int bgTemplateMap<Child>::Add(Child* pChild)
 template<class Child>
 int bgTemplateMap<Child>::Add(const TCHAR* pFileName)
 {
-	// 종복 방지 
 	if (pFileName)
 	{
 		TCHAR szFileName[256];

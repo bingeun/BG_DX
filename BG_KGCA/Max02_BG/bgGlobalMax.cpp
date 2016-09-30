@@ -2,13 +2,12 @@
 
 // =======================================================================================
 
-void bgMatrixIndex::Add(int iIndex, TCHAR* szName)
+void bgMatrixIndex::Add(int iIndex, T_STR szName)
 {
 	m_pObject = NULL;
 	m_pControl = NULL;
 	m_iIndex = iIndex;
-	memset(m_szName, 0, sizeof(TCHAR) * MAX_PATH);
-	_tcscpy(m_szName, szName);
+	m_szName = szName;
 }
 
 void bgMatrixIndex::SetNode(INode* pNode, int iTick, bgMatrixIndex* pParentIndex)

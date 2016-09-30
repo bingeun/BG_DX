@@ -32,6 +32,11 @@ public:
 	}
 };
 
+typedef basic_string<TCHAR>				T_STR;
+typedef basic_string<CHAR>				CHAR_STRING;
+typedef vector<basic_string<TCHAR>>		T_STR_VECTOR;
+typedef vector<DWORD>					DWORD_VECTOR;
+
 #ifndef COUNTOF
 #define COUNTOF(A)		(sizeof(A) / sizeof((A)[0]))
 #endif

@@ -135,7 +135,7 @@ struct bgMatrixIndex
 {
 	OBJECT_CLASS_TYPE	m_ClassType;
 	int					m_iIndex;
-	TCHAR				m_szName[MAX_PATH];
+	T_STR				m_szName;
 	vector<P3NC_Vertex>	m_VertexList;
 	Matrix3				m_NodeTM;
 	Matrix3				m_InvNodeTM;
@@ -144,7 +144,7 @@ struct bgMatrixIndex
 	Control*			m_pControl;
 	bgMesh				m_Mesh;
 
-	void	Add(int iIndex, TCHAR* szName);
+	void	Add(int iIndex, T_STR szName);
 	void	SetNode(INode* pNode, int iTick, bgMatrixIndex* pParentIndex = NULL);
 	void	Release();
 };

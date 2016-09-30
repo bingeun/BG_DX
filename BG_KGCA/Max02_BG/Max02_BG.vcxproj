@@ -37,7 +37,7 @@
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PreprocessorDefinitions>_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\3ds Max 2016 SDK\maxsdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\\..\\Max\\include;..\\..\\Max\\include\\CS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
