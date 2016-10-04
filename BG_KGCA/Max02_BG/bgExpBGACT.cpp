@@ -1,12 +1,6 @@
-#include "bgExpBGACT.h"
+#include "bgExporterMax.h"
 
-
-
-bgExpBGACT::bgExpBGACT()
+bool bgExporterMax::ExportBGACT()
 {
-}
-
-
-bgExpBGACT::~bgExpBGACT()
-{
+	return true;
 }

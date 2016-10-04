@@ -1002,7 +1002,7 @@ void bgParserASE::OperationTM()
 	D3DXMATRIX matPos, matRot, matScl;
 	D3DXVECTOR3 vPos, vScl;
 	D3DXQUATERNION qRot;
-	// 터렛 애니메이션 됨! (0프레임 행렬 디버그 필요)
+	
 	for (int iNode = 0; iNode < m_pModel->m_ObjectList.size(); iNode++)
 	{
 		if (m_pModel->m_ObjectList[iNode].pNodeParent)

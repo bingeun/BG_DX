@@ -1,0 +1,50 @@
+﻿  bgWindow.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgTimer.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgTextureMgr.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgTexture.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgSound.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgShapePlane.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgShapeGuideProj.cpp
+  bgShapeGuideAxis.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgShapeBox.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgShape.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgQuadTree.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgTreeNode.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgParser.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgHeightMap.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgDInput.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgDWrite.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgDevice.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgCore.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgCollider.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgCamera.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  bgParserASE.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgModel.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgBoundBox.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  bgArcBall.cpp
+d:\github\bg_dx\bg_kgca\bgcorelib\bgstd.h(16): fatal error C1083: 포함 파일을 열 수 없습니다. 'd3dx11.h': No such file or directory
+  코드를 생성하고 있습니다...

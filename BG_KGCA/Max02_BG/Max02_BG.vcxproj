@@ -64,10 +64,6 @@
   <ItemGroup>
     <ClInclude Include="3dsmaxsdk_preinclude.h" />
     <ClInclude Include="bgAnimMax.h" />
-    <ClInclude Include="bgExpBG3D.h" />
-    <ClInclude Include="bgExpBGACT.h" />
-    <ClInclude Include="bgExpBGMTX.h" />
-    <ClInclude Include="bgExpBGSKN.h" />
     <ClInclude Include="bgExporterMax.h" />
     <ClInclude Include="bgGlobalMax.h" />
     <ClInclude Include="bgObjectMax.h" />

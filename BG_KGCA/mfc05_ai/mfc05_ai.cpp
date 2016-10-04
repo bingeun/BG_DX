@@ -17,18 +17,18 @@
 
 
 
-TCHAR* szASEFileName[] =
+TCHAR* szBG3DFileName[] =
 {
-	_T("../../data/model/box.ase"),					// 0	박스
-	_T("../../data/model/ship.ase"),				// 1	공중부양 배
-	_T("../../data/model/MultiCameras.ase"),		// 2	멀티카메라
-	_T("../../data/model/scaleanimationmodel.ASE"),	// 3	박스 스케일 애니메이션
-	_T("../../data/model/BoxAnimation.ASE"),		// 4	박스 애니메이션 2
-	_T("../../data/model/Turret_Deploy.ASE"),		// 5	터렛 애니메이션
-	_T("../../data/model/mob.ASE"),					// 6	몹 - 인간형 몬스터
+	_T("../../data/model/box.BG3D"),					// 0	박스
+	_T("../../data/model/ship.BG3D"),					// 1	공중부양 배
+	_T("../../data/model/MultiCameras.BG3D"),			// 2	멀티카메라
+	_T("../../data/model/scaleanimationmodel.BG3D"),	// 3	박스 스케일 애니메이션
+	_T("../../data/model/BoxAnimation.BG3D"),			// 4	박스 애니메이션 2
+	_T("../../data/model/Turret_Deploy.BG3D"),			// 5	터렛 애니메이션
+	_T("../../data/model/mob.BG3D"),					// 6	몹 - 인간형 몬스터
 };
-int g_iASEFileIndex = 3;	// <<=== ASE 인덱스 넣기
-int g_iASEFileIndex2 = 5;	// <<=== ASE 인덱스 넣기
+int g_iBG3DFileIndex = 5;	// <<=== ASE 인덱스 넣기
+//int g_iBG3DFileIndex2 = 5;	// <<=== ASE 인덱스 넣기
 
 
 // Cmfc05_aiApp
@@ -282,17 +282,17 @@ bool Cmfc05_aiApp::Init()
 
 
 	// m_pRSWireFront 선 앞 m_pRSWireNone 선 앞뒤 m_pRSSolidFront 면 앞 m_pRSSolidNone 면 앞뒤 
-	m_ParserASE.Init(&m_Model);
-	m_ParserASE.Open(szASEFileName[g_iASEFileIndex]);
+	m_ParserBG3D.Init(&m_Model);
+	m_ParserBG3D.Open(szBG3DFileName[g_iBG3DFileIndex]);
 	m_Model.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
 	m_Model.CreateBuffer();
 	m_Model.LoadShader("VS", "PS_Tex");
 
-	m_ParserASE.Init(&m_Model2);
-	m_ParserASE.Open(szASEFileName[g_iASEFileIndex2]);
-	m_Model2.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
-	m_Model2.CreateBuffer();
-	m_Model2.LoadShader("VS", "PS_Tex");
+	//m_ParserBG3D.Init(&m_Model2);
+	//m_ParserBG3D.Open(szBG3DFileName[g_iBG3DFileIndex2]);
+	//m_Model2.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
+	//m_Model2.CreateBuffer();
+	//m_Model2.LoadShader("VS", "PS_Tex");
 
 	return true;
 }
@@ -372,7 +372,7 @@ bool Cmfc05_aiApp::Frame()
 
 	m_objWorldAxis.Frame();
 	m_Model.Frame();
-	m_Model2.Frame();
+	//m_Model2.Frame();
 
 	return true;
 }
@@ -381,7 +381,7 @@ bool Cmfc05_aiApp::Render()
 {
 	m_objWorldAxis.Render();
 	m_Model.Render();
-	m_Model2.Render();
+	//m_Model2.Render();
 
 	return true;
 }

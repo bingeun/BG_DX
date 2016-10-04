@@ -96,6 +96,7 @@ struct TMAnimation
 	vector<AnimTrackInfo>	PosTrack;			// *CONTROL_POS_TRACK
 	vector<AnimTrackInfo>	RotTrack;			// *CONTROL_ROT_TRACK
 	vector<AnimTrackInfo>	SclTrack;			// *CONTROL_SCALE_TRACK
+	vector<AnimTrackInfo>	AlpTrack;			// *VISIBLE_TRACK
 };
 
 struct GeomObject
