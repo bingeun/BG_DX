@@ -4,14 +4,14 @@
 #pragma once
 
 #ifndef __AFXWIN_H__
-	#error "PCH에 대해 이 파일을 포함하기 전에 'stdafx.h'를 포함합니다."
+#error "PCH에 대해 이 파일을 포함하기 전에 'stdafx.h'를 포함합니다."
 #endif
 
 #include "resource.h"       // 주 기호입니다.
 
 #include "bgCore.h"
-#include "bgParserASE.h"
-#include "bgModel.h"
+#include "bgParserBG3D.h"
+#include "bgModelBG3D.h"
 #include "bgTextureMgr.h"
 #include "bgShapeGuideAxis.h"
 #include "bgShapePlane.h"
@@ -26,9 +26,9 @@ class Cmfc05_aiApp : public CWinAppEx, public bgCore
 public:
 	bgShapeGuideAxis	m_objWorldAxis;
 
-	bgParserASE		m_ParserASE;
-	bgModel			m_Model;
-	bgModel			m_Model2;
+	bgParserBG3D	m_ParserBG3D;
+	bgModelBG3D		m_Model;
+	bgModelBG3D		m_Model2;
 
 public:
 	bool	Init();
@@ -42,12 +42,12 @@ public:
 	Cmfc05_aiApp();
 
 
-// 재정의입니다.
+	// 재정의입니다.
 public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
-// 구현입니다.
+	// 구현입니다.
 	UINT  m_nAppLook;
 	BOOL  m_bHiColorIcons;
 

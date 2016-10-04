@@ -29,6 +29,7 @@
     <ClInclude Include="bgArcBall.h" />
     <ClInclude Include="bgBoundBox.h" />
     <ClInclude Include="bgModel.h" />
+    <ClInclude Include="bgModelBG3D.h" />
     <ClInclude Include="bgParserASE.h" />
     <ClInclude Include="bgCamera.h" />
     <ClInclude Include="bgCollider.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="bgDInput.h" />
     <ClInclude Include="bgHeightMap.h" />
     <ClInclude Include="bgParser.h" />
+    <ClInclude Include="bgParserBG3D.h" />
     <ClInclude Include="bgTreeNode.h" />
     <ClInclude Include="bgQuadTree.h" />
     <ClInclude Include="bgShape.h" />
@@ -57,6 +59,7 @@
     <ClCompile Include="bgArcBall.cpp" />
     <ClCompile Include="bgBoundBox.cpp" />
     <ClCompile Include="bgModel.cpp" />
+    <ClCompile Include="bgModelBG3D.cpp" />
     <ClCompile Include="bgParserASE.cpp" />
     <ClCompile Include="bgCamera.cpp" />
     <ClCompile Include="bgCollider.cpp" />
@@ -66,6 +69,7 @@
     <ClCompile Include="bgDInput.cpp" />
     <ClCompile Include="bgHeightMap.cpp" />
     <ClCompile Include="bgParser.cpp" />
+    <ClCompile Include="bgParserBG3D.cpp" />
     <ClCompile Include="bgTreeNode.cpp" />
     <ClCompile Include="bgQuadTree.cpp" />
     <ClCompile Include="bgShape.cpp" />

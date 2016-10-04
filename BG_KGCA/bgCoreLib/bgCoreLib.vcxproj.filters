@@ -128,6 +128,12 @@
     <ClInclude Include="bgTreeNode.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
+    <ClInclude Include="bgModelBG3D.h">
+      <Filter>헤더 파일\bgObject</Filter>
+    </ClInclude>
+    <ClInclude Include="bgParserBG3D.h">
+      <Filter>헤더 파일\bgCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bgWindow.cpp">
@@ -201,6 +207,12 @@
     </ClCompile>
     <ClCompile Include="bgTreeNode.cpp">
       <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgParserBG3D.cpp">
+      <Filter>소스 파일\bgCore</Filter>
+    </ClCompile>
+    <ClCompile Include="bgModelBG3D.cpp">
+      <Filter>소스 파일\bgObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
