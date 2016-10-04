@@ -10,8 +10,8 @@
 #include "resource.h"       // 주 기호입니다.
 
 #include "bgCore.h"
-#include "bgParserBG3D.h"
-#include "bgModelBG3D.h"
+#include "bgParserASE.h"
+#include "bgModel.h"
 #include "bgTextureMgr.h"
 #include "bgShapeGuideAxis.h"
 #include "bgShapePlane.h"
@@ -26,9 +26,9 @@ class Cmfc05_aiApp : public CWinAppEx, public bgCore
 public:
 	bgShapeGuideAxis	m_objWorldAxis;
 
-	bgParserBG3D	m_ParserBG3D;
-	bgModelBG3D		m_Model;
-	bgModelBG3D		m_Model2;
+	bgParserASE		m_ParserASE;
+	bgModel			m_Model;
+	bgModel			m_Model2;
 
 public:
 	bool	Init();

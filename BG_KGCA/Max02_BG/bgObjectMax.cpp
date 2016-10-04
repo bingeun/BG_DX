@@ -23,7 +23,7 @@ void bgObjectMax::GetMaterial()
 
 		if (pSrcMtl->NumSubMtls() > 0)
 		{
-			for (int iSubMtrl = 0; iSubMtrl < pSrcMtl->NumSubMtls(); iSubMtrl++)
+			for (int iSubMtrl = 0; iSubMtrl< pSrcMtl->NumSubMtls(); iSubMtrl++)
 			{
 				Mtl* subMtl = pSrcMtl->GetSubMtl(iSubMtrl);
 				bgMaterial AddSubMtl;
@@ -55,7 +55,7 @@ void bgObjectMax::GetMaterial()
 
 void bgObjectMax::GetTexture(bgMaterial* pMaterial, Mtl* pMtl)
 {
-	for (int iSubMap = 0; iSubMap < pMtl->NumSubTexmaps(); iSubMap++)
+	for (int iSubMap = 0; iSubMap<pMtl->NumSubTexmaps(); iSubMap++)
 	{
 		Texmap* tex = pMtl->GetSubTexmap(iSubMap);
 		if (tex)
@@ -72,7 +72,7 @@ void bgObjectMax::GetTexture(bgMaterial* pMaterial, Mtl* pMtl)
 
 			if (tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0x00))
 			{
-				TSTR mapName = ((BitmapTex*)tex)->GetMapName();
+				TSTR mapName = ((BitmapTex *)tex)->GetMapName();
 				TSTR strFullName;
 				SplitPathFile(mapName, &strFullName, &mapName);
 				TexMap.strTextureName = FixupName(mapName);
@@ -87,7 +87,7 @@ void bgObjectMax::UpdateObject()
 {
 	for (int iObj = 0; iObj < m_MatrixMap.Count(); iObj++)
 	{
-		bgMatrixIndex* pPoint = (bgMatrixIndex*)m_MatrixMap.m_TMap[iObj];
+		bgMatrixIndex *pPoint = (bgMatrixIndex *)m_MatrixMap.m_TMap[iObj];
 		GetObject(pPoint);
 	}
 }
@@ -133,25 +133,15 @@ void bgObjectMax::GetMesh(INode* node, bgMesh* pMesh)
 	Mesh* mesh = &tri->GetMesh();
 	mesh->buildBoundingBox();
 	Box3 box = mesh->getBoundingBox(&tm);
-	DumpPoint3(pMesh->BoundBox.pmax, box.pmax);
-	DumpPoint3(pMesh->BoundBox.pmin, box.pmin);
+	DumpPoint3(pMesh->Box.pmax, box.pmax);
+	DumpPoint3(pMesh->Box.pmin, box.pmin);
 
 	pMesh->iNumFace = mesh->getNumFaces();
 
 	BOOL negScale = CheckNegativeTM(tm);
 	int v0, v1, v2;
-	if (negScale)
-	{
-		v0 = 2;
-		v1 = 1;
-		v2 = 0;
-	}
-	else
-	{
-		v0 = 0;
-		v1 = 1;
-		v2 = 2;
-	}
+	if (negScale) { v0 = 2;		v1 = 1;		v2 = 0; }
+	else { v0 = 0;		v1 = 1;		v2 = 2; }
 
 	pMesh->Triangles.resize(pMesh->iNumFace);
 	for (int iFace = 0; iFace < pMesh->iNumFace; iFace++)
@@ -201,8 +191,7 @@ void bgObjectMax::GetMesh(INode* node, bgMesh* pMesh)
 
 		mesh->buildNormals();
 
-		int  vert;
-		vert = mesh->faces[iFace].getVert(v0);
+		int  vert = mesh->faces[iFace].getVert(v0);
 		Point3 vn = GetVertexNormal(mesh, iFace, mesh->getRVertPtr(vert));
 		DumpPoint3(pMesh->Triangles[iFace].vertex[0].nor, vn);
 
@@ -262,7 +251,7 @@ Point3 bgObjectMax::GetVertexNormal(Mesh* mesh, int faceNo, RVertex* rv)
 TriObject* bgObjectMax::GetTriObject(INode* node, TimeValue time, int& deleteIt)
 {
 	deleteIt = FALSE;
-	Object* obj = node->EvalWorldState(time).obj;
+	Object *obj = node->EvalWorldState(time).obj;
 	if (obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0)))
 	{
 		TriObject* tri = (TriObject*)obj->ConvertToType(time, Class_ID(TRIOBJ_CLASS_ID, 0));

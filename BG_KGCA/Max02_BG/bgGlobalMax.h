@@ -43,27 +43,16 @@ struct PNCT_Vertex
 	Point2	tex;
 };
 
+struct bgBoundBox
+{
+	Point3	vMin;
+	Point3	vMax;
+};
+
 struct bgTriangle
 {
 	PNCT_Vertex		vertex[3];
 	int				iSubIndex;
-};
-
-struct DescendingDateSort
-{
-	bool operator()(bgTriangle& rpStart, bgTriangle& rpEnd)
-	{
-		return rpStart.iSubIndex < rpEnd.iSubIndex;
-	}
-};
-
-static int g_iSearchIndex = 0;
-struct IsSameInt
-{
-	bool operator()(bgTriangle& value)
-	{
-		return value.iSubIndex == g_iSearchIndex;
-	}
 };
 
 struct bgAnimTrack
@@ -107,7 +96,7 @@ struct bgMaterial
 struct bgMeshHeader
 {
 	OBJECT_CLASS_TYPE	ClassType;
-	Box3				BoundBox;
+	Box3				Box;
 	D3D_MATRIX			matWorld;
 	int					iNumVertex;
 	int					iNumFace;
@@ -122,7 +111,7 @@ struct bgMesh : public bgMeshHeader
 	vector<bgAnimTrack>	PosTrack;
 	vector<bgAnimTrack>	RotTrack;
 	vector<bgAnimTrack>	SclTrack;
-	vector<bgAnimTrack>	AlpTrack;
+	vector<bgAnimTrack>	VisTrack;
 	vector<bgTriangle>	Triangles;
 	vector<bgMesh*>		pSubMeshes;
 
@@ -137,7 +126,7 @@ struct bgMesh : public bgMeshHeader
 		PosTrack.clear();
 		RotTrack.clear();
 		SclTrack.clear();
-		AlpTrack.clear();
+		VisTrack.clear();
 		Triangles.clear();
 	}
 };

@@ -17,11 +17,13 @@ void bgMatrixIndex::SetNode(INode* pNode, int iTick, bgMatrixIndex* pParentIndex
 	m_pControl = m_pINode->GetTMController();
 
 	m_ClassType = CLASS_GEOM;
-
-	if (m_pObject && m_pObject->ClassID() == Class_ID(BONE_CLASS_ID, 0))
-		m_ClassType = CLASS_BONE;
-	if (m_pObject && m_pObject->ClassID() == Class_ID(DUMMY_CLASS_ID, 0))
-		m_ClassType = CLASS_DUMMY;
+	if (m_pObject)
+	{
+		if (m_pObject->ClassID() == Class_ID(BONE_CLASS_ID, 0))
+			m_ClassType = CLASS_BONE;
+		if (m_pObject->ClassID() == Class_ID(DUMMY_CLASS_ID, 0))
+			m_ClassType = CLASS_DUMMY;
+	}
 	if (m_pControl->ClassID() == BIPSLAVE_CONTROL_CLASS_ID || m_pControl->ClassID() == BIPBODY_CONTROL_CLASS_ID)
 		m_ClassType = CLASS_BIPED;
 

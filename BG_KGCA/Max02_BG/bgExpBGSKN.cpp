@@ -1,6 +1,12 @@
-#include "bgExporterMax.h"
+#include "bgExpBGSKN.h"
 
-bool bgExporterMax::ExportBGSKN()
+
+
+bgExpBGSKN::bgExpBGSKN()
 {
-	return true;
+}
+
+
+bgExpBGSKN::~bgExpBGSKN()
+{
 }

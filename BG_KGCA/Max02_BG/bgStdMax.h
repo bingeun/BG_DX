@@ -22,8 +22,6 @@ using namespace std;
 #define DegreeToRadian(fAngle)	(fAngle * (180.0f / 3.141592f))
 #define DEBUG_BUFFER_SIZE		(256)
 
-#define NULL_TEXT				_T("(NULL)")
-
 template <class T> class bgSingleton
 {
 public:

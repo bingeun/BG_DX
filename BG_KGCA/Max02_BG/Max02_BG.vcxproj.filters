@@ -19,6 +19,9 @@
     <Filter Include="소스 파일\Exporter">
       <UniqueIdentifier>{c2cfe0a3-195a-46f7-be07-e418d934c194}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Exporter">
+      <UniqueIdentifier>{5e429a46-4e21-4989-8f1a-39d36e5254a7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="헤더 파일\Common">
       <UniqueIdentifier>{d806c7b3-e86a-4510-af3a-5097de73032d}</UniqueIdentifier>
     </Filter>
@@ -73,6 +76,18 @@
     </ClInclude>
     <ClInclude Include="bgAnimMax.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="bgExpBG3D.h">
+      <Filter>헤더 파일\Exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="bgExpBGACT.h">
+      <Filter>헤더 파일\Exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="bgExpBGMTX.h">
+      <Filter>헤더 파일\Exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="bgExpBGSKN.h">
+      <Filter>헤더 파일\Exporter</Filter>
     </ClInclude>
     <ClInclude Include="bgExporterMax.h">
       <Filter>헤더 파일</Filter>
