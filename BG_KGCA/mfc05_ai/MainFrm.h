@@ -45,6 +45,11 @@ protected:
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+public:
+	afx_msg void OnCreateMap();
+	afx_msg void OnLoadMap();
+	afx_msg void OnSaveB();
+	afx_msg void OnSaveT();
 };
 
 

@@ -16,6 +16,7 @@
 #include "bgShapeGuideAxis.h"
 #include "bgShapePlane.h"
 #include "bgShapeBox.h"
+#include "bgBoundBox.h"
 
 // Cmfc05_aiApp:
 // 이 클래스의 구현에 대해서는 mfc05_ai.cpp을 참조하십시오.
@@ -29,6 +30,7 @@ public:
 	bgParserBG3D	m_ParserBG3D;
 	bgModelBG3D		m_Model;
 	bgModelBG3D		m_Model2;
+	bgBoundBox		m_BoundBox;
 
 public:
 	bool	Init();

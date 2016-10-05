@@ -66,7 +66,7 @@ void bgCamera::Frame()
 			m_fMouseDragY = m_fMouseY + m_fMouseDownY - (float)I_DInput.m_iMouseY;
 			m_fMouseDragZ = m_fMouseZ + m_fMouseDownZ - (float)I_DInput.m_iMouseZ;
 
-			D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * 0.125f, m_fMouseDragY * D3DX_PI / 180.0f * 0.125f, 0.0f);
+			D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 
 			D3DXMatrixIdentity(&m_Matrix.matWorld);
 			D3DXMatrixAffineTransformation(&m_Matrix.matView, 1.0f, NULL, &m_qDrag, &m_vEye);
@@ -237,32 +237,32 @@ void bgCamera::MoveDown(float fValue)
 
 void bgCamera::RotateLeft(float fValue)
 {
-	m_fMouseX -= fValue * g_fSPF * 80.0f;
+	m_fMouseX += fValue * g_fSPF * 80.0f;
 	m_fMouseDragX = m_fMouseX;
-	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * 0.125f, m_fMouseDragY * D3DX_PI / 180.0f * 0.125f, 0.0f);
+	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;
 }
 
 void bgCamera::RotateRight(float fValue)
 {
-	m_fMouseX += fValue * g_fSPF * 80.0f;
+	m_fMouseX -= fValue * g_fSPF * 80.0f;
 	m_fMouseDragX = m_fMouseX;
-	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * 0.125f, m_fMouseDragY * D3DX_PI / 180.0f * 0.125f, 0.0f);
+	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;
 }
 
 void bgCamera::RotateUp(float fValue)
 {
-	m_fMouseY -= fValue * g_fSPF * 80.0f;
+	m_fMouseY += fValue * g_fSPF * 80.0f;
 	m_fMouseDragY = m_fMouseY;
-	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * 0.125f, m_fMouseDragY * D3DX_PI / 180.0f * 0.125f, 0.0f);
+	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;
 }
 
 void bgCamera::RotateDown(float fValue)
 {
-	m_fMouseY += fValue * g_fSPF * 80.0f;
+	m_fMouseY -= fValue * g_fSPF * 80.0f;
 	m_fMouseDragY = m_fMouseY;
-	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * 0.125f, m_fMouseDragY * D3DX_PI / 180.0f * 0.125f, 0.0f);
+	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;
 }

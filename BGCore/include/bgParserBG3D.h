@@ -21,8 +21,8 @@ public:
 	bool	ReadMaterial();
 	bool	ReadTexture(int iIndex, MaterialInfo* pMat, SubMaterialInfo* pSubMat = NULL);
 	bool	ReadObject();
-	bool	ReadVertex(GeomObject* pMesh, int iMtrl, int iNumVertex);
-	bool	ReadIndex(GeomObject* pMesh, int iMtrl, int iNumIndex);
+	bool	ReadVertex(ObjectNode* pMesh, int iMtrl, int iNumVertex);
+	bool	ReadIndex(ObjectNode* pMesh, int iMtrl, int iNumIndex);
 	bool	ReadAnimation(TMAnimation* pMesh);
 
 	void	ConvertToModel();

@@ -27,11 +27,11 @@ TCHAR* szBG3DFileName[] =
 	_T("../../data/model/Turret_Deploy.BG3D"),			// 5	터렛 애니메이션
 	_T("../../data/model/mob.BG3D"),					// 6	몹 - 인간형 몬스터
 };
-int g_iBG3DFileIndex = 5;	// <<=== ASE 인덱스 넣기
-							//int g_iBG3DFileIndex2 = 5;	// <<=== ASE 인덱스 넣기
+int g_iBG3DFileIndex = 5;	// <<=== BG3D 인덱스 넣기
+int g_iBG3DFileIndex2 = 2;	// <<=== BG3D 인덱스 넣기
+int g_iBBoxIndex = 7;
 
-
-							// Cmfc05_aiApp
+// Cmfc05_aiApp
 
 BEGIN_MESSAGE_MAP(Cmfc05_aiApp, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &Cmfc05_aiApp::OnAppAbout)
@@ -288,11 +288,16 @@ bool Cmfc05_aiApp::Init()
 	m_Model.CreateBuffer();
 	m_Model.LoadShader("VS", "PS_Tex");
 
-	//m_ParserBG3D.Init(&m_Model2);
-	//m_ParserBG3D.Open(szBG3DFileName[g_iBG3DFileIndex2]);
-	//m_Model2.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
-	//m_Model2.CreateBuffer();
-	//m_Model2.LoadShader("VS", "PS_Tex");
+	m_ParserBG3D.Init(&m_Model2);
+	m_ParserBG3D.Open(szBG3DFileName[g_iBG3DFileIndex2]);
+	m_Model2.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
+	m_Model2.CreateBuffer();
+	m_Model2.LoadShader("VS", "PS_Tex");
+
+	m_BoundBox.Init();
+	m_BoundBox.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
+	m_BoundBox.CreateBuffer(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
+	m_BoundBox.LoadShader();
 
 	return true;
 }
@@ -370,9 +375,19 @@ bool Cmfc05_aiApp::Frame()
 		m_Camera.RotateDown();
 	}
 
+	if (I_DInput.IsKeyDownEvent(DIK_Z))
+	{
+		g_iBBoxIndex = (g_iBBoxIndex + 1) % m_Model.m_ObjectList.size();
+	}
+	if (I_DInput.IsKeyDownEvent(DIK_X))
+	{
+		g_iBBoxIndex = (g_iBBoxIndex + m_Model.m_ObjectList.size() - 1) % m_Model.m_ObjectList.size();
+	}
+
 	m_objWorldAxis.Frame();
 	m_Model.Frame();
-	//m_Model2.Frame();
+	m_Model2.Frame();
+	m_BoundBox.Frame();
 
 	return true;
 }
@@ -381,7 +396,8 @@ bool Cmfc05_aiApp::Render()
 {
 	m_objWorldAxis.Render();
 	m_Model.Render();
-	//m_Model2.Render();
+	m_Model2.Render();
+	m_BoundBox.Render(&m_Model.m_ObjectList[g_iBBoxIndex].matCalculation);
 
 	return true;
 }

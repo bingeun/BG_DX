@@ -23,6 +23,7 @@ bool bgShapeGuideAxis::Render()
 {
 	UINT iStride = sizeof(VertexPC);
 	UINT iOffset = 0;
+
 	m_pDContext->IASetVertexBuffers(0, 1, &m_pVB, &iStride, &iOffset);
 	m_pDContext->IASetIndexBuffer(m_pIB, DXGI_FORMAT_R32_UINT, 0);
 	m_pDContext->IASetInputLayout(m_pInputLayout);

@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\Dialog">
+      <UniqueIdentifier>{60bbccc6-32b5-4baf-946a-3aea18b3fba8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Dialog">
+      <UniqueIdentifier>{15286424-659f-4d12-a835-e488138bb314}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,6 +45,18 @@
     <ClInclude Include="Resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="bgSaveMapT.h">
+      <Filter>헤더 파일\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="bgLoadMap.h">
+      <Filter>헤더 파일\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="bgSaveMapB.h">
+      <Filter>헤더 파일\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="bgCreateMap.h">
+      <Filter>헤더 파일\Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mfc05_ai.cpp">
@@ -55,6 +73,18 @@
     </ClCompile>
     <ClCompile Include="mfc05_aiView.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="bgSaveMapT.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="bgCreateMap.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="bgLoadMap.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="bgSaveMapB.cpp">
+      <Filter>소스 파일\Dialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

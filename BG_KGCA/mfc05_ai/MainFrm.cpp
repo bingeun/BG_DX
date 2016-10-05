@@ -6,6 +6,10 @@
 #include "mfc05_ai.h"
 
 #include "MainFrm.h"
+#include "bgCreateMap.h"
+#include "bgLoadMap.h"
+#include "bgSaveMapB.h"
+#include "bgSaveMapT.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,6 +29,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
+	ON_COMMAND(ID_CREATE_MAP, &CMainFrame::OnCreateMap)
+	ON_COMMAND(ID_LOAD_MAP, &CMainFrame::OnLoadMap)
+	ON_COMMAND(ID_SAVE_B, &CMainFrame::OnSaveB)
+	ON_COMMAND(ID_SAVE_T, &CMainFrame::OnSaveT)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -308,3 +316,39 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	return TRUE;
 }
 
+
+
+void CMainFrame::OnCreateMap()
+{
+	static bgCreateMap dlg;
+	if (dlg.GetSafeHwnd() == NULL)
+	{
+		dlg.Create(IDD_CREATE_MAP, this);
+	}
+	dlg.ShowWindow(SW_SHOW);
+}
+
+
+void CMainFrame::OnLoadMap()
+{
+	static bgLoadMap dlg;
+	if (dlg.GetSafeHwnd() == NULL)
+	{
+		dlg.Create(IDD_LOAD_MAP, this);
+	}
+	dlg.ShowWindow(SW_SHOW);
+}
+
+
+void CMainFrame::OnSaveB()
+{
+	bgSaveMapB dlg;
+	dlg.DoModal();
+}
+
+
+void CMainFrame::OnSaveT()
+{
+	bgSaveMapT dlg;
+	dlg.DoModal();
+}

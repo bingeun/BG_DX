@@ -240,6 +240,24 @@ bool bgDInput::IsKeyDown(DWORD dwKey)
 	return false;
 }
 
+bool bgDInput::IsKeyDownEvent(DWORD dwKey)
+{
+	if (m_dwImmediate)
+	{
+		if (KEY_DOWN_EVENT(dwKey))
+			return true;
+	}
+	else
+	{
+		for (DWORD i = 0; i < m_dwElements; i++)
+		{
+			if ((m_KeyDOD[i].dwOfs == dwKey) && (m_KeyDOD[i].dwData & 0x80))
+				return true;
+		}
+	}
+	return false;
+}
+
 void bgDInput::SetAcquire(bool bActive)
 {
 	if (bActive)

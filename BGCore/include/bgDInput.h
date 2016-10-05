@@ -5,10 +5,12 @@
 
 #define I_DInput bgDInput::GetInstance()
 
-#define KEY_DOWN(key)	((m_KeyState[(key)] & 0x80) ? true : false)
-#define KEY_UP(key)		((m_KeyState[(key)] & 0x80) ? false : true)
-#define MOUSE_DOWN(key)	((m_MouseState.rgbButtons[(key)]) ? true : false)
-#define MOUSE_UP(key)	((m_MouseState.rgbButtons[(key)]) ? false : true)
+#define KEY_DOWN(key)			((m_KeyState[(key)] & 0x80) ? true : false)
+#define KEY_UP(key)				((m_KeyState[(key)] & 0x80) ? false : true)
+#define MOUSE_DOWN(key)			((m_MouseState.rgbButtons[(key)]) ? true : false)
+#define MOUSE_UP(key)			((m_MouseState.rgbButtons[(key)]) ? false : true)
+#define KEY_DOWN_EVENT(key)		(((m_KeyState[(key)] & 0x80) && !(m_KeyStateBefore[(key)] & 0x80)) ? true : false)
+#define MOUSE_DOWN_EVENT(key)	(((m_MouseState.rgbButtons[(key)] & 0x80) && !(m_MouseStateBefore.rgbButtons[(key)] & 0x80)) ? true : false)
 
 #define SIZE_KEYSTATE	(256)
 #define SIZE_KEYDOD		(16)
@@ -58,8 +60,10 @@ public:
 
 	bool	IsKeyUp(DWORD dwKey);
 	bool	IsKeyDown(DWORD dwKey);
+	bool	IsKeyDownEvent(DWORD dwKey);
 	bool	IsMouseUp(DWORD dwKey) { return ((m_MouseState.rgbButtons[(dwKey)]) ? false : true); }
 	bool	IsMouseDown(DWORD dwKey) { return ((m_MouseState.rgbButtons[(dwKey)]) ? true : false); }
+	bool	IsMouseDownEvent(DWORD dwKey) { return (((m_MouseState.rgbButtons[(dwKey)] & 0x80) && !(m_MouseStateBefore.rgbButtons[(dwKey)] & 0x80)) ? true : false); }
 	void	SetAcquire(bool bActive);
 	void	DeviceAcquire();
 	void	DeviceUnacquire();

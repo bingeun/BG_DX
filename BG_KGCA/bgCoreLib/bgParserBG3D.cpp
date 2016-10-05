@@ -203,8 +203,8 @@ bool bgParserBG3D::ReadObject()
 		IF_FALSE_RETURN(FindWord(_T("#BOUNDING_BOX")));
 		_stscanf(m_szLine, _T("%s %f%f%f %f%f%f"),
 			m_szWord,
-			&vData1.x, &vData1.y, &vData1.z,	// 바운딩박스 최대
-			&vData2.x, &vData2.y, &vData2.z);	// 바운딩박스 최소
+			&pMesh->vBBoxMax.x, &pMesh->vBBoxMax.y, &pMesh->vBBoxMax.z,		// 바운딩박스 최대
+			&pMesh->vBBoxMin.x, &pMesh->vBBoxMin.y, &pMesh->vBBoxMin.z);	// 바운딩박스 최소
 
 		IF_FALSE_RETURN(FindWord(_T("#WORLD_MATRIX")));
 		_stscanf(m_szLine, _T("%s %f%f%f%f %f%f%f%f %f%f%f%f %f%f%f%f"),
@@ -219,9 +219,36 @@ bool bgParserBG3D::ReadObject()
 			m_szWord,
 			&iData1);		// 서브ID 갯수
 
-		if (pMesh->iMaterialRef >= 0 && m_pModel->m_MaterialList[pMesh->iMaterialRef].SubMaterialList.size() > 0)
+		if (pMesh->iMaterialRef >= 0)
 		{
-			for (int iMtrl = 0; iMtrl < m_pModel->m_MaterialList[pMesh->iMaterialRef].SubMaterialList.size(); iMtrl++)
+			int iSubMtlSize = m_pModel->m_MaterialList[pMesh->iMaterialRef].SubMaterialList.size();
+			if (pMesh->iMaterialRef >= 0 && iSubMtlSize > 0)
+			{
+				pPoint->m_VertexList.resize(iSubMtlSize);
+				pPoint->m_IndexList.resize(iSubMtlSize);
+				for (int iMtrl = 0; iMtrl < m_pModel->m_MaterialList[pMesh->iMaterialRef].SubMaterialList.size(); iMtrl++)
+				{
+					IF_FALSE_RETURN(FindWord(_T("#TRIANGLE_LIST")));
+					_stscanf(m_szLine, _T("%s%d%d%d"),
+						m_szWord,
+						&iData,			// 번호
+						&iData1,		// 정점 갯수
+						&iData2);		// 페이스 갯수
+
+					if (iData1 > 0)
+					{
+						pPoint->m_VertexList[iMtrl].resize(iData1);
+						ReadVertex(pPoint, iMtrl, pPoint->m_VertexList[iMtrl].size());
+					}
+
+					if (iData2 > 0)
+					{
+						pPoint->m_IndexList[iMtrl].resize(iData2 * 3);
+						ReadIndex(pPoint, iMtrl, pPoint->m_IndexList[iMtrl].size());
+					}
+				}
+			}
+			else
 			{
 				IF_FALSE_RETURN(FindWord(_T("#TRIANGLE_LIST")));
 				_stscanf(m_szLine, _T("%s%d%d%d"),
@@ -232,52 +259,15 @@ bool bgParserBG3D::ReadObject()
 
 				if (iData1 > 0)
 				{
-					pMesh->VertexList.resize(iData1);
-					pMesh->NorVertexList.resize(iData1);
-					pMesh->ColVertexList.resize(iData1);
-					pMesh->TexVertexList.resize(iData1);
-
-					ReadVertex(pMesh, iMtrl, pMesh->VertexList.size());
+					pPoint->m_VertexList[0].resize(iData1);
+					ReadVertex(pPoint, 0, pPoint->m_VertexList[0].size());
 				}
 
 				if (iData2 > 0)
 				{
-					pMesh->FaceList.resize(iData2);
-					pMesh->NorFaceList.resize(iData2);
-					pMesh->ColFaceList.resize(iData2);
-					pMesh->TexFaceList.resize(iData2);
-
-					ReadIndex(pMesh, iMtrl, pMesh->FaceList.size());
+					pPoint->m_IndexList[0].resize(iData2 * 3);
+					ReadIndex(pPoint, 0, pPoint->m_IndexList[0].size());
 				}
-			}
-		}
-		else
-		{
-			IF_FALSE_RETURN(FindWord(_T("#TRIANGLE_LIST")));
-			_stscanf(m_szLine, _T("%s%d%d%d"),
-				m_szWord,
-				&iData,			// 번호
-				&iData1,		// 정점 갯수
-				&iData2);		// 페이스 갯수
-
-			if (iData1 > 0)
-			{
-				pMesh->VertexList.resize(iData1);
-				pMesh->NorVertexList.resize(iData1);
-				pMesh->ColVertexList.resize(iData1);
-				pMesh->TexVertexList.resize(iData1);
-
-				ReadVertex(pMesh, 0, pMesh->VertexList.size());
-			}
-
-			if (iData2 > 0)
-			{
-				pMesh->FaceList.resize(iData2);
-				pMesh->NorFaceList.resize(iData2);
-				pMesh->ColFaceList.resize(iData2);
-				pMesh->TexFaceList.resize(iData2);
-
-				ReadIndex(pMesh, 0, pMesh->FaceList.size());
 			}
 		}
 
@@ -287,7 +277,7 @@ bool bgParserBG3D::ReadObject()
 	return hr;
 }
 
-bool bgParserBG3D::ReadVertex(GeomObject* pMesh, int iMtrl, int iNumVertex)
+bool bgParserBG3D::ReadVertex(ObjectNode* pMesh, int iMtrl, int iNumVertex)
 {
 	bool hr = true;
 
@@ -295,31 +285,27 @@ bool bgParserBG3D::ReadVertex(GeomObject* pMesh, int iMtrl, int iNumVertex)
 
 	for (int iCnt = 0; iCnt < iNumVertex; iCnt++)
 	{
+		VertexPNCT* pNode = &pMesh->m_VertexList[iMtrl].at(iCnt);
 		_fgetts(m_szLine, MAX_PATH, m_pFile);
 		_stscanf(m_szLine, _T("%f%f%f %f%f%f %f%f%f%f %f%f"),
-			&pMesh->VertexList[iCnt].x, &pMesh->VertexList[iCnt].y, &pMesh->VertexList[iCnt].z,						// 포지션
-			&pMesh->NorVertexList[iCnt].x, &pMesh->NorVertexList[iCnt].y, &pMesh->NorVertexList[iCnt].z,			// 노멀
-			&pMesh->ColVertexList[iCnt].x, &pMesh->ColVertexList[iCnt].y, &pMesh->ColVertexList[iCnt].z, &fData,	// 컬러
-			&pMesh->TexVertexList[iCnt].x, &pMesh->TexVertexList[iCnt].y);											// 텍스쳐
+			&pNode->pos.x, &pNode->pos.y, &pNode->pos.z,			// 포지션
+			&pNode->nor.x, &pNode->nor.y, &pNode->nor.z,			// 노멀
+			&pNode->col.x, &pNode->col.y, &pNode->col.z, &fData,	// 컬러
+			&pNode->tex.x, &pNode->tex.y);							// 텍스쳐
 	}
 
 	return hr;
 }
 
-bool bgParserBG3D::ReadIndex(GeomObject* pMesh, int iMtrl, int iNumIndex)
+bool bgParserBG3D::ReadIndex(ObjectNode* pMesh, int iMtrl, int iNumIndex)
 {
 	bool hr = true;
 
-	for (int iCnt = 0; iCnt < iNumIndex; iCnt++)
+	for (int iCnt = 0; iCnt < iNumIndex; iCnt += 3)
 	{
 		_fgetts(m_szLine, MAX_PATH, m_pFile);
 		_stscanf(m_szLine, _T("%d%d%d"),
-			&pMesh->FaceList[iCnt].iA, &pMesh->FaceList[iCnt].iB, &pMesh->FaceList[iCnt].iC);
-
-		pMesh->FaceList[iCnt].iID = iMtrl;
-
-		pMesh->TexFaceList[iCnt] = pMesh->ColFaceList[iCnt] = pMesh->FaceList[iCnt];
-		pMesh->NorFaceList[iCnt] = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			&pMesh->m_IndexList[iMtrl].at(iCnt + 0), &pMesh->m_IndexList[iMtrl].at(iCnt + 1), &pMesh->m_IndexList[iMtrl].at(iCnt + 2));
 	}
 
 	return hr;
@@ -500,6 +486,13 @@ void bgParserBG3D::OperationTM()
 			D3DXMatrixInverse(&matInvParentWorld, NULL, matParentWorld);
 			matChildWorld = m_pModel->m_ObjectList[iNode].nodeTM.matWorld * matInvParentWorld;
 			D3DXMatrixDecompose(&vScl, &qRot, &vPos, &matChildWorld);
+			D3DXMatrixScaling(&m_pModel->m_ObjectList[iNode].matWorldScl, vScl.x, vScl.y, vScl.z);
+			D3DXMatrixTranslation(&m_pModel->m_ObjectList[iNode].matWorldPos, vPos.x, vPos.y, vPos.z);
+			D3DXMatrixRotationQuaternion(&m_pModel->m_ObjectList[iNode].matWorldRot, &qRot);
+		}
+		else
+		{
+			D3DXMatrixDecompose(&vScl, &qRot, &vPos, &m_pModel->m_ObjectList[iNode].nodeTM.matWorld);
 			D3DXMatrixScaling(&m_pModel->m_ObjectList[iNode].matWorldScl, vScl.x, vScl.y, vScl.z);
 			D3DXMatrixTranslation(&m_pModel->m_ObjectList[iNode].matWorldPos, vPos.x, vPos.y, vPos.z);
 			D3DXMatrixRotationQuaternion(&m_pModel->m_ObjectList[iNode].matWorldRot, &qRot);

@@ -23,7 +23,7 @@
     <RootNamespace>mfc05_ai</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
-    <ProjectName>MFC05_AI</ProjectName>
+    <ProjectName>BG3D_Viewer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -191,6 +191,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bgCreateMap.h" />
+    <ClInclude Include="bgLoadMap.h" />
+    <ClInclude Include="bgSaveMapB.h" />
+    <ClInclude Include="bgSaveMapT.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="mfc05_ai.h" />
     <ClInclude Include="mfc05_aiDoc.h" />
@@ -200,6 +204,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bgCreateMap.cpp" />
+    <ClCompile Include="bgLoadMap.cpp" />
+    <ClCompile Include="bgSaveMapB.cpp" />
+    <ClCompile Include="bgSaveMapT.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="mfc05_ai.cpp" />
     <ClCompile Include="mfc05_aiDoc.cpp" />

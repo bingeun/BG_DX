@@ -110,6 +110,8 @@ struct GeomObject
 	vector<D3DXVECTOR3>		NorVertexList;		// *MESH_VERTEXNORMAL
 	vector<D3DXVECTOR3>		NorFaceList;		// *MESH_FACENORMAL
 	int						iMaterialRef;		// *MATERIAL_REF
+	D3DXVECTOR3				vBBoxMin;			// *BOUNDINGBOX_MIN
+	D3DXVECTOR3				vBBoxMax;			// *BOUNDINGBOX_MAX
 };
 
 struct HelperObject

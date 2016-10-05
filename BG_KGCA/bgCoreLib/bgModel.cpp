@@ -22,7 +22,7 @@ bool bgModel::Frame()
 	m_fCurrentTick += g_fSPF * m_Scene.iFrameSpeed * m_Scene.iTicksPerFrame;
 	if (m_fCurrentTick >= m_Scene.iLastFrame * m_Scene.iTicksPerFrame)
 	{
-		m_fCurrentTick = 0.0f; // m_Scene.iLastFrame * m_Scene.iTicksPerFrame;
+		m_fCurrentTick = 0.0f;
 	}
 
 	D3DXMATRIX matWorld;
@@ -30,11 +30,6 @@ bool bgModel::Frame()
 	for (int iLoop = 0; iLoop < m_ObjectList.size(); iLoop++)
 	{
 		Interpolate(&m_ObjectList[iLoop], m_fCurrentTick, &matWorld);
-	}
-
-	for (int iLoop = 0; iLoop < m_ObjectList.size(); iLoop++)
-	{
-		//D3DXMatrixMultiply(&m_ObjectList[iLoop].matCalculation, &m_ObjectList[iLoop].matCalculation, &m_ObjectList[iLoop].matControlWorld);
 	}
 
 	return true;

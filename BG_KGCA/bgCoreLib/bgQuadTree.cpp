@@ -16,12 +16,12 @@ bgTreeNode* bgQuadTree::CreateNode(bgTreeNode* pParentNode, float fMinX, float f
 	pNode->m_ChildList.reserve(4);
 	pNode->m_CornerList.reserve(4);
 
-	pNode->m_BBox.vMin = D3DXVECTOR3(fMinX, 0.0f, fMinZ);
-	pNode->m_BBox.vMax = D3DXVECTOR3(fMaxX, 0.0f, fMaxZ);
-	pNode->m_BBox.vCenter = (pNode->m_BBox.vMax + pNode->m_BBox.vMin) / 2.0f;
-	pNode->m_BBox.fExtent[0] = pNode->m_BBox.vMax.x - pNode->m_BBox.vCenter.x;
-	pNode->m_BBox.fExtent[1] = pNode->m_BBox.vMax.y - pNode->m_BBox.vCenter.y;
-	pNode->m_BBox.fExtent[2] = pNode->m_BBox.vMax.z - pNode->m_BBox.vCenter.z;
+	pNode->m_BBox.m_vMin = D3DXVECTOR3(fMinX, 0.0f, fMinZ);
+	pNode->m_BBox.m_vMax = D3DXVECTOR3(fMaxX, 0.0f, fMaxZ);
+	pNode->m_BBox.m_vCenter = (pNode->m_BBox.m_vMax + pNode->m_BBox.m_vMin) / 2.0f;
+	pNode->m_BBox.m_fExtent[0] = pNode->m_BBox.m_vMax.x - pNode->m_BBox.m_vCenter.x;
+	pNode->m_BBox.m_fExtent[1] = pNode->m_BBox.m_vMax.y - pNode->m_BBox.m_vCenter.y;
+	pNode->m_BBox.m_fExtent[2] = pNode->m_BBox.m_vMax.z - pNode->m_BBox.m_vCenter.z;
 
 	pNode->m_CornerList.push_back(D3DXVECTOR3(fMinX, 0.0f, fMaxZ));	// 1	1---2	1 = -x +z
 	pNode->m_CornerList.push_back(D3DXVECTOR3(fMaxX, 0.0f, fMaxZ));	// 2	|   |	2 = +x +z
