@@ -10,6 +10,7 @@ bgObjectMax::~bgObjectMax()
 
 void bgObjectMax::GetMaterial()
 {
+	m_MaterialList.clear();
 	for (int iMtl = 0; iMtl < m_pMtlList.size(); iMtl++)
 	{
 		Mtl* pSrcMtl = m_pMtlList[iMtl];

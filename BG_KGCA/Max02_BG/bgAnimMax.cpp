@@ -162,14 +162,17 @@ void bgAnimMax::GetAnimKeys(INode* pNode, bgMesh* pMesh)
 	{
 		if (bPosAnim)
 		{
+			pMesh->PosTrack.clear();
 			DumpPosSample(pNode, pMesh);
 		}
 		if (bRotAnim)
 		{
+			pMesh->RotTrack.clear();
 			DumpRotSample(pNode, pMesh);
 		}
 		if (bSclAnim)
 		{
+			pMesh->SclTrack.clear();
 			DumpSclSample(pNode, pMesh);
 		}
 	}
@@ -177,6 +180,7 @@ void bgAnimMax::GetAnimKeys(INode* pNode, bgMesh* pMesh)
 	Control* AlpCont = pNode->GetVisController();
 	if (AlpCont)
 	{
+		pMesh->AlpTrack.clear();
 		DumpFloatKeys(AlpCont, pMesh);
 	}
 }

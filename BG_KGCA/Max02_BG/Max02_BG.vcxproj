@@ -49,9 +49,9 @@
   <ItemGroup>
     <ClCompile Include="bgAnimMax.cpp" />
     <ClCompile Include="bgExpBG3D.cpp" />
-    <ClCompile Include="bgExpBGACT.cpp" />
     <ClCompile Include="bgExpBGMTX.cpp" />
     <ClCompile Include="bgExpBGSKN.cpp" />
+    <ClCompile Include="bgExporterSkin.cpp" />
     <ClCompile Include="bgExporterMax.cpp" />
     <ClCompile Include="bgGlobalMax.cpp" />
     <ClCompile Include="bgObjectMax.cpp" />
@@ -65,6 +65,7 @@
     <ClInclude Include="3dsmaxsdk_preinclude.h" />
     <ClInclude Include="bgAnimMax.h" />
     <ClInclude Include="bgExporterMax.h" />
+    <ClInclude Include="bgExporterSkin.h" />
     <ClInclude Include="bgGlobalMax.h" />
     <ClInclude Include="bgObjectMax.h" />
     <ClInclude Include="bgStdMax.h" />

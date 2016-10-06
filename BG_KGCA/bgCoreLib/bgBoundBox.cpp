@@ -58,32 +58,12 @@ bool bgBoundBox::Release()
 	return true;
 }
 
-HRESULT bgBoundBox::CreateBuffer(D3DXVECTOR3* pVecMax, D3DXVECTOR3* pVecMin)
+HRESULT bgBoundBox::CreateBuffer()
 {
 	HRESULT hr = S_OK;
 
-	// ¹öÅØ½º Á¤º¸
-	m_vMax = *pVecMax;
-	m_vMin = *pVecMin;
-
-	m_VertexList.resize(8);
-	m_VertexList[0].pos = D3DXVECTOR3(pVecMin->x, pVecMin->y, pVecMin->z);	// 0 Min	  6---------7
-	m_VertexList[1].pos = D3DXVECTOR3(pVecMax->x, pVecMin->y, pVecMin->z);	// 1		 /|        /|
-	m_VertexList[2].pos = D3DXVECTOR3(pVecMin->x, pVecMin->y, pVecMax->z);	// 2		4---------5 |
-	m_VertexList[3].pos = D3DXVECTOR3(pVecMax->x, pVecMin->y, pVecMax->z);	// 3		| |       | |
-	m_VertexList[4].pos = D3DXVECTOR3(pVecMin->x, pVecMax->y, pVecMin->z);	// 4		| |       | |
-	m_VertexList[5].pos = D3DXVECTOR3(pVecMax->x, pVecMax->y, pVecMin->z);	// 5		| 2-------|-3
-	m_VertexList[6].pos = D3DXVECTOR3(pVecMin->x, pVecMax->y, pVecMax->z);	// 6		|/        |/
-	m_VertexList[7].pos = D3DXVECTOR3(pVecMax->x, pVecMax->y, pVecMax->z);	// 7 Max	0---------1 
-	m_VertexList[0].col = D3DXVECTOR4(0.0f, 0.0f, 1.0f, 1.0f);				// ÆÄ¶û (Min 0)
-	m_VertexList[1].col = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);				// ÇÏ´Ã (1)
-	m_VertexList[2].col = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);				// ÇÏ´Ã (2)
-	m_VertexList[3].col = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);				// ÇÏ´Ã (3)
-	m_VertexList[4].col = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);				// ³ë¶û (4)
-	m_VertexList[5].col = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);				// ³ë¶û (5)
-	m_VertexList[6].col = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);				// ³ë¶û (6)
-	m_VertexList[7].col = D3DXVECTOR4(1.0f, 0.0f, 0.0f, 1.0f);				// »¡°­ (Max 7)
-	m_iNumVertex = m_VertexList.size();
+	// ¹öÅØ½º Á¤º¸ - »ý¼º½Ã ¾Æ·¡ ÇÔ¼ö È£Ãâ
+	//SetBoundBox(&m_vMax, &m_vMin);
 
 	// ÀÎµ¦½º Á¤º¸
 	UINT iIndices[] =
@@ -171,4 +151,35 @@ void bgBoundBox::SetMatrix(D3DXMATRIX* pWorld, D3DXMATRIX* pView, D3DXMATRIX* pP
 	D3DXMatrixTranspose(&m_MatrixBuffer.matWorld, &m_MatrixBuffer.matWorld);
 	D3DXMatrixTranspose(&m_MatrixBuffer.matView, &m_MatrixBuffer.matView);
 	D3DXMatrixTranspose(&m_MatrixBuffer.matProj, &m_MatrixBuffer.matProj);
+}
+
+void bgBoundBox::SetBoundBox(D3DXVECTOR3* pVecMax, D3DXVECTOR3* pVecMin)
+{
+	m_vMax = *pVecMax;
+	m_vMin = *pVecMin;
+
+	m_VertexList.clear();
+	m_VertexList.resize(8);
+	m_VertexList[0].pos = D3DXVECTOR3(m_vMin.x, m_vMin.y, m_vMin.z);	// 0 Min	  6---------7
+	m_VertexList[1].pos = D3DXVECTOR3(m_vMax.x, m_vMin.y, m_vMin.z);	// 1		 /|        /|
+	m_VertexList[2].pos = D3DXVECTOR3(m_vMin.x, m_vMin.y, m_vMax.z);	// 2		4---------5 |
+	m_VertexList[3].pos = D3DXVECTOR3(m_vMax.x, m_vMin.y, m_vMax.z);	// 3		| |       | |
+	m_VertexList[4].pos = D3DXVECTOR3(m_vMin.x, m_vMax.y, m_vMin.z);	// 4		| |       | |
+	m_VertexList[5].pos = D3DXVECTOR3(m_vMax.x, m_vMax.y, m_vMin.z);	// 5		| 2-------|-3
+	m_VertexList[6].pos = D3DXVECTOR3(m_vMin.x, m_vMax.y, m_vMax.z);	// 6		|/        |/
+	m_VertexList[7].pos = D3DXVECTOR3(m_vMax.x, m_vMax.y, m_vMax.z);	// 7 Max	0---------1 
+	m_VertexList[0].col = D3DXVECTOR4(0.0f, 0.0f, 0.625f, 1.0f);		// ÆÄ¶û (Min 0)
+	m_VertexList[1].col = D3DXVECTOR4(0.375f, 0.375f, 1.0f, 1.0f);		// 
+	m_VertexList[2].col = D3DXVECTOR4(0.375f, 0.375f, 1.0f, 1.0f);		// ÇÏ´Ã (1 ~ 3)
+	m_VertexList[3].col = D3DXVECTOR4(0.375f, 0.375f, 1.0f, 1.0f);		// 
+	m_VertexList[4].col = D3DXVECTOR4(1.0f, 0.375f, 0.375f, 1.0f);		// 
+	m_VertexList[5].col = D3DXVECTOR4(1.0f, 0.375f, 0.375f, 1.0f);		// ÁÖÈ² (4 ~ 6)
+	m_VertexList[6].col = D3DXVECTOR4(1.0f, 0.375f, 0.375f, 1.0f);		// 
+	m_VertexList[7].col = D3DXVECTOR4(0.625f, 0.0f, 0.0f, 1.0f);		// »¡°­ (Max 7)
+	m_iNumVertex = m_VertexList.size();
+}
+
+void bgBoundBox::UpdateBoundBox()
+{
+	m_pDContext->UpdateSubresource(m_pVB, 0, NULL, &m_VertexList[0], 0, 0);
 }

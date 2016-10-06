@@ -13,7 +13,7 @@
 //***************************************************************************/
 
 #include "Max02_BG.h"
-#include "bgExporterMax.h"
+#include "bgExporterSkin.h"
 
 #define Max02_BG_CLASS_ID	Class_ID(0x820560c3, 0x8f621d1d)
 
@@ -116,6 +116,7 @@ void Max02_BG::EndEditParams(Interface* ip, IUtil*)
 
 void Max02_BG::Init(HWND /*handle*/)
 {
+	if (I_ExporterSkin.Init() == false) return;
 	if (I_Exporter.Initialize(ip) == false) return;
 
 	if (I_Exporter.m_MatrixMap.Count() > 0)
@@ -136,6 +137,7 @@ void Max02_BG::Init(HWND /*handle*/)
 
 void Max02_BG::Destroy(HWND /*handle*/)
 {
+	I_ExporterSkin.Release();
 	I_Exporter.Release();
 }
 
@@ -149,11 +151,11 @@ void Max02_BG::SelectionSetChanged(Interface* ip, IUtil* iu)
 	{
 		return;
 	}
-	//I_SkinExp.Release();
+	I_ExporterSkin.Release();
 
 	for (int iSelectObj = 0; iSelectObj < ip->GetSelNodeCount(); iSelectObj++)
 	{
-		//I_SkinExp.GetNodeInfo(ip->GetSelNode(iSelectObj), ip->GetTime());
+		I_ExporterSkin.GetNodeInfo(ip->GetSelNode(iSelectObj), ip->GetTime());
 	}
 
 	if (I_Exporter.m_MatrixMap.Count() > 0)
@@ -214,7 +216,8 @@ INT_PTR CALLBACK Max02_BG::DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 		{
 			I_Exporter.SetBindPose(true);
 			I_Exporter.Initialize(Max02_BG::GetInstance()->ip);
-			I_Exporter.ExportBGSKN();
+			I_ExporterSkin.m_Scene = I_Exporter.m_Scene;
+			I_ExporterSkin.ExportBGSKN();
 		}
 		break;
 
@@ -228,7 +231,6 @@ INT_PTR CALLBACK Max02_BG::DlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 
 		case IDC_BUTTON_ACTION:		// Action (*.BGACT)
 		{
-			I_Exporter.ExportBGACT();
 		}
 		break;
 

@@ -25,7 +25,10 @@ public:
 	bool	Render(D3DXMATRIX* pMatParent);
 	bool	Release();
 
-	HRESULT	CreateBuffer(D3DXVECTOR3* pVecMax, D3DXVECTOR3* pVecMin);
+	HRESULT	CreateBuffer();
 	HRESULT	LoadShader();
 	void	SetMatrix(D3DXMATRIX* pWorld, D3DXMATRIX* pView, D3DXMATRIX* pProj);
+
+	void	SetBoundBox(D3DXVECTOR3* pVecMax, D3DXVECTOR3* pVecMin);
+	void	UpdateBoundBox();
 };

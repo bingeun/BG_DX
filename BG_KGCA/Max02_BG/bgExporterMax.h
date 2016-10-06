@@ -15,9 +15,7 @@ public:
 
 public:
 	bool	ExportBG3D();
-	bool	ExportBGSKN();
 	bool	ExportBGMTX();
-	bool	ExportBGACT();
 
 public:
 	bool 	Init(Interface* p3DMax, TSTR strFileName);

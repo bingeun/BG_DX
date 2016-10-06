@@ -296,7 +296,8 @@ bool Cmfc05_aiApp::Init()
 
 	m_BoundBox.Init();
 	m_BoundBox.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
-	m_BoundBox.CreateBuffer(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
+	m_BoundBox.SetBoundBox(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
+	m_BoundBox.CreateBuffer();
 	m_BoundBox.LoadShader();
 
 	return true;
@@ -378,10 +379,14 @@ bool Cmfc05_aiApp::Frame()
 	if (I_DInput.IsKeyDownEvent(DIK_Z))
 	{
 		g_iBBoxIndex = (g_iBBoxIndex + 1) % m_Model.m_ObjectList.size();
+		m_BoundBox.SetBoundBox(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
+		m_BoundBox.UpdateBoundBox();
 	}
 	if (I_DInput.IsKeyDownEvent(DIK_X))
 	{
 		g_iBBoxIndex = (g_iBBoxIndex + m_Model.m_ObjectList.size() - 1) % m_Model.m_ObjectList.size();
+		m_BoundBox.SetBoundBox(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
+		m_BoundBox.UpdateBoundBox();
 	}
 
 	m_objWorldAxis.Frame();
