@@ -31,4 +31,7 @@ public:
 	void	ExpObject();
 	int		ExpMesh(bgMesh* pMesh, int iMtl = -1, int iAddCount = 0);
 	void	ExpAnimation(bgMesh* pMesh);
+
+	void	ExpSceneMTX();
+	void	ExpObjectMTX();
 };

@@ -32,6 +32,7 @@ bool bgExporterSkin::Release()
 		SAFE_DEL(pMesh);
 	}
 	m_SkinMeshList.clear();
+
 	return true;
 }
 
@@ -71,6 +72,288 @@ TCHAR* bgExporterSkin::SaveFileDialog(TCHAR* szExt, TCHAR* szTitle)
 	return szFile;
 }
 
+TCHAR* bgExporterSkin::FixupName(MSTR name)
+{
+	TCHAR* szPtr = m_szTemp;
+
+	memset(m_szTemp, 0, sizeof(TCHAR) * MAX_PATH);
+	_tcscpy(m_szTemp, name);
+
+	while (*szPtr)
+	{
+		if (*szPtr == '"')
+			*szPtr = SINGLE_QUOTE;
+		else if (*szPtr == ' ' || *szPtr <= CTL_CHARS)
+			*szPtr = _T('_');
+
+		szPtr++;
+	}
+
+	return m_szTemp;
+}
+
+int bgExporterSkin::IsEqualVertexList(vector<PNCT5_Vertex>& VertexArray, PNCT5_Vertex& Vertex)
+{
+	for (int iVertex = 0; iVertex < VertexArray.size(); iVertex++)
+	{
+		if (I_Exporter.EqualPoint3(VertexArray[iVertex].pos, Vertex.pos) &&
+			I_Exporter.EqualPoint3(VertexArray[iVertex].nor, Vertex.nor) &&
+			I_Exporter.EqualPoint4(VertexArray[iVertex].col, Vertex.col) &&
+			I_Exporter.EqualPoint2(VertexArray[iVertex].tex, Vertex.tex))
+		{
+			return iVertex;
+		}
+	}
+	return -1;
+}
+
+bool bgExporterSkin::GetNodeInfo(INode* node, TimeValue t)
+{
+	BOOL needDel;
+	TriObject *tri = I_Exporter.GetTriObject(node, t, needDel);
+	if (tri == NULL)
+		return false;
+
+	Mesh* mesh = &tri->GetMesh();
+	mesh->buildNormals();
+	if (!mesh->faces || !tri || !mesh || !mesh->getNumFaces() || !mesh->getNumVerts() || !mesh->getNumTVerts())
+	{
+		return false;
+	}
+
+	SetBipedInfo(node);
+
+	bgSkinMesh*	SkinMesh = NULL;
+	SAFE_NEW(SkinMesh, bgSkinMesh);
+
+	GenerateGroup(node, mesh, SkinMesh);
+
+	m_SkinMeshList.push_back(SkinMesh);
+
+	if (needDel)
+	{
+		delete tri;
+	}
+	return true;
+}
+
+void bgExporterSkin::SetBipedInfo(INode* node)
+{
+	Modifier* phyMod = FindModifier(node, Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B));
+	Modifier* skinMod = FindModifier(node, SKIN_CLASSID);
+
+	if (phyMod)
+	{
+		ExportPhysiqueData(node, phyMod);
+	}
+	else if (skinMod)
+	{
+		ExportSkinData(node, skinMod);
+	}
+}
+
+void bgExporterSkin::GenerateGroup(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh)
+{
+	Mtl* mtl = node->GetMtl();
+	pSkinMesh->strNodeName = node->GetName();
+
+	if (mtl)
+	{
+		pSkinMesh->iMaterialRef = mtl->NumSubMtls();
+	}
+	if (pSkinMesh->iMaterialRef > 0)
+	{
+		for (int imtl = 0; imtl < pSkinMesh->iMaterialRef; imtl++)
+		{
+			bgSkinMesh* pSubSkinMesh = NULL;
+			SAFE_NEW(pSubSkinMesh, bgSkinMesh);
+			Mtl* subMtl = mtl->GetSubMtl(imtl);
+			LoadMaterial(pSubSkinMesh, subMtl);
+			SetTriangle(node, mesh, pSkinMesh, pSubSkinMesh, imtl);
+			pSkinMesh->pSubMeshes.push_back(pSubSkinMesh);
+		}
+	}
+	else
+	{
+		LoadMaterial(pSkinMesh, mtl);
+		SetTriangle(node, mesh, pSkinMesh);
+	}
+}
+
+Modifier* bgExporterSkin::FindModifier(INode *nodePtr, Class_ID classID)
+{
+	Object *ObjectPtr = nodePtr->GetObjectRef();
+	if (!ObjectPtr)
+	{
+		return NULL;
+	}
+	while (ObjectPtr->SuperClassID() == GEN_DERIVOB_CLASS_ID && ObjectPtr)
+	{
+		IDerivedObject *DerivedObjectPtr = (IDerivedObject *)(ObjectPtr);
+
+		int ModStackIndex = 0;
+		while (ModStackIndex < DerivedObjectPtr->NumModifiers())
+		{
+			Modifier* ModifierPtr = DerivedObjectPtr->GetModifier(ModStackIndex);
+
+			if (ModifierPtr->ClassID() == classID)
+			{
+				return ModifierPtr;
+			}
+
+			ModStackIndex++;
+		}
+		ObjectPtr = DerivedObjectPtr->GetObjRef();
+	}
+	return NULL;
+}
+
+void bgExporterSkin::ExportPhysiqueData(INode* node, Modifier* phyMod)
+{
+	IPhysiqueExport *phyExport = (IPhysiqueExport *)phyMod->GetInterface(I_PHYEXPORT);
+	IPhyContextExport *mcExport = (IPhyContextExport *)phyExport->GetContextInterface(node);
+
+	mcExport->ConvertToRigid(true);
+	mcExport->AllowBlending(true);
+
+	IPhyBlendedRigidVertex	*rb_vtx = NULL;
+	IPhyRigidVertex			*r_vtx = NULL;
+
+	int numverts = mcExport->GetNumberVertices();
+
+	ObjectState os = node->EvalWorldState(I_Exporter.m_p3DMax->GetTime());
+
+	for (int i = 0; i < numverts; i++)
+	{
+		float totalWeight = 0.0f, weight = 0.0f;
+		TSTR nodeName;
+
+		IPhyVertexExport *vi = mcExport->GetVertexInterface(i);
+		if (vi)
+		{
+			int type = vi->GetVertexType();
+			switch (type)
+			{
+			case RIGID_BLENDED_TYPE:
+			{
+				rb_vtx = (IPhyBlendedRigidVertex*)vi;
+				int iNode = rb_vtx->GetNumberNodes();
+				bgBipedVertex BipVertex;
+				BipVertex.m_dwNumWeight = iNode;
+
+				for (int x = 0; x < iNode; x++)
+				{
+					INode* pNode = rb_vtx->GetNode(x);
+					nodeName = pNode->GetName();
+					BYTE Index = (BYTE)I_Exporter.GetIndex(nodeName);
+					BipVertex.m_BipIDList.push_back(Index);
+
+					float fWeight = rb_vtx->GetWeight(x);
+					BipVertex.m_fWeightList.push_back(fWeight);
+
+					if (Index < 0)
+					{
+						MessageBox(GetActiveWindow(), _T("No Biped ID."), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
+						break;
+					}
+				}
+				if (m_Scene.iMaxWeight < iNode)
+				{
+					m_Scene.iMaxWeight = iNode;
+					if (m_Scene.iMaxWeight > 8)
+					{
+						MessageBox(GetActiveWindow(), _T("바이패드+본+더미가 정점 당 8개 이상 적용되었습니다."), _T("최대 적용 에러!"), MB_OK | MB_ICONSTOP);
+					}
+				}
+				m_BipedList.push_back(BipVertex);
+			}
+			break;
+			case RIGID_NON_BLENDED_TYPE:
+			{
+				r_vtx = (IPhyRigidVertex*)vi;
+				INode* pNode = r_vtx->GetNode();
+				nodeName = pNode->GetName();
+
+				bgBipedVertex BipVertex;
+				BipVertex.m_dwNumWeight = 1;
+				BYTE Index = (BYTE)I_Exporter.GetIndex(nodeName);
+				BipVertex.m_BipIDList.push_back(Index);
+				BipVertex.m_fWeightList.push_back(1.0f);
+
+				// 최대 가중치 갯수를 저장
+				if (m_Scene.iMaxWeight < 1)
+				{
+					m_Scene.iMaxWeight = 1;
+				}
+				m_BipedList.push_back(BipVertex);
+
+				if (Index < 0)
+				{
+					MessageBox(GetActiveWindow(), _T("No Biped ID."), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
+					break;
+				}
+			}
+			break;
+			default:
+				MessageBox(GetActiveWindow(), _T("Nothing!! Rigid Vertex Type"), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
+				break;
+			}
+			mcExport->ReleaseVertexInterface(vi);
+		}
+	}
+	phyExport->ReleaseContextInterface(mcExport);
+	phyMod->ReleaseInterface(I_PHYINTERFACE, phyExport);
+}
+
+void bgExporterSkin::ExportSkinData(INode* node, Modifier* skinMod)
+{
+	if (node == NULL || skinMod == NULL) return;
+	ISkin *skin = (ISkin *)skinMod->GetInterface(I_SKIN);
+	ISkinContextData *skinData = skin->GetContextInterface(node);
+
+	if (skin && skinData)
+	{
+		int numberOfPoints;
+		numberOfPoints = skinData->GetNumPoints();
+		for (int i = 0; i < numberOfPoints; i++)
+		{
+			int numOfWeights = skinData->GetNumAssignedBones(i);
+
+			bgBipedVertex BipVertex;
+			BipVertex.m_dwNumWeight = numOfWeights;
+
+			for (int j = 0; j < numOfWeights; j++)
+			{
+				int boneIndex = skinData->GetAssignedBone(i, j);
+				INode * pBone = skin->GetBone(boneIndex);
+				if (pBone == NULL)  break;
+				const TCHAR* nodeName = nodeName = pBone->GetName();
+				float boneWeight = skinData->GetBoneWeight(i, j);
+
+				BYTE Index = (BYTE)I_Exporter.GetIndex(nodeName);
+				BipVertex.m_BipIDList.push_back(Index);
+				BipVertex.m_fWeightList.push_back(boneWeight);
+
+				if (Index < 0)
+				{
+					MessageBox(GetActiveWindow(), _T("No Biped ID."), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
+					break;
+				}
+			}
+			m_BipedList.push_back(BipVertex);
+
+			if (m_Scene.iMaxWeight < numOfWeights)
+			{
+				m_Scene.iMaxWeight = numOfWeights;
+				if (m_Scene.iMaxWeight > 8)
+				{
+					MessageBox(GetActiveWindow(), _T("바이패드+본+더미가 정점 당 8개 이상 적용되었습니다."), _T("최대 적용 에러!"), MB_OK | MB_ICONSTOP);
+				}
+			}
+		}
+	}
+}
+
 void bgExporterSkin::LoadMaterial(bgSkinMesh* pMesh, Mtl* mtl)
 {
 	if (mtl)
@@ -106,92 +389,6 @@ void bgExporterSkin::LoadMaterial(bgSkinMesh* pMesh, Mtl* mtl)
 	}
 }
 
-void bgExporterSkin::GenerateGroup(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh)
-{
-	Mtl* mtl = node->GetMtl();
-	pSkinMesh->strNodeName = node->GetName();
-
-	if (mtl)
-	{
-		pSkinMesh->iMaterialRef = mtl->NumSubMtls();
-	}
-	if (pSkinMesh->iMaterialRef > 0)
-	{
-		for (int imtl = 0; imtl < pSkinMesh->iMaterialRef; imtl++)
-		{
-			bgSkinMesh* pSubSkinMesh = NULL;
-			SAFE_NEW(pSubSkinMesh, bgSkinMesh);
-			Mtl* subMtl = mtl->GetSubMtl(imtl);
-			LoadMaterial(pSubSkinMesh, subMtl);
-			SetTriangle(node, mesh, pSkinMesh, pSubSkinMesh, imtl);
-			pSkinMesh->pSubMeshes.push_back(pSubSkinMesh);
-		}
-	}
-	else
-	{
-		LoadMaterial(pSkinMesh, mtl);
-		SetTriangle(node, mesh, pSkinMesh);
-	}
-}
-
-Modifier* bgExporterSkin::FindModifier(INode* nodePtr, Class_ID classID)
-{
-	Object *ObjectPtr = nodePtr->GetObjectRef();
-	if (!ObjectPtr)
-	{
-		return NULL;
-	}
-	while (ObjectPtr->SuperClassID() == GEN_DERIVOB_CLASS_ID && ObjectPtr)
-	{
-		IDerivedObject *DerivedObjectPtr = (IDerivedObject *)(ObjectPtr);
-
-		int ModStackIndex = 0;
-		while (ModStackIndex < DerivedObjectPtr->NumModifiers())
-		{
-			Modifier* ModifierPtr = DerivedObjectPtr->GetModifier(ModStackIndex);
-
-			if (ModifierPtr->ClassID() == classID)
-			{
-				return ModifierPtr;
-			}
-
-			ModStackIndex++;
-		}
-		ObjectPtr = DerivedObjectPtr->GetObjRef();
-	}
-	return NULL;
-}
-
-bool bgExporterSkin::GetNodeInfo(INode* node, TimeValue t)
-{
-	BOOL needDel;
-	TriObject* tri = I_Exporter.GetTriObject(node, t, needDel);
-	if (tri == NULL)
-		return false;
-
-	Mesh* mesh = &tri->GetMesh();
-	mesh->buildNormals();
-	if (!mesh->faces || !tri || !mesh || !mesh->getNumFaces() || !mesh->getNumVerts() || !mesh->getNumTVerts())
-	{
-		return false;
-	}
-
-	SetBipedInfo(node);
-
-	bgSkinMesh*	SkinMesh = NULL;
-	SAFE_NEW(SkinMesh, bgSkinMesh);
-
-	GenerateGroup(node, mesh, SkinMesh);
-	m_SkinMeshList.push_back(SkinMesh);
-
-	if (needDel)
-	{
-		delete tri;
-	}
-
-	return true;
-}
-
 int bgExporterSkin::GetMapID(Class_ID cid, int subNo)
 {
 	int iResultIndex = 1;
@@ -221,87 +418,6 @@ int bgExporterSkin::GetMapID(Class_ID cid, int subNo)
 		iResultIndex = 31;
 	}
 	return iResultIndex;
-}
-
-void bgExporterSkin::SetBipedInfo(INode* node)
-{
-	Modifier* phyMod = FindModifier(node, Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B));
-	Modifier* skinMod = FindModifier(node, SKIN_CLASSID);
-
-	if (phyMod)
-	{
-		ExpPhysique(node, phyMod);
-	}
-	else if (skinMod)
-	{
-		ExpSkin(node, skinMod);
-	}
-}
-
-void bgExporterSkin::SetVertexBiped(INode* node, Face* face, int v0, int v1, int v2, bgSkinTri* pTri)
-{
-	int iNumWeight = 1;
-	if (m_BipedList.size())
-	{
-		iNumWeight = m_BipedList[face->v[v0]].m_BipIDList.size();
-		for (int iBip = 0; iBip < iNumWeight; iBip++)
-		{
-			if (iBip < 4)
-			{
-				pTri->m_vVertex[0].i1[iBip] = m_BipedList[face->v[v0]].m_BipIDList[iBip];
-				pTri->m_vVertex[0].w1[iBip] = m_BipedList[face->v[v0]].m_fWeightList[iBip];
-			}
-			else
-			{
-				pTri->m_vVertex[0].i2[iBip - 4] = m_BipedList[face->v[v0]].m_BipIDList[iBip];
-				pTri->m_vVertex[0].w2[iBip - 4] = m_BipedList[face->v[v0]].m_fWeightList[iBip];
-			}
-		}
-		iNumWeight = m_BipedList[face->v[v2]].m_BipIDList.size();
-		for (int iBip = 0; iBip < iNumWeight; iBip++)
-		{
-			if (iBip < 4)
-			{
-				pTri->m_vVertex[1].i1[iBip] = m_BipedList[face->v[v2]].m_BipIDList[iBip];
-				pTri->m_vVertex[1].w1[iBip] = m_BipedList[face->v[v2]].m_fWeightList[iBip];
-			}
-			else
-			{
-				pTri->m_vVertex[1].i2[iBip - 4] = m_BipedList[face->v[v2]].m_BipIDList[iBip];
-				pTri->m_vVertex[1].w2[iBip - 4] = m_BipedList[face->v[v2]].m_fWeightList[iBip];
-			}
-		}
-		iNumWeight = m_BipedList[face->v[v1]].m_BipIDList.size();
-		for (int iBip = 0; iBip < iNumWeight; iBip++)
-		{
-			if (iBip < 4)
-			{
-				pTri->m_vVertex[2].i1[iBip] = m_BipedList[face->v[v1]].m_BipIDList[iBip];
-				pTri->m_vVertex[2].w1[iBip] = m_BipedList[face->v[v1]].m_fWeightList[iBip];
-			}
-			else
-			{
-				pTri->m_vVertex[2].i2[iBip - 4] = m_BipedList[face->v[v1]].m_BipIDList[iBip];
-				pTri->m_vVertex[2].w2[iBip - 4] = m_BipedList[face->v[v1]].m_fWeightList[iBip];
-			}
-		}
-		pTri->m_vVertex[0].w2[3] = m_BipedList[face->v[v0]].m_dwNumWeight;
-		pTri->m_vVertex[1].w2[3] = m_BipedList[face->v[v2]].m_dwNumWeight;
-		pTri->m_vVertex[2].w2[3] = m_BipedList[face->v[v1]].m_dwNumWeight;
-	}
-	else
-	{
-		int iBipIndex = I_Exporter.GetIndex(node->GetName());
-		pTri->m_vVertex[0].i1[0] = iBipIndex;
-		pTri->m_vVertex[0].w1[0] = 1.0f;
-		pTri->m_vVertex[1].i1[0] = iBipIndex;
-		pTri->m_vVertex[1].w1[0] = 1.0f;
-		pTri->m_vVertex[2].i1[0] = iBipIndex;
-		pTri->m_vVertex[2].w1[0] = 1.0f;
-		pTri->m_vVertex[0].w2[3] = 1.0f;
-		pTri->m_vVertex[1].w2[3] = 1.0f;
-		pTri->m_vVertex[2].w2[3] = 1.0f;
-	}
 }
 
 void bgExporterSkin::SetTriangle(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh, bgSkinMesh* pSubMesh, int iMtrl)
@@ -413,203 +529,68 @@ void bgExporterSkin::SetTriangle(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh,
 	pMesh->iNumFace = pMesh->m_SkinTriList.size();
 }
 
-int bgExporterSkin::IsEqualVertexList(vector<PNCT5_Vertex>& VertexArray, PNCT5_Vertex& Vertex)
+void bgExporterSkin::SetVertexBiped(INode* node, Face*	face, int v0, int v1, int v2, bgSkinTri* pTri)
 {
-	for (int iVertex = 0; iVertex < VertexArray.size(); iVertex++)
+	int iNumWeight = 1;
+	if (m_BipedList.size())
 	{
-		if (I_Exporter.EqualPoint3(VertexArray[iVertex].pos, Vertex.pos) &&
-			I_Exporter.EqualPoint3(VertexArray[iVertex].nor, Vertex.nor) &&
-			I_Exporter.EqualPoint4(VertexArray[iVertex].col, Vertex.col) &&
-			I_Exporter.EqualPoint2(VertexArray[iVertex].tex, Vertex.tex))
+		iNumWeight = m_BipedList[face->v[v0]].m_BipIDList.size();
+		for (int iBip = 0; iBip < iNumWeight; iBip++)
 		{
-			return iVertex;
-		}
-	}
-	return -1;
-}
-
-void bgExporterSkin::ExpPhysique(INode* node, Modifier* phyMod)
-{
-	IPhysiqueExport* phyExport = (IPhysiqueExport*)phyMod->GetInterface(I_PHYEXPORT);
-	IPhyContextExport* mcExport = (IPhyContextExport*)phyExport->GetContextInterface(node);
-
-	mcExport->ConvertToRigid(true);
-	mcExport->AllowBlending(true);
-
-	IPhyBlendedRigidVertex* rb_vtx = NULL;
-	IPhyRigidVertex* r_vtx = NULL;
-
-	int numverts = mcExport->GetNumberVertices();
-
-	ObjectState os = node->EvalWorldState(I_Exporter.m_p3DMax->GetTime());
-
-	for (int i = 0; i < numverts; i++)
-	{
-		float totalWeight = 0.0f, weight = 0.0f;
-		TSTR nodeName;
-
-		IPhyVertexExport* vi = mcExport->GetVertexInterface(i);
-		if (vi)
-		{
-			int type = vi->GetVertexType();
-			switch (type)
+			if (iBip < 4)
 			{
-			case RIGID_BLENDED_TYPE:
-			{
-				rb_vtx = (IPhyBlendedRigidVertex*)vi;
-				int iNode = rb_vtx->GetNumberNodes();
-				bgBipedVertex BipVertex;
-				BipVertex.m_dwNumWeight = iNode;
-
-				for (int x = 0; x < iNode; x++)
-				{
-					INode* pNode = rb_vtx->GetNode(x);
-					nodeName = pNode->GetName();
-					BYTE Index = (BYTE)I_Exporter.GetIndex(nodeName);
-					BipVertex.m_BipIDList.push_back(Index);
-
-					float fWeight = rb_vtx->GetWeight(x);
-					BipVertex.m_fWeightList.push_back(fWeight);
-
-					if (Index < 0)
-					{
-						MessageBox(GetActiveWindow(), _T("No Biped ID."), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
-						break;
-					}
-				}
-				if (m_Scene.iMaxWeight < iNode)
-				{
-					m_Scene.iMaxWeight = iNode;
-					if (m_Scene.iMaxWeight > 8)
-					{
-						MessageBox(GetActiveWindow(), _T("바이패드+본+더미가 정점 당 8개 이상 적용되었습니다."), _T("최대 적용 에러!"), MB_OK | MB_ICONSTOP);
-					}
-				}
-				m_BipedList.push_back(BipVertex);
+				pTri->m_vVertex[0].i1[iBip] = m_BipedList[face->v[v0]].m_BipIDList[iBip];
+				pTri->m_vVertex[0].w1[iBip] = m_BipedList[face->v[v0]].m_fWeightList[iBip];
 			}
-			break;
-			case RIGID_NON_BLENDED_TYPE:
+			else
 			{
-				r_vtx = (IPhyRigidVertex*)vi;
-				INode* pNode = r_vtx->GetNode();
-				nodeName = pNode->GetName();
-
-				bgBipedVertex BipVertex;
-				BipVertex.m_dwNumWeight = 1;
-				BYTE Index = (BYTE)I_Exporter.GetIndex(nodeName);
-				BipVertex.m_BipIDList.push_back(Index);
-				BipVertex.m_fWeightList.push_back(1.0f);
-
-				if (m_Scene.iMaxWeight < 1)
-				{
-					m_Scene.iMaxWeight = 1;
-				}
-				m_BipedList.push_back(BipVertex);
-
-				if (Index < 0)
-				{
-					MessageBox(GetActiveWindow(), _T("No Biped ID."), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
-					break;
-				}
-			}
-			break;
-			default:
-				MessageBox(GetActiveWindow(), _T("Nothing! Rigid Vertex Type"), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
-				break;
-			}
-			mcExport->ReleaseVertexInterface(vi);
-		}
-	}
-	phyExport->ReleaseContextInterface(mcExport);
-	phyMod->ReleaseInterface(I_PHYINTERFACE, phyExport);
-}
-
-void bgExporterSkin::ExpSkin(INode* node, Modifier* skinMod)
-{
-	if (node == NULL || skinMod == NULL) return;
-	ISkin *skin = (ISkin *)skinMod->GetInterface(I_SKIN);
-	ISkinContextData *skinData = skin->GetContextInterface(node);
-
-	if (skin && skinData)
-	{
-		int numberOfPoints;
-		numberOfPoints = skinData->GetNumPoints();
-		for (int i = 0; i < numberOfPoints; i++)
-		{
-			int numOfWeights = skinData->GetNumAssignedBones(i);
-
-			bgBipedVertex BipVertex;
-			BipVertex.m_dwNumWeight = numOfWeights;
-
-			for (int j = 0; j < numOfWeights; j++)
-			{
-				int boneIndex = skinData->GetAssignedBone(i, j);
-				INode * pBone = skin->GetBone(boneIndex);
-				if (pBone == NULL)  break;
-				const TCHAR* nodeName = nodeName = pBone->GetName();
-				float boneWeight = skinData->GetBoneWeight(i, j);
-
-				BYTE Index = (BYTE)I_Exporter.GetIndex(nodeName);
-				BipVertex.m_BipIDList.push_back(Index);
-				BipVertex.m_fWeightList.push_back(boneWeight);
-
-
-				if (Index < 0)
-				{
-					MessageBox(GetActiveWindow(), _T("No Biped ID."), _T("ERROR!!"), MB_OK | MB_ICONSTOP);
-					break;
-				}
-			}
-			m_BipedList.push_back(BipVertex);
-
-			if (m_Scene.iMaxWeight < numOfWeights)
-			{
-				m_Scene.iMaxWeight = numOfWeights;
-				if (m_Scene.iMaxWeight > 8)
-				{
-					MessageBox(GetActiveWindow(), _T("바이패드+본+더미가 정점 당 8개 이상 적용되었습니다."), _T("최대 적용 에러!"), MB_OK | MB_ICONSTOP);
-				}
+				pTri->m_vVertex[0].i2[iBip - 4] = m_BipedList[face->v[v0]].m_BipIDList[iBip];
+				pTri->m_vVertex[0].w2[iBip - 4] = m_BipedList[face->v[v0]].m_fWeightList[iBip];
 			}
 		}
-	}
-}
-
-bool bgExporterSkin::ExpMesh(FILE* fp, bgSkinMesh* pMesh)
-{
-	vector<PNCT5_Vertex> VertexArray;
-	vector<unsigned int> IndexArray;
-	VertexArray.reserve(pMesh->iNumFace * 3);
-	IndexArray.reserve(pMesh->iNumFace * 3);
-
-	int iPosPushCnt = 0;
-	for (int iFace = 0; iFace < pMesh->iNumFace; iFace++)
-	{
-		for (int iCnt = 0; iCnt < 3; iCnt++)
+		iNumWeight = m_BipedList[face->v[v2]].m_BipIDList.size();
+		for (int iBip = 0; iBip < iNumWeight; iBip++)
 		{
-			int iPosReturn = IsEqualVertexList(VertexArray, pMesh->m_SkinTriList[iFace].m_vVertex[iCnt]);
-			if (iPosReturn < 0)
+			if (iBip < 4)
 			{
-				VertexArray.push_back(pMesh->m_SkinTriList[iFace].m_vVertex[iCnt]);
-				iPosReturn = iPosPushCnt++;
+				pTri->m_vVertex[1].i1[iBip] = m_BipedList[face->v[v2]].m_BipIDList[iBip];
+				pTri->m_vVertex[1].w1[iBip] = m_BipedList[face->v[v2]].m_fWeightList[iBip];
 			}
-			IndexArray.push_back(iPosReturn);
+			else
+			{
+				pTri->m_vVertex[1].i2[iBip - 4] = m_BipedList[face->v[v2]].m_BipIDList[iBip];
+				pTri->m_vVertex[1].w2[iBip - 4] = m_BipedList[face->v[v2]].m_fWeightList[iBip];
+			}
 		}
+		iNumWeight = m_BipedList[face->v[v1]].m_BipIDList.size();
+		for (int iBip = 0; iBip < iNumWeight; iBip++)
+		{
+			if (iBip < 4)
+			{
+				pTri->m_vVertex[2].i1[iBip] = m_BipedList[face->v[v1]].m_BipIDList[iBip];
+				pTri->m_vVertex[2].w1[iBip] = m_BipedList[face->v[v1]].m_fWeightList[iBip];
+			}
+			else
+			{
+				pTri->m_vVertex[2].i2[iBip - 4] = m_BipedList[face->v[v1]].m_BipIDList[iBip];
+				pTri->m_vVertex[2].w2[iBip - 4] = m_BipedList[face->v[v1]].m_fWeightList[iBip];
+			}
+		}
+		pTri->m_vVertex[0].w2[3] = m_BipedList[face->v[v0]].m_dwNumWeight;
+		pTri->m_vVertex[1].w2[3] = m_BipedList[face->v[v2]].m_dwNumWeight;
+		pTri->m_vVertex[2].w2[3] = m_BipedList[face->v[v1]].m_dwNumWeight;
 	}
-	pMesh->iNumVertex = VertexArray.size();
-
-	fwrite(&pMesh->iNumVertex, sizeof(int), 1, fp);
-	fwrite(&pMesh->iNumFace, sizeof(int), 1, fp);
-	fwrite(&pMesh->m_iNumTex, sizeof(int), 1, fp);
-
-	fwrite(&VertexArray.at(0), sizeof(PNCT5_Vertex) * VertexArray.size(), 1, fp);
-	fwrite(&IndexArray.at(0), sizeof(unsigned int) * IndexArray.size(), 1, fp);
-
-	for (int itex = 0; itex < pMesh->m_iNumTex; itex++)
+	else
 	{
-		int iLen = _tcslen(pMesh->m_szTexName[itex]);
-		fwrite(&iLen, sizeof(int), 1, fp);
-		fwrite(&pMesh->m_iTexType[itex], sizeof(int), 1, fp);
-		fwrite(pMesh->m_szTexName[itex], sizeof(TCHAR) * iLen, 1, fp);
+		int iBipIndex = I_Exporter.GetIndex(node->GetName());
+		pTri->m_vVertex[0].i1[0] = iBipIndex;
+		pTri->m_vVertex[0].w1[0] = 1.0f;
+		pTri->m_vVertex[1].i1[0] = iBipIndex;
+		pTri->m_vVertex[1].w1[0] = 1.0f;
+		pTri->m_vVertex[2].i1[0] = iBipIndex;
+		pTri->m_vVertex[2].w1[0] = 1.0f;
+		pTri->m_vVertex[0].w2[3] = 1.0f;
+		pTri->m_vVertex[1].w2[3] = 1.0f;
+		pTri->m_vVertex[2].w2[3] = 1.0f;
 	}
-	return true;
 }

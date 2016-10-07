@@ -1,5 +1,4 @@
 #pragma once
-//#include "bgGlobalMax.h"
 #include "bgExporterMax.h"
 
 #define I_ExporterSkin bgExporterSkin::GetInstance()
@@ -57,6 +56,7 @@ class bgExporterSkin : public bgSingleton<bgExporterSkin>
 public:
 	FILE*	m_pStream;
 	TSTR	m_strFileName;
+	TCHAR	m_szTemp[MAX_PATH];
 
 	bgScene					m_Scene;
 	vector<bgBipedVertex>	m_BipedList;
@@ -73,19 +73,23 @@ public:
 	bool	Init();
 	bool	Release();
 
-	TCHAR*		SaveFileDialog(TCHAR* szExt, TCHAR* szTitle = _T("BG 3DSMax Export"));
-	void		LoadMaterial(bgSkinMesh* pMesh, Mtl* mtl);
-	void		GenerateGroup(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh);
-	Modifier*	FindModifier(INode* nodePtr, Class_ID classID);
+	TCHAR*	SaveFileDialog(TCHAR* szExt, TCHAR* szTitle = _T("BG 3DSMax Export"));
+	TCHAR*	FixupName(MSTR name);
+	int		IsEqualVertexList(vector<PNCT5_Vertex>& VertexArray, PNCT5_Vertex& Vertex);
+	bool	GetNodeInfo(INode* node, TimeValue t);
+	void	SetBipedInfo(INode* node);
+	void	GenerateGroup(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh);
+	void	LoadMaterial(bgSkinMesh* pMesh, Mtl* mtl);
+	int		GetMapID(Class_ID cid, int subNo);
+	void	SetTriangle(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh, bgSkinMesh* pSubMesh = NULL, int iMtrl = 0);
+	void	SetVertexBiped(INode* node, Face*	face, int v0, int v1, int v2, bgSkinTri* pTri);
+	Modifier*	FindModifier(INode *nodePtr, Class_ID classID);
+	
+	void	ExportPhysiqueData(INode* node, Modifier* phyMod);
+	void	ExportSkinData(INode* node, Modifier* skinMod);
 
-	bool		GetNodeInfo(INode* node, TimeValue t);
-	int			GetMapID(Class_ID cid, int subNo);
-	void		SetBipedInfo(INode* node);
-	void		SetVertexBiped(INode* node, Face* face, int v0, int v1, int v2, bgSkinTri* pTri);
-	void		SetTriangle(INode* node, Mesh* mesh, bgSkinMesh* pSkinMesh, bgSkinMesh* pSubMesh = NULL, int iMtrl = 0);
-	int			IsEqualVertexList(vector<PNCT5_Vertex>& VertexArray, PNCT5_Vertex& Vertex);
-
-	void		ExpPhysique(INode* node, Modifier* phyMod);
-	void		ExpSkin(INode* node, Modifier* skinMod);
-	bool		ExpMesh(FILE* fp, bgSkinMesh* pMesh);
+	void	ExpScene();
+	void	ExpSkinMesh();
+	bool	ExpMesh(bgSkinMesh* pMesh, int iNum);
+	void	ExpNodeMatrix();
 };
