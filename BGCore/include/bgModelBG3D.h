@@ -3,10 +3,14 @@
 #include "bgTextureMgr.h"
 #include "bgSys.h"
 
+typedef basic_string<TCHAR> T_STR;
+
 enum OBJECT_NODE_TYPE
 {
 	OBJECT_NODE_TYPE_GEOMOBJECT = 0,
-	OBJECT_NODE_TYPE_HELPEROBJECT,
+	OBJECT_NODE_TYPE_BONE,
+	OBJECT_NODE_TYPE_DUMMY,
+	OBJECT_NODE_TYPE_BIPED,
 };
 
 struct FaceInfo
@@ -26,10 +30,20 @@ struct FaceInfo
 
 struct SceneInfo
 {
+	int iVersion;		// 버전
 	int iFirstFrame;		// *SCENE_FIRSTFRAME
 	int iLastFrame;			// *SCENE_LASTFRAME
 	int iFrameSpeed;		// *SCENE_FRAMESPEED
 	int iTicksPerFrame;		// *SCENE_TICKSPERFRAME
+	int iNumMesh;		// 메쉬오브젝트 개수
+	int iMaxWeight;		// 정점 당 가중치
+	int iBindPose;		// 바인딩 포즈 에니메이션 여부
+};
+
+struct VersionMark
+{
+	int		iVersion;
+	TCHAR	description[128];
 };
 
 struct SubMaterialInfo
@@ -122,7 +136,8 @@ struct HelperObject
 
 struct ObjectNode
 {
-	OBJECT_NODE_TYPE	eNodeType;				// Node 종류
+	//OBJECT_NODE_TYPE	eNodeType;				// Node 종류
+	int					eNodeType;				// Node 종류
 	TCHAR				szNodeName[MAX_PATH];	// *NODE_NAME
 	TCHAR				szNodeParent[MAX_PATH];	// *NODE_PARENT
 	ObjectNode*			pNodeParent;			// 부모 Node 에 대한 포인터

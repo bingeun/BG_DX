@@ -68,7 +68,7 @@ public:
 #define SAFE_DEL(A)				{ if (A) delete (A); (A) = NULL; }
 #endif 
 #ifndef SAFE_NEW_ARRAY
-#define SAFE_NEW_ARRAY(A, B, C)	{ if (!(A) && (C)) (A) = new (B)[(C)]; }
+#define SAFE_NEW_ARRAY(A, B, C)	{ if (!(A) && (C)) (A) = new B[(C)]; }
 #endif 
 #ifndef SAFE_DEL_ARRAY
 #define SAFE_DEL_ARRAY(A)		{ if (A) delete [] (A); (A) = NULL; }
@@ -80,7 +80,7 @@ public:
 #define SAFE_NEW_CLEAR(A, B)	{ if (!(A)) (A) = new (B); if (A) memset((A), 0, sizeof(B)); }
 #endif 
 #ifndef SAFE_NEW_ARRAY_CLEAR
-#define SAFE_NEW_ARRAY_CLEAR(A, B, C)	{ if (!(A) && (C)) (A) = new (B)[(C)]; if (A) memset((A), 0, sizeof(B) * (C)); }
+#define SAFE_NEW_ARRAY_CLEAR(A, B, C)	{ if (!(A) && (C)) (A) = new B[(C)]; if (A) memset((A), 0, sizeof(B) * (C)); }
 #endif
 
 struct MATRIX_BUFFER

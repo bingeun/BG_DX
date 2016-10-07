@@ -458,7 +458,7 @@ void bgParserBG3D::LinkNode()
 	// 헬퍼오브젝트이고 자식노드가 없으면 제거 (사용되지 않는 오브젝트)
 	for (iNode = 0; iNode < m_pModel->m_ObjectList.size(); iNode++)
 	{
-		if (m_pModel->m_ObjectList[iNode].eNodeType == OBJECT_NODE_TYPE_HELPEROBJECT &&
+		if (m_pModel->m_ObjectList[iNode].eNodeType != OBJECT_NODE_TYPE_GEOMOBJECT &&
 			m_pModel->m_ObjectList[iNode].pNodeChildList.size() == 0)
 		{
 			// 제거 처리

@@ -87,10 +87,6 @@ bool bgModelBG3D::Render()
 			}
 		}
 		break;
-		case OBJECT_NODE_TYPE_HELPEROBJECT:
-		{
-		}
-		break;
 		}
 	}
 
