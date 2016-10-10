@@ -10,13 +10,11 @@
 #include "resource.h"       // 주 기호입니다.
 
 #include "bgCore.h"
-#include "bgParserBG3D.h"
-#include "bgModelBG3D.h"
+#include "bgParserBGSKN.h"
+#include "bgParserBGMTX.h"
+#include "bgModel.h"
+#include "bgAnimation.h"
 #include "bgTextureMgr.h"
-#include "bgShapeGuideAxis.h"
-#include "bgShapePlane.h"
-#include "bgShapeBox.h"
-#include "bgBoundBox.h"
 
 // Cmfc05_aiApp:
 // 이 클래스의 구현에 대해서는 mfc05_ai.cpp을 참조하십시오.
@@ -25,12 +23,10 @@
 class Cmfc05_aiApp : public CWinAppEx, public bgCore
 {
 public:
-	bgShapeGuideAxis	m_objWorldAxis;
-
-	bgParserBG3D	m_ParserBG3D;
-	bgModelBG3D		m_Model;
-	bgModelBG3D		m_Model2;
-	bgBoundBox		m_BoundBox;
+	bgParserBGSKN	m_ParserSKN;
+	bgParserBGMTX	m_ParserMTX;
+	bgModel			m_Model;
+	bgAnimation		m_Animation;
 
 public:
 	bool	Init();

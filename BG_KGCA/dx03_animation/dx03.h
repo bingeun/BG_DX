@@ -13,8 +13,8 @@ public:
 	bgShapeGuideAxis	m_objWorldAxis;
 
 	bgParserASE		m_ParserASE;
-	bgModel			m_Model;
-	bgModel			m_Model2;
+	bgModelASE			m_Model;
+	bgModelASE			m_Model2;
 
 public:
 	dx03();

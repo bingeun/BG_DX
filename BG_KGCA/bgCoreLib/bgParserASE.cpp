@@ -8,7 +8,7 @@ bgParserASE::~bgParserASE()
 {
 }
 
-bool bgParserASE::Init(bgModel* pModel)
+bool bgParserASE::Init(bgModelASE* pModel)
 {
 	m_pModel = pModel;
 	return true;
@@ -18,7 +18,7 @@ bool bgParserASE::Read()
 {
 	bool hr = true;
 
-	TCHAR szWordArray[2][MAX_PATH];
+	TCHAR szWordArray[2][MAX_PATH * 4];
 
 	// m_ASE 데이터 초기화
 	ZeroMemory(&m_pModel->m_Scene, sizeof(SceneInfo));
@@ -78,7 +78,7 @@ bool bgParserASE::ReadMaterial()
 {
 	bool hr = true;
 
-	TCHAR szWordArray[2][MAX_PATH];
+	TCHAR szWordArray[2][MAX_PATH * 4];
 	int iData;
 	int iLoop, iLoopMax;
 	int iLoopSub, iLoopSubMax;
@@ -95,7 +95,7 @@ bool bgParserASE::ReadMaterial()
 		IF_FALSE_RETURN(FindWord(_T("*MATERIAL")));
 
 		IF_FALSE_RETURN(FindWord(_T("*MATERIAL_NAME")));
-		ZeroMemory(m_pModel->m_MaterialList[iLoop].szMaterialName, MAX_PATH);
+		ZeroMemory(m_pModel->m_MaterialList[iLoop].szMaterialName, MAX_PATH * 4);
 		m_pszToken = _tcstok(m_szLine, _T("\""));
 		m_pszToken = _tcstok(NULL, _T("\""));
 		_tcscpy(m_pModel->m_MaterialList[iLoop].szMaterialName, m_pszToken);
@@ -137,7 +137,7 @@ bool bgParserASE::ReadMaterial()
 					{
 					case 0:		// *BITMAP		비트맵이 있다면 ---------------
 					{
-						ZeroMemory(m_pModel->m_MaterialList[iLoop].SubMaterialList[iLoopSub].szBitmap, MAX_PATH);
+						ZeroMemory(m_pModel->m_MaterialList[iLoop].SubMaterialList[iLoopSub].szBitmap, MAX_PATH * 4);
 						m_pszToken = _tcstok(m_szLine, _T("\""));
 						m_pszToken = _tcstok(NULL, _T("\""));
 						_tcscpy(m_pModel->m_MaterialList[iLoop].SubMaterialList[iLoopSub].szBitmap, GetPathToFileName(m_pszToken));
@@ -182,7 +182,7 @@ bool bgParserASE::ReadMaterial()
 			{
 			case 0:		// *BITMAP		비트맵이 있다면 ------------------------
 			{
-				ZeroMemory(m_pModel->m_MaterialList[iLoop].szBitmap, MAX_PATH);
+				ZeroMemory(m_pModel->m_MaterialList[iLoop].szBitmap, MAX_PATH * 4);
 				m_pszToken = _tcstok(m_szLine, _T("\""));
 				m_pszToken = _tcstok(NULL, _T("\""));
 				_tcscpy(m_pModel->m_MaterialList[iLoop].szBitmap, GetPathToFileName(m_pszToken));
@@ -221,8 +221,8 @@ bool bgParserASE::ReadGeomObject()
 {
 	bool hr = true;
 
-	TCHAR szWordArray[2][MAX_PATH];
-	TCHAR szCheck[MAX_PATH];
+	TCHAR szWordArray[2][MAX_PATH * 4];
+	TCHAR szCheck[MAX_PATH * 4];
 	D3DXVECTOR3 v3Data;
 	FaceInfo i4Data;
 	int iData;
@@ -471,7 +471,7 @@ bool bgParserASE::ReadHelperObject()
 {
 	bool hr = true;
 
-	TCHAR szWordArray[2][MAX_PATH];
+	TCHAR szWordArray[2][MAX_PATH * 4];
 	D3DXVECTOR3 v3Data;
 	FaceInfo i4Data;
 	int iData;
@@ -539,11 +539,11 @@ bool bgParserASE::ReadNodeInfo(int iNumObj)
 {
 	bool hr = true;
 
-	TCHAR szWordArray[2][MAX_PATH];
+	TCHAR szWordArray[2][MAX_PATH * 4];
 
 	// 월드행렬 정보 저장
 	IF_FALSE_RETURN(FindWord(_T("*NODE_NAME")));
-	ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeName, MAX_PATH);
+	ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeName, MAX_PATH * 4);
 	m_pszToken = _tcstok(m_szLine, _T("\""));
 	m_pszToken = _tcstok(NULL, _T("\""));
 	_tcscpy(m_pModel->m_ObjectList[iNumObj].szNodeName, m_pszToken);
@@ -554,7 +554,7 @@ bool bgParserASE::ReadNodeInfo(int iNumObj)
 	{
 	case 0:		// *NODE_PARENT		부모 노드가 있다면 ============================
 	{
-		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH);
+		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH * 4);
 		m_pszToken = _tcstok(m_szLine, _T("\""));
 		m_pszToken = _tcstok(NULL, _T("\""));
 		_tcscpy(m_pModel->m_ObjectList[iNumObj].szNodeParent, m_pszToken);
@@ -564,7 +564,7 @@ bool bgParserASE::ReadNodeInfo(int iNumObj)
 	break;
 	case 1:		// *NODE_TM			부모 노드가 없다면 ============================
 	{
-		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH);
+		ZeroMemory(m_pModel->m_ObjectList[iNumObj].szNodeParent, MAX_PATH * 4);
 		m_pModel->m_ObjectList[iNumObj].pNodeParent = NULL;
 	}
 	break;
@@ -667,8 +667,8 @@ bool bgParserASE::ReadTMAnimation(int iNumObj)
 {
 	bool hr = true;
 
-	TCHAR szWordArray[2][MAX_PATH];
-	TCHAR szWordTrack[4][MAX_PATH];
+	TCHAR szWordArray[2][MAX_PATH * 4];
+	TCHAR szWordTrack[4][MAX_PATH * 4];
 	AnimTrackInfo animData;
 	bool bAnimEnd, bTrackEnd;
 

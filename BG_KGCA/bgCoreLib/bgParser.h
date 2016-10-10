@@ -6,9 +6,9 @@ class bgParser
 {
 public:
 	FILE*	m_pFile;
-	TCHAR	m_szLine[MAX_PATH];
-	TCHAR	m_szWord[MAX_PATH];
-	TCHAR	m_szFileName[MAX_PATH];
+	TCHAR	m_szFileName[MAX_PATH * 4];
+	TCHAR	m_szLine[MAX_PATH * 4];
+	TCHAR	m_szWord[MAX_PATH * 4];
 	TCHAR*	m_pszToken;
 
 public:
@@ -17,14 +17,14 @@ public:
 
 public:
 	bool	Init();
+	bool	Release();
 	bool	Open(TCHAR* szFileName);
+	virtual	bool	Read() = 0;
 	bool	Close();
 
-	bool	FindWord(TCHAR* szFindWord);
-	int		FindWordArray(TCHAR szFindWords[][MAX_PATH], int iNumArray);
-
-	TCHAR*	GetPathToFileName(TCHAR* szPath);
 
 public:
-	virtual	bool	Read() = 0;
+	bool	FindWord(TCHAR* szFindWord);
+	int		FindWordArray(TCHAR szFindWords[][MAX_PATH * 4], int iNumArray);
+	TCHAR*	GetPathToFileName(TCHAR* szPath);
 };

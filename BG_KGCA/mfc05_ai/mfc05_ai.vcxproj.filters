@@ -118,5 +118,6 @@
     <FxCompile Include="PC.hlsl" />
     <FxCompile Include="PCT.hlsl" />
     <FxCompile Include="PNCT.hlsl" />
+    <FxCompile Include="PNC.hlsl" />
   </ItemGroup>
 </Project>

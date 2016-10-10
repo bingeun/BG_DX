@@ -21,11 +21,17 @@
     <Filter Include="헤더 파일\bgCore\Common">
       <UniqueIdentifier>{ed06c45b-baac-4114-97a3-68421f2150e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\bgObject">
-      <UniqueIdentifier>{86ce8132-64a8-4e29-a11a-1c72bbd5e588}</UniqueIdentifier>
+    <Filter Include="헤더 파일\bgModel">
+      <UniqueIdentifier>{e5fbc74a-78fd-4390-925a-c8a0ca54c84f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\bgObject">
+    <Filter Include="소스 파일\bgModel">
+      <UniqueIdentifier>{7033dde1-d285-49e0-8aa6-420fc35cb439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\bgOther">
       <UniqueIdentifier>{4abb65bb-bdbc-433a-8c33-0ac2cd6da523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\bgOther">
+      <UniqueIdentifier>{86ce8132-64a8-4e29-a11a-1c72bbd5e588}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -89,50 +95,56 @@
     <ClInclude Include="bgTexture.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
-    <ClInclude Include="bgHeightMap.h">
-      <Filter>헤더 파일\bgObject</Filter>
-    </ClInclude>
     <ClInclude Include="bgTextureMgr.h">
       <Filter>헤더 파일\bgCore</Filter>
     </ClInclude>
-    <ClInclude Include="bgParser.h">
-      <Filter>헤더 파일\bgCore</Filter>
-    </ClInclude>
-    <ClInclude Include="bgParserASE.h">
-      <Filter>헤더 파일\bgCore</Filter>
-    </ClInclude>
-    <ClInclude Include="bgModel.h">
-      <Filter>헤더 파일\bgObject</Filter>
-    </ClInclude>
-    <ClInclude Include="bgShapePlane.h">
-      <Filter>헤더 파일\bgObject</Filter>
-    </ClInclude>
-    <ClInclude Include="bgShape.h">
-      <Filter>헤더 파일\bgObject</Filter>
-    </ClInclude>
     <ClInclude Include="bgShapeBox.h">
-      <Filter>헤더 파일\bgObject</Filter>
+      <Filter>헤더 파일\bgOther</Filter>
     </ClInclude>
     <ClInclude Include="bgShapeGuideAxis.h">
-      <Filter>헤더 파일\bgObject</Filter>
+      <Filter>헤더 파일\bgOther</Filter>
     </ClInclude>
     <ClInclude Include="bgShapeGuideProj.h">
-      <Filter>헤더 파일\bgObject</Filter>
+      <Filter>헤더 파일\bgOther</Filter>
     </ClInclude>
-    <ClInclude Include="bgQuadTree.h">
-      <Filter>헤더 파일\bgCore</Filter>
+    <ClInclude Include="bgParserASE.h">
+      <Filter>헤더 파일\bgOther</Filter>
+    </ClInclude>
+    <ClInclude Include="bgModel.h">
+      <Filter>헤더 파일\bgModel</Filter>
+    </ClInclude>
+    <ClInclude Include="bgShape.h">
+      <Filter>헤더 파일\bgOther</Filter>
     </ClInclude>
     <ClInclude Include="bgBoundBox.h">
-      <Filter>헤더 파일\bgObject</Filter>
+      <Filter>헤더 파일\bgOther</Filter>
     </ClInclude>
-    <ClInclude Include="bgTreeNode.h">
-      <Filter>헤더 파일\bgCore</Filter>
+    <ClInclude Include="bgParserBGMTX.h">
+      <Filter>헤더 파일\bgModel</Filter>
     </ClInclude>
-    <ClInclude Include="bgModelBG3D.h">
-      <Filter>헤더 파일\bgObject</Filter>
+    <ClInclude Include="bgParser.h">
+      <Filter>헤더 파일\bgModel</Filter>
+    </ClInclude>
+    <ClInclude Include="bgModelASE.h">
+      <Filter>헤더 파일\bgOther</Filter>
     </ClInclude>
     <ClInclude Include="bgParserBG3D.h">
-      <Filter>헤더 파일\bgCore</Filter>
+      <Filter>헤더 파일\bgOther</Filter>
+    </ClInclude>
+    <ClInclude Include="bgAnimation.h">
+      <Filter>헤더 파일\bgModel</Filter>
+    </ClInclude>
+    <ClInclude Include="bgStd3D.h">
+      <Filter>헤더 파일\bgCore\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="bgObject.h">
+      <Filter>헤더 파일\bgModel</Filter>
+    </ClInclude>
+    <ClInclude Include="bgParserBGSKN.h">
+      <Filter>헤더 파일\bgModel</Filter>
+    </ClInclude>
+    <ClInclude Include="bgModelBG3D.h">
+      <Filter>헤더 파일\bgModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -169,50 +181,53 @@
     <ClCompile Include="bgTexture.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
-    <ClCompile Include="bgHeightMap.cpp">
-      <Filter>소스 파일\bgObject</Filter>
-    </ClCompile>
     <ClCompile Include="bgTextureMgr.cpp">
       <Filter>소스 파일\bgCore</Filter>
     </ClCompile>
-    <ClCompile Include="bgParser.cpp">
-      <Filter>소스 파일\bgCore</Filter>
-    </ClCompile>
-    <ClCompile Include="bgParserASE.cpp">
-      <Filter>소스 파일\bgCore</Filter>
-    </ClCompile>
-    <ClCompile Include="bgShape.cpp">
-      <Filter>소스 파일\bgObject</Filter>
-    </ClCompile>
     <ClCompile Include="bgShapeBox.cpp">
-      <Filter>소스 파일\bgObject</Filter>
+      <Filter>소스 파일\bgOther</Filter>
     </ClCompile>
     <ClCompile Include="bgShapeGuideAxis.cpp">
-      <Filter>소스 파일\bgObject</Filter>
+      <Filter>소스 파일\bgOther</Filter>
     </ClCompile>
     <ClCompile Include="bgShapeGuideProj.cpp">
-      <Filter>소스 파일\bgObject</Filter>
-    </ClCompile>
-    <ClCompile Include="bgShapePlane.cpp">
-      <Filter>소스 파일\bgObject</Filter>
+      <Filter>소스 파일\bgOther</Filter>
     </ClCompile>
     <ClCompile Include="bgModel.cpp">
-      <Filter>소스 파일\bgObject</Filter>
+      <Filter>소스 파일\bgModel</Filter>
     </ClCompile>
-    <ClCompile Include="bgQuadTree.cpp">
-      <Filter>소스 파일\bgCore</Filter>
+    <ClCompile Include="bgShape.cpp">
+      <Filter>소스 파일\bgOther</Filter>
     </ClCompile>
     <ClCompile Include="bgBoundBox.cpp">
-      <Filter>소스 파일\bgObject</Filter>
+      <Filter>소스 파일\bgOther</Filter>
     </ClCompile>
-    <ClCompile Include="bgTreeNode.cpp">
-      <Filter>소스 파일\bgCore</Filter>
+    <ClCompile Include="bgParserBGMTX.cpp">
+      <Filter>소스 파일\bgModel</Filter>
+    </ClCompile>
+    <ClCompile Include="bgParser.cpp">
+      <Filter>소스 파일\bgModel</Filter>
+    </ClCompile>
+    <ClCompile Include="bgParserASE.cpp">
+      <Filter>소스 파일\bgOther</Filter>
     </ClCompile>
     <ClCompile Include="bgParserBG3D.cpp">
-      <Filter>소스 파일\bgCore</Filter>
+      <Filter>소스 파일\bgOther</Filter>
+    </ClCompile>
+    <ClCompile Include="bgModelASE.cpp">
+      <Filter>소스 파일\bgOther</Filter>
+    </ClCompile>
+    <ClCompile Include="bgAnimation.cpp">
+      <Filter>소스 파일\bgModel</Filter>
+    </ClCompile>
+    <ClCompile Include="bgObject.cpp">
+      <Filter>소스 파일\bgModel</Filter>
+    </ClCompile>
+    <ClCompile Include="bgParserBGSKN.cpp">
+      <Filter>소스 파일\bgModel</Filter>
     </ClCompile>
     <ClCompile Include="bgModelBG3D.cpp">
-      <Filter>소스 파일\bgObject</Filter>
+      <Filter>소스 파일\bgModel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

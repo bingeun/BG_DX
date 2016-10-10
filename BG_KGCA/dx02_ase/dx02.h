@@ -15,7 +15,7 @@ public:
 	bgShapeBox			m_objWorldBox;
 
 	bgParserASE		m_ParserASE;
-	bgModel			m_ModelShip;
+	bgModelASE			m_ModelShip;
 
 public:
 	dx02();

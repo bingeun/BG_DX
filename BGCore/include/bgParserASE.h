@@ -2,19 +2,19 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "bgTextureMgr.h"
 #include "bgParser.h"
-#include "bgModel.h"
+#include "bgModelASE.h"
 
 class bgParserASE : public bgParser
 {
 public:
-	bgModel*	m_pModel;
+	bgModelASE*	m_pModel;
 
 public:
 	bgParserASE();
 	virtual ~bgParserASE();
 
 public:
-	bool	Init(bgModel* pModel);
+	bool	Init(bgModelASE* pModel);
 
 	bool	Read();				// 부모객체의 필수 재정의 함수
 	bool	ReadScene();

@@ -15,22 +15,6 @@
 #define new DEBUG_NEW
 #endif
 
-
-
-TCHAR* szBG3DFileName[] =
-{
-	_T("../../data/model/box.BG3D"),					// 0	박스
-	_T("../../data/model/ship.BG3D"),					// 1	공중부양 배
-	_T("../../data/model/MultiCameras.BG3D"),			// 2	멀티카메라
-	_T("../../data/model/scaleanimationmodel.BG3D"),	// 3	박스 스케일 애니메이션
-	_T("../../data/model/BoxAnimation.BG3D"),			// 4	박스 애니메이션 2
-	_T("../../data/model/Turret_Deploy.BG3D"),			// 5	터렛 애니메이션
-	_T("../../data/model/mob.BG3D"),					// 6	몹 - 인간형 몬스터
-};
-int g_iBG3DFileIndex = 5;	// <<=== BG3D 인덱스 넣기
-int g_iBG3DFileIndex2 = 2;	// <<=== BG3D 인덱스 넣기
-int g_iBBoxIndex = 7;
-
 // Cmfc05_aiApp
 
 BEGIN_MESSAGE_MAP(Cmfc05_aiApp, CWinAppEx)
@@ -275,30 +259,18 @@ BOOL Cmfc05_aiApp::OnIdle(LONG lCount)
 
 bool Cmfc05_aiApp::Init()
 {
-	m_objWorldAxis.Init();
-	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
-	m_objWorldAxis.CreateBuffer(1000.0f);
-	m_objWorldAxis.LoadShader();
-
-
-	// m_pRSWireFront 선 앞 m_pRSWireNone 선 앞뒤 m_pRSSolidFront 면 앞 m_pRSSolidNone 면 앞뒤 
-	m_ParserBG3D.Init(&m_Model);
-	m_ParserBG3D.Open(szBG3DFileName[g_iBG3DFileIndex]);
+	m_Model.Init();
 	m_Model.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
+	m_Model.m_pObjList.resize(1);
+	m_Model.m_pObjList[0] = new bgObject;
+	m_ParserSKN.Set(m_Model.m_pObjList[0]);
+	m_ParserSKN.Open(_T("../../data/model/mob_body.BGSKN"));
+
+	m_ParserMTX.Set(&m_Animation);
+	m_ParserMTX.Open(_T("../../data/model/mob.BGMTX"));
+
 	m_Model.CreateBuffer();
-	m_Model.LoadShader("VS", "PS_Tex");
-
-	m_ParserBG3D.Init(&m_Model2);
-	m_ParserBG3D.Open(szBG3DFileName[g_iBG3DFileIndex2]);
-	m_Model2.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
-	m_Model2.CreateBuffer();
-	m_Model2.LoadShader("VS", "PS_Tex");
-
-	m_BoundBox.Init();
-	m_BoundBox.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
-	m_BoundBox.SetBoundBox(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
-	m_BoundBox.CreateBuffer();
-	m_BoundBox.LoadShader();
+	m_Model.LoadShader();
 
 	return true;
 }
@@ -378,31 +350,19 @@ bool Cmfc05_aiApp::Frame()
 
 	if (I_DInput.IsKeyDownEvent(DIK_Z))
 	{
-		g_iBBoxIndex = (g_iBBoxIndex + 1) % m_Model.m_ObjectList.size();
-		m_BoundBox.SetBoundBox(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
-		m_BoundBox.UpdateBoundBox();
 	}
 	if (I_DInput.IsKeyDownEvent(DIK_X))
 	{
-		g_iBBoxIndex = (g_iBBoxIndex + m_Model.m_ObjectList.size() - 1) % m_Model.m_ObjectList.size();
-		m_BoundBox.SetBoundBox(&static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMax, &static_cast<GeomObject*>(m_Model.m_ObjectList[g_iBBoxIndex].vpObj)->vBBoxMin);
-		m_BoundBox.UpdateBoundBox();
 	}
 
-	m_objWorldAxis.Frame();
 	m_Model.Frame();
-	m_Model2.Frame();
-	m_BoundBox.Frame();
 
 	return true;
 }
 
 bool Cmfc05_aiApp::Render()
 {
-	m_objWorldAxis.Render();
 	m_Model.Render();
-	m_Model2.Render();
-	m_BoundBox.Render(&m_Model.m_ObjectList[g_iBBoxIndex].matCalculation);
 
 	return true;
 }

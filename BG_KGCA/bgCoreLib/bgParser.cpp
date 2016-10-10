@@ -7,12 +7,18 @@ bgParser::bgParser()
 
 bgParser::~bgParser()
 {
-	Close();
+	Release();
 }
 
 bool bgParser::Init()
 {
 	m_pFile = NULL;
+	return true;
+}
+
+bool bgParser::Release()
+{
+	Close();
 	return true;
 }
 
@@ -40,7 +46,7 @@ bool bgParser::FindWord(TCHAR* szFindWord)
 {
 	while (!feof(m_pFile))
 	{
-		_fgetts(m_szLine, MAX_PATH, m_pFile);
+		_fgetts(m_szLine, MAX_PATH * 4, m_pFile);
 		_stscanf(m_szLine, _T("%s"), m_szWord);
 		if (!_tcsicmp(m_szWord, szFindWord))
 		{
@@ -50,13 +56,13 @@ bool bgParser::FindWord(TCHAR* szFindWord)
 	return false;
 }
 
-int bgParser::FindWordArray(TCHAR szFindWords[][MAX_PATH], int iNumArray)
+int bgParser::FindWordArray(TCHAR szFindWords[][MAX_PATH * 4], int iNumArray)
 {
 	int iWordArrayIndex;
 
 	while (!feof(m_pFile))
 	{
-		_fgetts(m_szLine, MAX_PATH, m_pFile);
+		_fgetts(m_szLine, MAX_PATH * 4, m_pFile);
 		_stscanf(m_szLine, _T("%s"), m_szWord);
 		for (iWordArrayIndex = 0; iWordArrayIndex < iNumArray; iWordArrayIndex++)
 		{
@@ -72,10 +78,10 @@ int bgParser::FindWordArray(TCHAR szFindWords[][MAX_PATH], int iNumArray)
 
 TCHAR* bgParser::GetPathToFileName(TCHAR* szPath)
 {
-	TCHAR szDrive[MAX_PATH] = { 0, };
-	TCHAR szDir[MAX_PATH] = { 0, };
-	TCHAR szName[MAX_PATH] = { 0, };
-	TCHAR szExt[MAX_PATH] = { 0, };
+	TCHAR szDrive[MAX_PATH * 4] = { 0, };
+	TCHAR szDir[MAX_PATH * 4] = { 0, };
+	TCHAR szName[MAX_PATH * 4] = { 0, };
+	TCHAR szExt[MAX_PATH * 4] = { 0, };
 	_tsplitpath_s(szPath, szDrive, szDir, szName, szExt);
 	ZeroMemory(m_szFileName, sizeof(TCHAR) * MAX_PATH);
 	_stprintf_s(m_szFileName, _T("../../data/model/%s%s"), szName, szExt);
