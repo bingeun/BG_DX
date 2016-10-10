@@ -17,6 +17,9 @@ bool bgModel::Init()
 	m_pInputLayout = NULL;
 	m_pVertexShader = NULL;
 	m_pPixelShader = NULL;
+	m_pBipedInputLayout = NULL;
+	m_pBipedVertexShader = NULL;
+	m_pBipedPixelShader = NULL;
 	m_pMatrixBuffer = NULL;
 
 	m_ePrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -87,7 +90,7 @@ bool bgModel::Render()
 				m_pDContext->IASetVertexBuffers(0, 1, &pMesh->pVertexBuffer, &iStride, &iOffset);
 				m_pDContext->IASetIndexBuffer(pMesh->pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-				//I_TextureMgr.GetPtr(m_TexIDList[iMaterialRef].iID)->Apply();
+				I_TextureMgr.GetPtr(m_iTexID)->Apply();
 
 				m_pDContext->DrawIndexed(pMesh->IndexList.size(), 0, 0);
 			}
@@ -99,6 +102,8 @@ bool bgModel::Render()
 
 bool bgModel::Release()
 {
+	SAFE_RELEASE(m_pBipedVertexShader);
+	SAFE_RELEASE(m_pBipedPixelShader);
 	SAFE_RELEASE(m_pVertexShader);
 	SAFE_RELEASE(m_pPixelShader);
 	SAFE_RELEASE(m_pMatrixBuffer);
@@ -124,52 +129,57 @@ HRESULT bgModel::CreateBuffer()
 {
 	HRESULT hr = S_OK;
 
+	D3D11_BUFFER_DESC BufferDesc;
+	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	BufferDesc.CPUAccessFlags = 0;
+	BufferDesc.MiscFlags = 0;
+	BufferDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA SRData;
+	SRData.SysMemPitch = 0;
+	SRData.SysMemSlicePitch = 0;
+
 	// 버텍스버퍼
-	D3D11_BUFFER_DESC VBDesc;
-	VBDesc.Usage = D3D11_USAGE_DEFAULT;
-	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	VBDesc.CPUAccessFlags = 0;
-	VBDesc.MiscFlags = 0;
-	VBDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA VData;
-	VData.SysMemPitch = 0;
-	VData.SysMemSlicePitch = 0;
-
+	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	for (int iObj = 0; iObj < m_pObjList.size(); iObj++)
 	{
 		for (int iMesh = 0; iMesh < m_pObjList[iObj]->m_MeshList.size(); iMesh++)
 		{
 			if (m_pObjList[iObj]->m_MeshList[iMesh].VertexList.size() > 0)
 			{
-				VBDesc.ByteWidth = sizeof(PNCT_VERTEX) * m_pObjList[iObj]->m_MeshList[iMesh].VertexList.size();
-				VData.pSysMem = &m_pObjList[iObj]->m_MeshList[iMesh].VertexList[0];
-				HR_RETURN(m_pDevice->CreateBuffer(&VBDesc, &VData, &m_pObjList[iObj]->m_MeshList[iMesh].pVertexBuffer));
+				BufferDesc.ByteWidth = sizeof(PNCT_VERTEX) * m_pObjList[iObj]->m_MeshList[iMesh].VertexList.size();
+				SRData.pSysMem = &m_pObjList[iObj]->m_MeshList[iMesh].VertexList[0];
+				HR_RETURN(m_pDevice->CreateBuffer(&BufferDesc, &SRData, &m_pObjList[iObj]->m_MeshList[iMesh].pVertexBuffer));
 			}
 		}
 	}
 
 	// 인덱스버퍼
-	D3D11_BUFFER_DESC IBDesc;
-	IBDesc.Usage = D3D11_USAGE_DEFAULT;
-	IBDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	IBDesc.CPUAccessFlags = 0;
-	IBDesc.MiscFlags = 0;
-	IBDesc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA IData;
-	IData.SysMemPitch = 0;
-	IData.SysMemSlicePitch = 0;
-
+	BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	for (int iObj = 0; iObj < m_pObjList.size(); iObj++)
 	{
 		for (int iMesh = 0; iMesh < m_pObjList[iObj]->m_MeshList.size(); iMesh++)
 		{
 			if (m_pObjList[iObj]->m_MeshList[iMesh].IndexList.size() > 0)
 			{
-				IBDesc.ByteWidth = sizeof(UINT) * m_pObjList[iObj]->m_MeshList[iMesh].IndexList.size();
-				IData.pSysMem = &m_pObjList[iObj]->m_MeshList[iMesh].IndexList[0];
-				HR_RETURN(m_pDevice->CreateBuffer(&IBDesc, &IData, &m_pObjList[iObj]->m_MeshList[iMesh].pIndexBuffer));
+				BufferDesc.ByteWidth = sizeof(UINT) * m_pObjList[iObj]->m_MeshList[iMesh].IndexList.size();
+				SRData.pSysMem = &m_pObjList[iObj]->m_MeshList[iMesh].IndexList[0];
+				HR_RETURN(m_pDevice->CreateBuffer(&BufferDesc, &SRData, &m_pObjList[iObj]->m_MeshList[iMesh].pIndexBuffer));
+			}
+		}
+	}
+
+	// 바이패드용 버텍스버퍼
+	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	for (int iAnim = 0; iAnim < m_pAnimList.size(); iAnim++)
+	{
+		for (int iNode = 0; iNode < m_pAnimList[iAnim]->m_NodeList.size(); iNode++)
+		{
+			if (m_pAnimList[iAnim]->m_NodeList[iNode].vBipedList.size() > 0)
+			{
+				BufferDesc.ByteWidth = sizeof(PNC_VERTEX) * m_pAnimList[iAnim]->m_NodeList[iNode].vBipedList.size();
+				SRData.pSysMem = &m_pAnimList[iAnim]->m_NodeList[iNode].vBipedList[0];
+				HR_RETURN(m_pDevice->CreateBuffer(&BufferDesc, &SRData, &m_pAnimList[iAnim]->m_NodeList[iNode].pBipedBuffer));
 			}
 		}
 	}
@@ -188,12 +198,12 @@ HRESULT bgModel::LoadShader(CHAR* szVS, CHAR* szPS)
 
 	// 정점쉐이더 로드
 	ID3DBlob* pVSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PNC.hlsl", NULL, NULL, szVS, "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, szVS, "vs_5_0", dwShaderFlags, NULL, NULL, &pVSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pVSB->GetBufferPointer(), pVSB->GetBufferSize(), NULL, &m_pVertexShader));
 
 	// 픽셀쉐이더 로드
 	ID3DBlob* pPSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PNC.hlsl", NULL, NULL, szPS, "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, szPS, "ps_5_0", dwShaderFlags, NULL, NULL, &pPSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pPSB->GetBufferPointer(), pPSB->GetBufferSize(), NULL, &m_pPixelShader));
 
 	// 레이아웃 생성
@@ -205,6 +215,27 @@ HRESULT bgModel::LoadShader(CHAR* szVS, CHAR* szPS)
 		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, 40,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HR_RETURN(m_pDevice->CreateInputLayout(layout, 4, pVSB->GetBufferPointer(), pVSB->GetBufferSize(), &m_pInputLayout));
+
+	// ----------------------------------------------------------------------
+
+	// 바이패드용 정점쉐이더 로드
+	ID3DBlob* pBipedVSB = NULL;
+	HR_RETURN(D3DX11CompileFromFile(L"PNC.hlsl", NULL, NULL, szVS, "vs_5_0", dwShaderFlags, NULL, NULL, &pBipedVSB, NULL, NULL));
+	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pBipedVSB->GetBufferPointer(), pBipedVSB->GetBufferSize(), NULL, &m_pBipedVertexShader));
+
+	// 바이패드용 픽셀쉐이더 로드
+	ID3DBlob* pBipedPSB = NULL;
+	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, szPS, "ps_5_0", dwShaderFlags, NULL, NULL, &pBipedPSB, NULL, NULL));
+	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pBipedPSB->GetBufferPointer(), pBipedPSB->GetBufferSize(), NULL, &m_pBipedPixelShader));
+
+	// 바이패드용 레이아웃 생성
+	const D3D11_INPUT_ELEMENT_DESC layoutBiped[] =
+	{
+		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",  0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	HR_RETURN(m_pDevice->CreateInputLayout(layoutBiped, 3, pBipedVSB->GetBufferPointer(), pBipedVSB->GetBufferSize(), &m_pBipedInputLayout));
 
 	return hr;
 }

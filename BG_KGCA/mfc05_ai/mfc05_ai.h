@@ -28,6 +28,8 @@ public:
 	bgModel			m_Model;
 	bgAnimation		m_Animation;
 
+	float			m_MoveSpeed;
+
 public:
 	bool	Init();
 	bool	Frame();

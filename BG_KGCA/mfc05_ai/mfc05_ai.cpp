@@ -261,16 +261,29 @@ bool Cmfc05_aiApp::Init()
 {
 	m_Model.Init();
 	m_Model.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
-	m_Model.m_pObjList.resize(1);
+	m_Model.m_pObjList.resize(3);
+
 	m_Model.m_pObjList[0] = new bgObject;
 	m_ParserSKN.Set(m_Model.m_pObjList[0]);
 	m_ParserSKN.Open(_T("../../data/model/mob_body.BGSKN"));
+
+	m_Model.m_pObjList[1] = new bgObject;
+	m_ParserSKN.Set(m_Model.m_pObjList[1]);
+	m_ParserSKN.Open(_T("../../data/model/mob_left.BGSKN"));
+
+	m_Model.m_pObjList[2] = new bgObject;
+	m_ParserSKN.Set(m_Model.m_pObjList[2]);
+	m_ParserSKN.Open(_T("../../data/model/mob_right.BGSKN"));
 
 	m_ParserMTX.Set(&m_Animation);
 	m_ParserMTX.Open(_T("../../data/model/mob.BGMTX"));
 
 	m_Model.CreateBuffer();
-	m_Model.LoadShader();
+	m_Model.LoadShader("VS", "PS_Tex");
+
+	m_Model.m_iTexID = I_TextureMgr.Add(_T("../../data/model/mob04.bmp"));
+
+	m_MoveSpeed = 2.0f;
 
 	return true;
 }
@@ -280,72 +293,60 @@ bool Cmfc05_aiApp::Frame()
 	if (I_DInput.IsKeyDown(DIK_HOME))
 	{
 		m_Camera.MoveForward();
-		//m_Camera.m_vEye.z += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_END))
 	{
 		m_Camera.MoveBackward();
-		//m_Camera.m_vEye.z -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_DELETE))
 	{
 		m_Camera.MoveLeft();
-		//m_Camera.m_vEye.x -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_PGDN))
 	{
 		m_Camera.MoveRight();
-		//m_Camera.m_vEye.x += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_PGUP))
 	{
 		m_Camera.MoveDown();
-		//m_Camera.m_vEye.y -= m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 200.0f; // 임시
 	}
 	if (I_DInput.IsKeyDown(DIK_INSERT))
 	{
 		m_Camera.MoveUp();
-		//m_Camera.m_vEye.y += m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 200.0f; // 임시
 	}
 	// 카메라 이동
 	if (I_DInput.IsKeyDown(DIK_W))
 	{
-		m_Camera.MoveForward();
-		//m_Camera.m_vEye.z += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
+		m_Camera.MoveForward(m_MoveSpeed);
 	}
 	if (I_DInput.IsKeyDown(DIK_S))
 	{
-		m_Camera.MoveBackward();
-		//m_Camera.m_vEye.z -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
+		m_Camera.MoveBackward(m_MoveSpeed);
 	}
 	if (I_DInput.IsKeyDown(DIK_A))
 	{
-		m_Camera.MoveLeft();
-		m_Camera.m_vEye.x -= m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
+		m_Camera.MoveLeft(m_MoveSpeed);
 	}
 	if (I_DInput.IsKeyDown(DIK_D))
 	{
-		m_Camera.MoveRight();
-		m_Camera.m_vEye.x += m_Timer.m_fSPF * m_Camera.m_fMoveSpeed * 20.0f; // 임시
+		m_Camera.MoveRight(m_MoveSpeed);
 	}
 	// 카메라 회전
 	if (I_DInput.IsKeyDown(DIK_Q))
 	{
-		m_Camera.RotateLeft();
-		//m_Camera.m_vEye.y -= m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
+		m_Camera.RotateLeft(m_MoveSpeed);
 	}
 	if (I_DInput.IsKeyDown(DIK_E))
 	{
-		m_Camera.RotateRight();
-		//m_Camera.m_vEye.y += m_Timer.m_fSPF * m_Camera.m_fRotateSpeed * 20.0f; // 임시
+		m_Camera.RotateRight(m_MoveSpeed);
 	}
 	if (I_DInput.IsKeyDown(DIK_R))
 	{
-		m_Camera.RotateUp();
+		m_Camera.RotateUp(m_MoveSpeed);
 	}
 	if (I_DInput.IsKeyDown(DIK_F))
 	{
-		m_Camera.RotateDown();
+		m_Camera.RotateDown(m_MoveSpeed);
 	}
 
 	if (I_DInput.IsKeyDownEvent(DIK_Z))
