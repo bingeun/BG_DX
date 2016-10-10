@@ -275,6 +275,9 @@ bool Cmfc05_aiApp::Init()
 	m_ParserSKN.Set(m_Model.m_pObjList[2]);
 	m_ParserSKN.Open(_T("../../data/model/mob_right.BGSKN"));
 
+	m_Animation.m_NodeList.resize(1);
+	m_Model.m_pAnimList.resize(1);
+	m_Model.m_pAnimList[0] = &m_Animation;
 	m_ParserMTX.Set(&m_Animation);
 	m_ParserMTX.Open(_T("../../data/model/mob.BGMTX"));
 

@@ -53,8 +53,11 @@ bool bgModel::Frame()
 
 bool bgModel::Render()
 {
-	UINT iStride = sizeof(PNCT_VERTEX);
-	UINT iOffset = 0;
+	UINT iStride;
+	UINT iOffset;
+
+	iStride = sizeof(PNCT_VERTEX);
+	iOffset = 0;
 	
 	m_pDContext->IASetInputLayout(m_pInputLayout);
 	m_pDContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
@@ -93,6 +96,51 @@ bool bgModel::Render()
 				I_TextureMgr.GetPtr(m_iTexID)->Apply();
 
 				m_pDContext->DrawIndexed(pMesh->IndexList.size(), 0, 0);
+			}
+		}
+	}
+
+	// ----------------------------------------------------------------------
+
+	iStride = sizeof(PNC_VERTEX);
+	iOffset = 0;
+
+	m_pDContext->IASetInputLayout(m_pBipedInputLayout);
+	m_pDContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
+
+	m_pDContext->VSSetShader(m_pBipedVertexShader, NULL, 0);
+	m_pDContext->VSSetConstantBuffers(0, 1, &m_pMatrixBuffer);
+	m_pDContext->HSSetShader(NULL, NULL, 0);
+	m_pDContext->DSSetShader(NULL, NULL, 0);
+	m_pDContext->GSSetShader(NULL, NULL, 0);
+	m_pDContext->PSSetShader(m_pBipedPixelShader, NULL, 0);
+
+	m_pDContext->RSSetState(m_pBipedRasterizerState);
+	m_pDContext->VSSetSamplers(0, 1, &g_pDevice->m_pSSTexture);
+	m_pDContext->PSSetSamplers(0, 1, &g_pDevice->m_pSSTexture);
+
+	for (int iAnim = 0; iAnim < m_pAnimList.size(); iAnim++)
+	{
+		for (int iNode = 0; iNode < m_pAnimList[iAnim]->m_NodeList.size(); iNode++)
+		{
+			if (m_pAnimList[iAnim]->m_NodeList[iNode].vBipedList.size() > 0)
+			{
+				SetMatrix(&m_pAnimList[iAnim]->m_NodeList[iNode].matWorld, &m_RenderMatrix.matView, &m_RenderMatrix.matProj);
+
+				D3D11_MAPPED_SUBRESOURCE MappedResource;
+				m_pDContext->Map(m_pMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+				MATRIX_BUFFER* pCBData = (MATRIX_BUFFER*)MappedResource.pData;
+				pCBData->matWorld = m_RenderMatrix.matWorld;
+				pCBData->matView = g_pCameraMatrix->matView;
+				pCBData->matProj = g_pCameraMatrix->matProj;
+				m_pDContext->Unmap(m_pMatrixBuffer, 0);
+
+				bgAnimNode* pNode = &m_pAnimList[iAnim]->m_NodeList[iNode];
+				if (pNode->vBipedList.size() > 0)
+				{
+					m_pDContext->IASetVertexBuffers(0, 1, &pNode->pBipedBuffer, &iStride, &iOffset);
+					m_pDContext->Draw(pNode->vBipedList.size(), 0);
+				}
 			}
 		}
 	}
@@ -220,12 +268,12 @@ HRESULT bgModel::LoadShader(CHAR* szVS, CHAR* szPS)
 
 	// 바이패드용 정점쉐이더 로드
 	ID3DBlob* pBipedVSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PNC.hlsl", NULL, NULL, szVS, "vs_5_0", dwShaderFlags, NULL, NULL, &pBipedVSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNC.hlsl", NULL, NULL, "VS", "vs_5_0", dwShaderFlags, NULL, NULL, &pBipedVSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreateVertexShader((DWORD*)pBipedVSB->GetBufferPointer(), pBipedVSB->GetBufferSize(), NULL, &m_pBipedVertexShader));
 
 	// 바이패드용 픽셀쉐이더 로드
 	ID3DBlob* pBipedPSB = NULL;
-	HR_RETURN(D3DX11CompileFromFile(L"PNCT.hlsl", NULL, NULL, szPS, "ps_5_0", dwShaderFlags, NULL, NULL, &pBipedPSB, NULL, NULL));
+	HR_RETURN(D3DX11CompileFromFile(L"PNC.hlsl", NULL, NULL, "PS", "ps_5_0", dwShaderFlags, NULL, NULL, &pBipedPSB, NULL, NULL));
 	HR_RETURN(m_pDevice->CreatePixelShader((DWORD*)pBipedPSB->GetBufferPointer(), pBipedPSB->GetBufferSize(), NULL, &m_pBipedPixelShader));
 
 	// 바이패드용 레이아웃 생성
