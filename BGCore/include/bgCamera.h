@@ -2,8 +2,8 @@
 #include "bgArcBall.h"
 
 const float DEFAULT_FOV = (float)D3DX_PI / 4.0f;
-const float MOVE_VALUE = 10.0f;
-const float ROTATE_VALUE = 10.0f;
+const float MOVE_VALUE = 5.0f;
+const float ROTATE_VALUE = 200.0f;
 
 class bgCamera
 {

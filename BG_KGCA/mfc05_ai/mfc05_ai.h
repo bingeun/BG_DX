@@ -15,6 +15,7 @@
 #include "bgModel.h"
 #include "bgAnimation.h"
 #include "bgTextureMgr.h"
+#include "bgShapeGuideAxis.h"
 
 // Cmfc05_aiApp:
 // 이 클래스의 구현에 대해서는 mfc05_ai.cpp을 참조하십시오.
@@ -23,6 +24,7 @@
 class Cmfc05_aiApp : public CWinAppEx, public bgCore
 {
 public:
+	bgShapeGuideAxis	m_GuideAxis;
 	bgParserBGSKN	m_ParserSKN;
 	bgParserBGMTX	m_ParserMTX;
 	bgModel			m_Model;

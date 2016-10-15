@@ -7,7 +7,6 @@ struct bgMesh
 	bgTexMap			Texture;
 	vector<PNCT_VERTEX>	VertexList;
 	vector<UINT>		IndexList;
-	D3DXMATRIX			matCalculation;
 
 	ID3D11Buffer*		pVertexBuffer;
 	ID3D11Buffer*		pIndexBuffer;

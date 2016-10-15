@@ -20,15 +20,24 @@ public:
 	ID3D11VertexShader*		m_pBipedVertexShader;
 	ID3D11PixelShader*		m_pBipedPixelShader;
 
-	ID3D11Buffer*			m_pMatrixBuffer;
+	ID3D11Buffer*				m_pMatrixBuffer;
+	ID3D11Buffer*				m_pBoneBuffer;
+	ID3D11ShaderResourceView*	m_pBoneBufferRV;
 
 	MATRIX_BUFFER			m_RenderMatrix;
 	D3D_PRIMITIVE_TOPOLOGY	m_ePrimitiveTopology;
 	float					m_fCurrentTick;
 
 public:
+	bgScene*				m_pScene;
 	vector<bgObject*>		m_pObjList;
 	vector<bgAnimation*>	m_pAnimList;
+
+	float					m_fElapseTime;
+	float					m_fLerpTime;
+	int						m_iCurrentFrame;
+	int						m_iStartFrame;
+	int						m_iEndFrame;
 	int						m_iTexID;
 
 public:
@@ -49,4 +58,6 @@ public:
 	HRESULT	LoadShader(CHAR* szVS = "VS", CHAR* szPS = "PS");
 
 	void	SetMatrix(D3DXMATRIX* pWorld, D3DXMATRIX* pView, D3DXMATRIX* pProj);
+	bool	AnimFrame(FLOAT fCurrentFrame, FLOAT fLerpTime, int iStartFrame, int iEndFrame, D3DXMATRIX* pMatrix);
+	void	SetBoneMatrices(D3DXMATRIX* pMatrix = NULL, vector<D3DXMATRIX>* pMatrixList = NULL);
 };

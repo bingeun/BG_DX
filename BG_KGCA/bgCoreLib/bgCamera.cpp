@@ -16,7 +16,7 @@ void bgCamera::Init(ID3D11Device* pDevice, ID3D11DeviceContext* pDContext)
 	m_pDevice = pDevice;
 	m_pDContext = pDContext;
 
-	m_vEye = D3DXVECTOR3(0.0f, 20.0f, -50.0f);
+	m_vEye = D3DXVECTOR3(0.0f, 2.0f, -10.0f);
 	m_vAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
@@ -108,6 +108,39 @@ void bgCamera::Frame()
 			D3DXMatrixTranspose(&m_Matrix.matProj, &m_Matrix.matProj);
 		}
 	}
+	// 마우스 휠 드래그 - 카메라 1인칭시점 이동 =================================================================
+	if (I_DInput.m_MouseState.rgbButtons[2])
+	{
+		// 눌림 지속 (드래그)
+		if (I_DInput.m_MouseStateBefore.rgbButtons[2])
+		{
+			if (I_DInput.m_MouseState.lX > 0)
+			{
+				MoveLeft(I_DInput.m_MouseState.lX);
+			}
+			else if (I_DInput.m_MouseState.lX < 0)
+			{
+				MoveRight(-I_DInput.m_MouseState.lX);
+			}
+			if (I_DInput.m_MouseState.lY > 0)
+			{
+				MoveUp(I_DInput.m_MouseState.lY);
+			}
+			else if (I_DInput.m_MouseState.lY < 0)
+			{
+				MoveDown(-I_DInput.m_MouseState.lY);
+			}
+		}
+	}
+	// 마우스 휠 굴리기
+	if (I_DInput.m_MouseState.lZ > 0)
+	{
+		MoveForward(50.0f);
+	}
+	else if(I_DInput.m_MouseState.lZ < 0)
+	{
+		MoveBackward(50.0f);
+	}
 }
 
 HRESULT bgCamera::CreateMatrixBuffer()
@@ -175,9 +208,9 @@ void bgCamera::MoveForward(float fValue)
 	D3DXQUATERNION qRot;
 	D3DXQuaternionNormalize(&qRot, &m_qRotate);
 	D3DXMatrixRotationQuaternion(&matRot, &qRot);
-	m_vEye.x += matRot._31 * g_fSPF * fValue * 20.0f;
-	m_vEye.y += matRot._32 * g_fSPF * fValue * 20.0f;
-	m_vEye.z += matRot._33 * g_fSPF * fValue * 20.0f;
+	m_vEye.x += matRot._31 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.y += matRot._32 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.z += matRot._33 * g_fSPF * fValue * MOVE_VALUE;
 }
 
 void bgCamera::MoveBackward(float fValue)
@@ -186,9 +219,9 @@ void bgCamera::MoveBackward(float fValue)
 	D3DXQUATERNION qRot;
 	D3DXQuaternionNormalize(&qRot, &m_qRotate);
 	D3DXMatrixRotationQuaternion(&matRot, &qRot);
-	m_vEye.x -= matRot._31 * g_fSPF * fValue * 20.0f;
-	m_vEye.y -= matRot._32 * g_fSPF * fValue * 20.0f;
-	m_vEye.z -= matRot._33 * g_fSPF * fValue * 20.0f;
+	m_vEye.x -= matRot._31 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.y -= matRot._32 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.z -= matRot._33 * g_fSPF * fValue * MOVE_VALUE;
 }
 
 void bgCamera::MoveLeft(float fValue)
@@ -197,9 +230,9 @@ void bgCamera::MoveLeft(float fValue)
 	D3DXQUATERNION qRot;
 	D3DXQuaternionNormalize(&qRot, &m_qRotate);
 	D3DXMatrixRotationQuaternion(&matRot, &qRot);
-	m_vEye.x -= matRot._11 * g_fSPF * fValue * 20.0f;
-	m_vEye.y -= matRot._12 * g_fSPF * fValue * 20.0f;
-	m_vEye.z -= matRot._13 * g_fSPF * fValue * 20.0f;
+	m_vEye.x -= matRot._11 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.y -= matRot._12 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.z -= matRot._13 * g_fSPF * fValue * MOVE_VALUE;
 }
 
 void bgCamera::MoveRight(float fValue)
@@ -208,9 +241,9 @@ void bgCamera::MoveRight(float fValue)
 	D3DXQUATERNION qRot;
 	D3DXQuaternionNormalize(&qRot, &m_qRotate);
 	D3DXMatrixRotationQuaternion(&matRot, &qRot);
-	m_vEye.x += matRot._11 * g_fSPF * fValue * 20.0f;
-	m_vEye.y += matRot._12 * g_fSPF * fValue * 20.0f;
-	m_vEye.z += matRot._13 * g_fSPF * fValue * 20.0f;
+	m_vEye.x += matRot._11 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.y += matRot._12 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.z += matRot._13 * g_fSPF * fValue * MOVE_VALUE;
 }
 
 void bgCamera::MoveUp(float fValue)
@@ -219,9 +252,9 @@ void bgCamera::MoveUp(float fValue)
 	D3DXQUATERNION qRot;
 	D3DXQuaternionNormalize(&qRot, &m_qRotate);
 	D3DXMatrixRotationQuaternion(&matRot, &qRot);
-	m_vEye.x += matRot._21 * g_fSPF * fValue * 20.0f;
-	m_vEye.y += matRot._22 * g_fSPF * fValue * 20.0f;
-	m_vEye.z += matRot._23 * g_fSPF * fValue * 20.0f;
+	m_vEye.x += matRot._21 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.y += matRot._22 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.z += matRot._23 * g_fSPF * fValue * MOVE_VALUE;
 }
 
 void bgCamera::MoveDown(float fValue)
@@ -230,14 +263,14 @@ void bgCamera::MoveDown(float fValue)
 	D3DXQUATERNION qRot;
 	D3DXQuaternionNormalize(&qRot, &m_qRotate);
 	D3DXMatrixRotationQuaternion(&matRot, &qRot);
-	m_vEye.x -= matRot._21 * g_fSPF * fValue * 20.0f;
-	m_vEye.y -= matRot._22 * g_fSPF * fValue * 20.0f;
-	m_vEye.z -= matRot._23 * g_fSPF * fValue * 20.0f;
+	m_vEye.x -= matRot._21 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.y -= matRot._22 * g_fSPF * fValue * MOVE_VALUE;
+	m_vEye.z -= matRot._23 * g_fSPF * fValue * MOVE_VALUE;
 }
 
 void bgCamera::RotateLeft(float fValue)
 {
-	m_fMouseX += fValue * g_fSPF * 80.0f;
+	m_fMouseX += fValue * g_fSPF * ROTATE_VALUE;
 	m_fMouseDragX = m_fMouseX;
 	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;
@@ -245,7 +278,7 @@ void bgCamera::RotateLeft(float fValue)
 
 void bgCamera::RotateRight(float fValue)
 {
-	m_fMouseX -= fValue * g_fSPF * 80.0f;
+	m_fMouseX -= fValue * g_fSPF * ROTATE_VALUE;
 	m_fMouseDragX = m_fMouseX;
 	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;
@@ -253,7 +286,7 @@ void bgCamera::RotateRight(float fValue)
 
 void bgCamera::RotateUp(float fValue)
 {
-	m_fMouseY += fValue * g_fSPF * 80.0f;
+	m_fMouseY += fValue * g_fSPF * ROTATE_VALUE;
 	m_fMouseDragY = m_fMouseY;
 	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;
@@ -261,7 +294,7 @@ void bgCamera::RotateUp(float fValue)
 
 void bgCamera::RotateDown(float fValue)
 {
-	m_fMouseY -= fValue * g_fSPF * 80.0f;
+	m_fMouseY -= fValue * g_fSPF * ROTATE_VALUE;
 	m_fMouseDragY = m_fMouseY;
 	D3DXQuaternionRotationYawPitchRoll(&m_qDrag, m_fMouseDragX * D3DX_PI / 180.0f * -0.125f, m_fMouseDragY * D3DX_PI / 180.0f * -0.125f, 0.0f);
 	m_qRotate = m_qDrag;

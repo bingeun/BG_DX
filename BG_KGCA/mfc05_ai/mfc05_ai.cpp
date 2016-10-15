@@ -259,6 +259,11 @@ BOOL Cmfc05_aiApp::OnIdle(LONG lCount)
 
 bool Cmfc05_aiApp::Init()
 {
+	m_GuideAxis.Init();
+	m_GuideAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
+	m_GuideAxis.CreateBuffer(1000.0f);
+	m_GuideAxis.LoadShader();
+
 	m_Model.Init();
 	m_Model.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_Camera.m_pMatrixBuffer);
 	m_Model.m_pObjList.resize(3);
@@ -351,14 +356,25 @@ bool Cmfc05_aiApp::Frame()
 	{
 		m_Camera.RotateDown(m_MoveSpeed);
 	}
+	if (I_DInput.IsKeyDown(DIK_Z))
+	{
+		m_Camera.MoveLeft(m_MoveSpeed * 2);
+		m_Camera.RotateRight(m_MoveSpeed * 2);
+	}
+	if (I_DInput.IsKeyDown(DIK_X))
+	{
+		m_Camera.MoveRight(m_MoveSpeed * 2);
+		m_Camera.RotateLeft(m_MoveSpeed * 2);
+	}
 
-	if (I_DInput.IsKeyDownEvent(DIK_Z))
+	if (I_DInput.IsKeyDownEvent(DIK_C))
 	{
 	}
-	if (I_DInput.IsKeyDownEvent(DIK_X))
+	if (I_DInput.IsKeyDownEvent(DIK_V))
 	{
 	}
 
+	m_GuideAxis.Frame();
 	m_Model.Frame();
 
 	return true;
@@ -366,6 +382,7 @@ bool Cmfc05_aiApp::Frame()
 
 bool Cmfc05_aiApp::Render()
 {
+	m_GuideAxis.Render();
 	m_Model.Render();
 
 	return true;

@@ -15,6 +15,8 @@ bool bgParserBGSKN::Read()
 	IF_FALSE_RETURN(ReadScene());
 	IF_FALSE_RETURN(ReadObject());
 
+	IF_FALSE_RETURN(PostRead());
+
 	return hr;
 }
 

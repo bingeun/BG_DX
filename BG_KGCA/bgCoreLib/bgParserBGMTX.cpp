@@ -15,6 +15,8 @@ bool bgParserBGMTX::Read()
 	IF_FALSE_RETURN(ReadScene());
 	IF_FALSE_RETURN(ReadNode());
 
+	IF_FALSE_RETURN(PostRead());
+
 	return hr;
 }
 
@@ -125,5 +127,33 @@ bool bgParserBGMTX::ReadMatrix(bgAnimNode* pNode)
 bool bgParserBGMTX::PostRead()
 {
 	bool hr = true;
+
+	D3DXQUATERNION qRot;
+	D3DXVECTOR3 vPos, vScl;
+
+	for (int iNode = 0; iNode < m_pAnimation->m_NodeList.size(); iNode++)
+	{
+		bgAnimNode* pNode = &m_pAnimation->m_NodeList[iNode];
+		if (pNode->matFrameList.size() > 0)
+		{
+			pNode->qRotList.resize(pNode->matFrameList.size());
+			pNode->vSclList.resize(pNode->matFrameList.size());
+			pNode->vPosList.resize(pNode->matFrameList.size());
+		}
+		for (int iFrame = 0; iFrame < pNode->matFrameList.size(); iFrame++)
+		{
+			if (SUCCEEDED(D3DXMatrixDecompose(&vScl, &qRot, &vPos, &pNode->matFrameList[iFrame])))
+			{
+				pNode->qRotList[iFrame] = qRot;
+				pNode->vSclList[iFrame] = vScl;
+				pNode->vPosList[iFrame] = vPos;
+			}
+			else
+			{
+				D3DXQuaternionRotationMatrix(&pNode->qRotList[iFrame], &pNode->matFrameList[iFrame]);
+			}
+		}
+	}
+
 	return hr;
 }
