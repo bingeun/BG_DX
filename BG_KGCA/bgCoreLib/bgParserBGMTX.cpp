@@ -118,7 +118,7 @@ bool bgParserBGMTX::ReadMatrix(bgAnimNode* pNode)
 	{
 		D3DXMATRIX* pMatrix = &pNode->matFrameList[iMatrix];
 		_fgetts(m_szLine, MAX_PATH * 4, m_pFile);
-		_stscanf(m_szLine, _T("%s %f%f%f%f %f%f%f%f %f%f%f%f %f%f%f%f"),
+		_stscanf(m_szLine, _T("%f%f%f%f %f%f%f%f %f%f%f%f %f%f%f%f"),
 			&pMatrix->_11, &pMatrix->_12, &pMatrix->_13, &pMatrix->_14,		// 프레임단위 애니메이션 행렬
 			&pMatrix->_21, &pMatrix->_22, &pMatrix->_23, &pMatrix->_24,
 			&pMatrix->_31, &pMatrix->_32, &pMatrix->_33, &pMatrix->_34,

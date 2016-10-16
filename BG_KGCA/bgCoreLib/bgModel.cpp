@@ -78,6 +78,7 @@ bool bgModel::Render()
 	{
 		for (int iMesh = 0; iMesh < m_pObjList[iObj]->m_MeshList.size(); iMesh++)
 		{
+			//SetMatrix(&m_pAnimList[0]->m_NodeList[iMesh].matCalculation, &m_RenderMatrix.matView, &m_RenderMatrix.matProj);
 			SetMatrix(&m_pObjList[iObj]->m_matNodeList[iMesh], &m_RenderMatrix.matView, &m_RenderMatrix.matProj);
 
 			D3D11_MAPPED_SUBRESOURCE MappedResource;
