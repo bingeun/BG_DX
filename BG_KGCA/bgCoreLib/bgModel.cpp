@@ -78,7 +78,6 @@ bool bgModel::Render()
 	{
 		for (int iMesh = 0; iMesh < m_pObjList[iObj]->m_MeshList.size(); iMesh++)
 		{
-			//SetMatrix(&m_pObjList[iObj]->m_MeshList[iMesh].matWorld, &m_RenderMatrix.matView, &m_RenderMatrix.matProj);
 			SetMatrix(&m_pObjList[iObj]->m_matNodeList[iMesh], &m_RenderMatrix.matView, &m_RenderMatrix.matProj);
 
 			D3D11_MAPPED_SUBRESOURCE MappedResource;
@@ -344,39 +343,45 @@ bool bgModel::AnimFrame(FLOAT fCurrentFrame, FLOAT fLerpTime, int iStartFrame, i
 	int iNextFrame = iCurrentFrame + 1;
 
 	D3DXMatrixIdentity(&matScl);
-	for (int iMesh = 0; iMesh < m_pScene->iNumMesh; iMesh++)
+	for (int iAnim = 0; iAnim < m_pAnimList.size(); iAnim++)
 	{
-		bgAnimNode* pNode = &m_pAnimList[0]->m_NodeList[iMesh];
-		pMatrix = &m_pAnimList[0]->m_NodeList[iMesh].matCalculation;
-		if (iNextFrame >= iEndFrame)
+		for (int iNode = 0; iNode < m_pAnimList[iAnim]->m_NodeList.size(); iNode++)
 		{
-			iCurrentFrame = iStartFrame;
-			qCurrent = pNode->qRotList[iCurrentFrame];
-			qNext = pNode->qRotList[iCurrentFrame + 1];
-			D3DXQuaternionSlerp(&qTemp, &qCurrent, &qNext, fLerpTime);
-			D3DXMatrixRotationQuaternion(&matRot, &qTemp);
-			D3DXMatrixScaling(&matScl, pNode->vSclList[iCurrentFrame].x, pNode->vSclList[iCurrentFrame].y, pNode->vSclList[iCurrentFrame].z);
+			if (m_pAnimList[iAnim]->m_NodeList[iNode].vBipedList.size() > 0)
+			{
+				bgAnimNode* pNode = &m_pAnimList[iAnim]->m_NodeList[iNode];
+				pMatrix = &pNode->matCalculation;
+				if (iNextFrame >= iEndFrame)
+				{
+					iCurrentFrame = iStartFrame;
+					qCurrent = pNode->qRotList[iCurrentFrame];
+					qNext = pNode->qRotList[iCurrentFrame + 1];
+					D3DXQuaternionSlerp(&qTemp, &qCurrent, &qNext, fLerpTime);
+					D3DXMatrixRotationQuaternion(&matRot, &qTemp);
+					D3DXMatrixScaling(&matScl, pNode->vSclList[iCurrentFrame].x, pNode->vSclList[iCurrentFrame].y, pNode->vSclList[iCurrentFrame].z);
 
-			vPos = pNode->vPosList[iCurrentFrame];
-			(*pMatrix) = matScl * matRot;
-			(*pMatrix)._41 = vPos.x;
-			(*pMatrix)._42 = vPos.y;
-			(*pMatrix)._43 = vPos.z;
-			bResult = true;
-		}
-		else
-		{
-			qCurrent = pNode->qRotList[iCurrentFrame];
-			qNext = pNode->qRotList[iNextFrame];
-			D3DXQuaternionSlerp(&qTemp, &qCurrent, &qNext, fLerpTime);
-			D3DXMatrixRotationQuaternion(&matRot, &qCurrent);
-			D3DXMatrixScaling(&matScl, pNode->vSclList[iCurrentFrame].x, pNode->vSclList[iCurrentFrame].y, pNode->vSclList[iCurrentFrame].z);
+					vPos = pNode->vPosList[iCurrentFrame];
+					(*pMatrix) = matScl * matRot;
+					(*pMatrix)._41 = vPos.x;
+					(*pMatrix)._42 = vPos.y;
+					(*pMatrix)._43 = vPos.z;
+					bResult = true;
+				}
+				else
+				{
+					qCurrent = pNode->qRotList[iCurrentFrame];
+					qNext = pNode->qRotList[iNextFrame];
+					D3DXQuaternionSlerp(&qTemp, &qCurrent, &qNext, fLerpTime);
+					D3DXMatrixRotationQuaternion(&matRot, &qCurrent);
+					D3DXMatrixScaling(&matScl, pNode->vSclList[iCurrentFrame].x, pNode->vSclList[iCurrentFrame].y, pNode->vSclList[iCurrentFrame].z);
 
-			vPos = pNode->vPosList[iCurrentFrame];
-			(*pMatrix) = matScl * matRot;
-			(*pMatrix)._41 = vPos.x;
-			(*pMatrix)._42 = vPos.y;
-			(*pMatrix)._43 = vPos.z;
+					vPos = pNode->vPosList[iCurrentFrame];
+					(*pMatrix) = matScl * matRot;
+					(*pMatrix)._41 = vPos.x;
+					(*pMatrix)._42 = vPos.y;
+					(*pMatrix)._43 = vPos.z;
+				}
+			}
 		}
 	}
 

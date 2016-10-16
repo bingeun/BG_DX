@@ -48,14 +48,6 @@ void bgCamera::Frame()
 	D3DXVECTOR3 vAxis;
 	FLOAT fAngle;
 
-	// 키보드 입력 - 회전 =================================================================
-	if (I_DInput.IsKeyDown(DIK_Q))
-	{
-	}
-	if (I_DInput.IsKeyDown(DIK_E))
-	{
-	}
-
 	// 마우스 왼쪽 드래그 - 카메라 1인칭시점 회전 =================================================================
 	if (I_DInput.m_MouseState.rgbButtons[0])
 	{

@@ -64,6 +64,8 @@ bool bgParserBGMTX::ReadNode()
 			&pNode->matWorld._21, &pNode->matWorld._22, &pNode->matWorld._23, &pNode->matWorld._24,
 			&pNode->matWorld._31, &pNode->matWorld._32, &pNode->matWorld._33, &pNode->matWorld._34,
 			&pNode->matWorld._41, &pNode->matWorld._42, &pNode->matWorld._43, &pNode->matWorld._44);
+		
+		D3DXMatrixInverse(&pNode->matWorldInv, 0, &pNode->matWorld);
 
 		ReadVertex(pNode);
 		ReadMatrix(pNode);
@@ -92,6 +94,9 @@ bool bgParserBGMTX::ReadVertex(bgAnimNode* pNode)
 			&pVertex->p.x, &pVertex->p.y, &pVertex->p.z,					// 포지션
 			&pVertex->n.x, &pVertex->n.y, &pVertex->n.z,					// 노멀
 			&pVertex->c.x, &pVertex->c.y, &pVertex->c.z, &pVertex->c.w);	// 컬러
+
+		if (m_pAnimation->m_Scene.iBindPose)
+			D3DXVec3TransformCoord(&pVertex->p, &pVertex->p, &pNode->matWorldInv);
 	}
 
 	return hr;
@@ -114,7 +119,6 @@ bool bgParserBGMTX::ReadMatrix(bgAnimNode* pNode)
 		D3DXMATRIX* pMatrix = &pNode->matFrameList[iMatrix];
 		_fgetts(m_szLine, MAX_PATH * 4, m_pFile);
 		_stscanf(m_szLine, _T("%s %f%f%f%f %f%f%f%f %f%f%f%f %f%f%f%f"),
-			m_szWord,
 			&pMatrix->_11, &pMatrix->_12, &pMatrix->_13, &pMatrix->_14,		// 프레임단위 애니메이션 행렬
 			&pMatrix->_21, &pMatrix->_22, &pMatrix->_23, &pMatrix->_24,
 			&pMatrix->_31, &pMatrix->_32, &pMatrix->_33, &pMatrix->_34,

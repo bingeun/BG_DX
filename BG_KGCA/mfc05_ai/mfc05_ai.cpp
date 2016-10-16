@@ -298,6 +298,12 @@ bool Cmfc05_aiApp::Init()
 
 bool Cmfc05_aiApp::Frame()
 {
+	// 프로그램 종료
+	if (I_DInput.IsKeyDown(DIK_ESCAPE))
+	{
+		m_pMainWnd->SendMessage(WM_CLOSE, 0, 0);
+	}
+	// 카메라 이동
 	if (I_DInput.IsKeyDown(DIK_HOME))
 	{
 		m_Camera.MoveForward();
