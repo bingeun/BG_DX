@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>dx02_ase</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>DX02_ASE</ProjectName>
+    <ProjectName>DX99_FSM</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -152,10 +152,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="bgFSMClass.h" />
+    <ClInclude Include="bgFSMState.h" />
     <ClInclude Include="dx02.h" />
+    <ClInclude Include="StateMobAttack.h" />
+    <ClInclude Include="objMob.h" />
+    <ClInclude Include="StateMobIdle.h" />
+    <ClInclude Include="StateMobMove.h" />
+    <ClInclude Include="StateMobTrace.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bgFSMClass.cpp" />
+    <ClCompile Include="bgFSMState.cpp" />
     <ClCompile Include="dx02.cpp" />
+    <ClCompile Include="StateMobAttack.cpp" />
+    <ClCompile Include="objMob.cpp" />
+    <ClCompile Include="StateMobIdle.cpp" />
+    <ClCompile Include="StateMobMove.cpp" />
+    <ClCompile Include="StateMobTrace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PC.hlsl">

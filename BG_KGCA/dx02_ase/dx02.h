@@ -1,21 +1,14 @@
 #pragma once
 #include "bgCore.h"
-#include "bgParserASE.h"
-#include "bgModel.h"
-#include "bgTextureMgr.h"
 #include "bgShapeGuideAxis.h"
-#include "bgShapePlane.h"
-#include "bgShapeBox.h"
+#include "objMob.h"
 
 class dx02 : public bgCore
 {
 public:
 	bgShapeGuideAxis	m_objWorldAxis;
-	bgShapePlane		m_objWorldPlane;
-	bgShapeBox			m_objWorldBox;
-
-	bgParserASE		m_ParserASE;
-	bgModelASE			m_ModelShip;
+	objMob	m_objMob;
+	objMob	m_objHero;
 
 public:
 	dx02();

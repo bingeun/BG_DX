@@ -1,15 +1,5 @@
 #include "dx02.h"
 
-TCHAR* szASEFileName[] =
-{
-	_T("../../data/model/box.ase"),					// 0	박스
-	_T("../../data/model/ship.ase"),				// 1	공중부양 배
-	_T("../../data/model/MultiCameras.ase"),		// 2	멀티카메라
-	_T("../../data/model/scaleanimationmodel.ASE"),	// 3	박스 스케일 애니메이션
-	_T("../../data/model/Turret_Deploy.ASE"),		// 4	터렛 애니메이션
-};
-int g_iASEFileIndex = 2; // <<=== ASE 인덱스 넣기
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	dx02 core;
@@ -30,128 +20,114 @@ dx02::~dx02()
 
 bool dx02::Init()
 {
-	m_objWorldBox.Init();
-	m_objWorldBox.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_objWorldBox.CreateBuffer(1.0f);
-	m_objWorldBox.LoadShader();
-
-	m_objWorldPlane.Init();
-	m_objWorldPlane.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_objWorldPlane.CreateBuffer(10.0f);
-	m_objWorldPlane.LoadShader();
-
 	m_objWorldAxis.Init();
-	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_pMatrixBuffer);
+	m_objWorldAxis.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
 
+	m_objMob.Init();
+	m_objMob.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
+	m_objMob.CreateBuffer();
+	m_objMob.LoadShader();
 
-	m_ModelShip.Init();
-	// m_pRSWireFront 선 앞 m_pRSWireNone 선 앞뒤 m_pRSSolidFront 면 앞 m_pRSSolidNone 면 앞뒤 
-	m_ModelShip.SetDevice(m_pDevice, m_pDContext, m_pRSSolidFront, m_pMatrixBuffer);
-	m_ParserASE.Open(szASEFileName[g_iASEFileIndex]);
-	m_ParserASE.ConvertToModel(&m_ModelShip);
-	m_ModelShip.CreateBuffer();
-	m_ModelShip.LoadShader("VS", "PS_Tex");
+	m_objHero.Init();
+	m_objHero.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
+	m_objHero.CreateBuffer();
+	m_objHero.LoadShader();
+
+	m_objHero.m_vPos.x = -15.0f;
+	m_objHero.m_vPos.y = 0.0f;
+	m_objHero.m_vPos.z = -15.0f;
+
+	m_objMob.m_pHeroPos = &m_objHero.m_vPos;
 
 	return true;
 }
 
 bool dx02::Frame()
 {
-	if (I_DInput.IsKeyDown(DIK_HOME))
-	{
-		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
-	}
-	if (I_DInput.IsKeyDown(DIK_END))
-	{
-		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
-	}
-	if (I_DInput.IsKeyDown(DIK_DELETE))
-	{
-		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
-	}
-	if (I_DInput.IsKeyDown(DIK_PGDN))
-	{
-		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
-	}
-	if (I_DInput.IsKeyDown(DIK_PGUP))
-	{
-		m_CameraViewport[0].RotateLeft(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
-	}
-	if (I_DInput.IsKeyDown(DIK_INSERT))
-	{
-		m_CameraViewport[0].RotateRight(m_Timer.m_fSPF * m_fSpeedCamera * 250.0f);
-		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera * 250.0f; // 임시
-	}
-	// 카메라 이동
 	if (I_DInput.IsKeyDown(DIK_W))
 	{
-		m_CameraViewport[0].MoveForward(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.z += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveForward();
 	}
 	if (I_DInput.IsKeyDown(DIK_S))
 	{
-		m_CameraViewport[0].MoveBackward(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.z -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveBackward();
 	}
 	if (I_DInput.IsKeyDown(DIK_A))
 	{
-		m_CameraViewport[0].MoveLeft(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.x -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveLeft();
 	}
 	if (I_DInput.IsKeyDown(DIK_D))
 	{
-		m_CameraViewport[0].MoveRight(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.x += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.MoveRight();
 	}
-	// 카메라 회전
+
 	if (I_DInput.IsKeyDown(DIK_Q))
 	{
-		m_CameraViewport[0].RotateLeft(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.y -= m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.RotateLeft(4.0f);
 	}
 	if (I_DInput.IsKeyDown(DIK_E))
 	{
-		m_CameraViewport[0].RotateRight(m_Timer.m_fSPF * m_fSpeedCamera * 50.0f);
-		m_CameraViewport[0].m_Eye.y += m_Timer.m_fSPF * m_fSpeedCamera * 50.0f; // 임시
+		m_Camera.RotateRight(4.0f);
 	}
 	if (I_DInput.IsKeyDown(DIK_R))
 	{
-		m_CameraViewport[0].RotateUp(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_Camera.RotateUp(4.0f);
 	}
 	if (I_DInput.IsKeyDown(DIK_F))
 	{
-		m_CameraViewport[0].RotateDown(m_Timer.m_fSPF * m_fSpeedCamera);
+		m_Camera.RotateDown(4.0f);
 	}
 
-	m_objWorldBox.Frame();
-	m_objWorldPlane.Frame();
 	m_objWorldAxis.Frame();
+	m_objMob.Frame();
+	
+	//m_objHero.Frame();
+	{
+		if (I_DInput.IsKeyDown(DIK_LEFT))
+		{
+			m_objHero.m_vPos.x -= g_fSPF * 5.0f;
+		}
+		if (I_DInput.IsKeyDown(DIK_RIGHT))
+		{
+			m_objHero.m_vPos.x += g_fSPF * 5.0f;
+		}
+		if (I_DInput.IsKeyDown(DIK_UP))
+		{
+			m_objHero.m_vPos.z += g_fSPF * 5.0f;
+		}
+		if (I_DInput.IsKeyDown(DIK_DOWN))
+		{
+			m_objHero.m_vPos.z -= g_fSPF * 5.0f;
+		}
 
-	m_ModelShip.Frame();
+		D3DXVECTOR3 vMin = D3DXVECTOR3(m_objHero.m_vPos.x - 1.0f, m_objHero.m_vPos.y - 1.0f, m_objHero.m_vPos.z - 1.0f);
+		D3DXVECTOR3 vMax = D3DXVECTOR3(m_objHero.m_vPos.x + 1.0f, m_objHero.m_vPos.y + 1.0f, m_objHero.m_vPos.z + 1.0f);
+		
+		D3DXMatrixIdentity(&m_objHero.m_MatrixBuffer.matWorld);
+		D3DXMatrixTranslation(&m_objHero.m_MatrixBuffer.matWorld, m_objHero.m_vPos.x, m_objHero.m_vPos.y, m_objHero.m_vPos.z);
+		m_objHero.SetMatrix(&m_objHero.m_MatrixBuffer.matWorld, &m_objHero.m_MatrixBuffer.matView, &m_objHero.m_MatrixBuffer.matProj);
+	}
 
 	return true;
 }
 
 bool dx02::Render()
 {
-	//m_objWorldBox.Render();
-	m_objWorldPlane.Render();
 	m_objWorldAxis.Render();
-
-	m_ModelShip.Render();
+	m_objMob.Render();
+	m_objHero.Render();
 
 	return true;
 }
 
 bool dx02::Release()
 {
+	m_objWorldAxis.Release();
+	m_objMob.Release();
+	m_objHero.Release();
+
 	return true;
 }
 
@@ -192,29 +168,6 @@ LRESULT CALLBACK dx02::AppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			if (m_DWrite.m_bFontBorder)
 				m_bPrintKeyState = !m_bPrintKeyState;
 			m_DWrite.m_bFontBorder = !m_DWrite.m_bFontBorder;
-		}
-		break;
-
-		case '3': // 뷰포트 모드 변경 (0=단일모드, 1=2x2모드, 2=4+1모드)
-		{
-			m_iModeViewport = (m_iModeViewport + 1) % 3;
-			switch (m_iModeViewport)
-			{
-			case 0: // 단일화면 모드
-			{
-			}
-			break;
-
-			case 1: // 2x2화면 모드
-			{
-			}
-			break;
-
-			case 2: // 4+1화면 모드
-			{
-			}
-			break;
-			}
 		}
 		break;
 
