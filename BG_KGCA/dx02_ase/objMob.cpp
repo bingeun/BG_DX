@@ -83,7 +83,8 @@ bool objMob::Render()
 	pCBData->matProj = g_pCameraMatrix->matProj;
 	m_pDContext->Unmap(m_pCB, 0);
 
-	m_pDContext->DrawIndexed(m_iNumIndex, 0, 0);
+	//m_pDContext->DrawIndexed(m_iNumIndex, 0, 0);
+	m_pCurrentState->Render();
 
 	return true;
 }
@@ -115,10 +116,15 @@ HRESULT objMob::CreateBuffer()
 		{ { +1.0f, 0.0f, +1.0f },{ 1.0f, 1.0f, 0.0f, 1.0f } },	// 2	|       |	노란색
 		{ { -1.0f, 0.0f, +1.0f },{ 1.0f, 1.0f, 0.0f, 1.0f } },	// 3	0-------1
 
-		{ { -5.0f, 0.0f, -5.0f },{ 1.0f, 1.0f, 1.0f, 1.0f } },	// 4	7-------6	몬스터 사정거리
-		{ { +5.0f, 0.0f, -5.0f },{ 1.0f, 1.0f, 1.0f, 1.0f } },	// 5	|       |	큰 정사각형
+		{ { -5.0f, 0.0f, -5.0f },{ 1.0f, 1.0f, 1.0f, 1.0f } },	// 4	7-------6	몬스터 시야
+		{ { +5.0f, 0.0f, -5.0f },{ 1.0f, 1.0f, 1.0f, 1.0f } },	// 5	|       |	중간 정사각형
 		{ { +5.0f, 0.0f, +5.0f },{ 1.0f, 1.0f, 1.0f, 1.0f } },	// 6	|       |	하얀색
 		{ { -5.0f, 0.0f, +5.0f },{ 1.0f, 1.0f, 1.0f, 1.0f } },	// 7	4-------5
+
+		{ { -9.0f, 0.0f, -9.0f },{ 1.0f, 0.0f, 0.0f, 1.0f } },	// 8	11------10	몬스터 추격 영역
+		{ { +9.0f, 0.0f, -9.0f },{ 1.0f, 0.0f, 0.0f, 1.0f } },	// 9	 |      |	큰 정사각형
+		{ { +9.0f, 0.0f, +9.0f },{ 1.0f, 0.0f, 0.0f, 1.0f } },	// 10	 |      |	빨간색
+		{ { -9.0f, 0.0f, +9.0f },{ 1.0f, 0.0f, 0.0f, 1.0f } },	// 11	 8------9
 	};
 	m_iNumVertex = COUNTOF(Vertices);
 
@@ -126,7 +132,8 @@ HRESULT objMob::CreateBuffer()
 	UINT iIndices[] =
 	{
 		0, 1, 1, 2, 2, 3, 3, 0,		// 몬스터 몸체
-		4, 5, 5, 6, 6, 7, 7, 4,		// 몬스터 사정거리
+		4, 5, 5, 6, 6, 7, 7, 4,		// 몬스터 시야
+		8, 9, 9, 10, 10, 11, 11, 8,	// 몬스터 추격 영역
 	};
 	m_iNumIndex = COUNTOF(iIndices);
 

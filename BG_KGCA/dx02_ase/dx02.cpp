@@ -25,11 +25,6 @@ bool dx02::Init()
 	m_objWorldAxis.CreateBuffer(1000.0f);
 	m_objWorldAxis.LoadShader();
 
-	m_objMob.Init();
-	m_objMob.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
-	m_objMob.CreateBuffer();
-	m_objMob.LoadShader();
-
 	m_objHero.Init();
 	m_objHero.SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
 	m_objHero.CreateBuffer();
@@ -39,7 +34,16 @@ bool dx02::Init()
 	m_objHero.m_vPos.y = 0.0f;
 	m_objHero.m_vPos.z = -15.0f;
 
-	m_objMob.m_pHeroPos = &m_objHero.m_vPos;
+	for (int i = 0; i < MAX_MOB; i++)
+	{
+		m_objMobList[i].Init();
+		m_objMobList[i].SetDevice(m_pDevice, m_pDContext, m_pRSWireNone, m_Camera.m_pMatrixBuffer);
+		m_objMobList[i].CreateBuffer();
+		m_objMobList[i].LoadShader();
+		m_objMobList[i].m_pHeroPos = &m_objHero.m_vPos;
+	}
+
+	m_Camera.m_vEye = D3DXVECTOR3(0.0f, 50.0f, -1.0f);
 
 	return true;
 }
@@ -81,7 +85,10 @@ bool dx02::Frame()
 	}
 
 	m_objWorldAxis.Frame();
-	m_objMob.Frame();
+	for (int i = 0; i < MAX_MOB; i++)
+	{
+		m_objMobList[i].Frame();
+	}
 	
 	//m_objHero.Frame();
 	{
@@ -116,7 +123,10 @@ bool dx02::Frame()
 bool dx02::Render()
 {
 	m_objWorldAxis.Render();
-	m_objMob.Render();
+	for (int i = 0; i < MAX_MOB; i++)
+	{
+		m_objMobList[i].Render();
+	}
 	m_objHero.Render();
 
 	return true;
@@ -125,7 +135,10 @@ bool dx02::Render()
 bool dx02::Release()
 {
 	m_objWorldAxis.Release();
-	m_objMob.Release();
+	for (int i = 0; i < MAX_MOB; i++)
+	{
+		m_objMobList[i].Release();
+	}
 	m_objHero.Release();
 
 	return true;
